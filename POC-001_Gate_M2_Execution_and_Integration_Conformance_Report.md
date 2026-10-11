@@ -2,7 +2,7 @@
 
 **Project**: POC-001 Market HFT Operating System  
 **Milestone**: Gate M2 — Execution Engine Integration & Live Exchange Feeds (Simulation Milestone)  
-**Status**: Fully Implemented & All 15 Acceptance Test Suites Passing (105/105 Tests)  
+**Status**: Fully Implemented & All 15 Acceptance Test Suites Passing (106/106 Tests)  
 **Frozen Specification Baseline**: [`POC-001_Gate_M1_Design_Readiness_Specification.md`](https://github.com/Shrom-Main/ADRs/blob/77eff71c3807c8852b49355f50e814bd75eb90ad/POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.13 Final, commit [`77eff71`](https://github.com/Shrom-Main/ADRs/commit/77eff71c3807c8852b49355f50e814bd75eb90ad), Git blob `ac8899da3a6dcccb2c612247302e6f57fc566472`)  
 **Gate M1 Implementation Baseline**: [`70121a05f160b8674133ecd3d6c48cd3b6fcb2ae`](https://github.com/Shrom-Main/Market-HFT-OS/commit/70121a05f160b8674133ecd3d6c48cd3b6fcb2ae) (short: `70121a0`)  
 **Implementation Repository**: [`https://github.com/Shrom-Main/Market-HFT-OS.git`](https://github.com/Shrom-Main/Market-HFT-OS)  
@@ -13,11 +13,12 @@
 - **Increment 4 (Integration Gate)**: [`3df48e485d9c003a5eff42a736ee8c9d34d4f76b`](https://github.com/Shrom-Main/Market-HFT-OS/commit/3df48e485d9c003a5eff42a736ee8c9d34d4f76b) — Exact rational cost basis, transport hardening, and end-to-end simulation pipeline
 - **Byte-Accurate Payload Patch**: [`9a61e0ec6532d80d25bf088ca4d01b1382fe8f4a`](https://github.com/Shrom-Main/Market-HFT-OS/commit/9a61e0ec6532d80d25bf088ca4d01b1382fe8f4a) — Byte-accurate WebSocket payload limits (`Buffer.byteLength`), multibyte UTF-8 expansion tests, and native `maxPayload` bounds
 - **Partition Invariance & Transport Lifecycle Patch**: [`d238774ac8c8e084e7c0107bf115be237695a72d`](https://github.com/Shrom-Main/Market-HFT-OS/commit/d238774ac8c8e084e7c0107bf115be237695a72d) — Anchored cumulative COGS allocation ($A(s) = \operatorname{divideHalfEven}(C_0 \cdot s, Q_0)$) proving strict fill-partition invariance, connection stabilization window, and oversized peer bombardment recovery lifecycle verification
+- **Short Prohibition & Quantity Overflow Patch**: [`da6238207acea56001073b7e96ebc4f791661861`](https://github.com/Shrom-Main/Market-HFT-OS/commit/da6238207acea56001073b7e96ebc4f791661861) — Unsupported short-selling prohibition (`E-ERR-044`), safe-integer cumulative quantity overflow guards (`E-ERR-045`), and atomic accounting protections
 **Machine-Readable Test Artifacts**:
 - [`test-results.json`](https://github.com/Shrom-Main/Market-HFT-OS/blob/main/test-results.json) in implementation repository
 - [`POC-001_Gate_M2_Test_Execution_Results.json`](https://github.com/Shrom-Main/ADRs/blob/main/POC-001_Gate_M2_Test_Execution_Results.json) in ADR repository
 **Execution Environment**: Node.js v24.14.0, Vitest v1.6.0, TypeScript v5.4.5, Windows OS  
-**Audit Timestamp**: 2026-10-11T21:30:34+05:30  
+**Audit Timestamp**: 2026-10-11T22:32:17+05:30  
 
 ---
 
@@ -33,9 +34,9 @@ Gate M2 represents the second major implementation milestone of **POC-001 Market
 
 ### Overall Verification Results
 - **Test Files**: 15 of 15 passed (100%)
-- **Test Cases**: 105 of 105 passed (0 failed, 0 skipped)
+- **Test Cases**: 106 of 106 passed (0 failed, 0 skipped)
 - **TypeScript Typecheck (`tsc --noEmit`)**: 0 errors
-- **Execution Speed**: 6.06s total duration
+- **Execution Speed**: 4.58s total duration
 
 ---
 
@@ -76,12 +77,12 @@ Gate M2 represents the second major implementation milestone of **POC-001 Market
   4. **Append-Only Order Transition Journal**: Emits immutable `SimulatedOrderTransitionEvent` records tracking monotonic transitions, timestamps, and fill state.
   5. **Deep Immutability**: All order snapshots, balances, and journals are frozen via `Object.freeze`.
 
-### 2.4 Increment 4 & Corrective Conformance Patches: Fill-Partition-Invariant Cumulative COGS & Transport Hardening
+### 2.4 Increment 4 & Corrective Conformance Patches: Fill-Partition-Invariant Cumulative COGS, Short Prohibition & Overflow Guards
 - **Source Modules**:
   - [`src/portfolio/simulationPortfolio.ts`](https://github.com/Shrom-Main/Market-HFT-OS/blob/main/src/portfolio/simulationPortfolio.ts)
   - [`src/feeds/localWebSocketTransport.ts`](https://github.com/Shrom-Main/Market-HFT-OS/blob/main/src/feeds/localWebSocketTransport.ts)
   - [`src/simulation/simulationPipeline.ts`](https://github.com/Shrom-Main/Market-HFT-OS/blob/main/src/simulation/simulationPipeline.ts)
-- **Test Suite**: [`tests/acceptance/suite15_e2e_simulation_pipeline.test.ts`](https://github.com/Shrom-Main/Market-HFT-OS/blob/main/tests/acceptance/suite15_e2e_simulation_pipeline.test.ts) (12 tests)
+- **Test Suite**: [`tests/acceptance/suite15_e2e_simulation_pipeline.test.ts`](https://github.com/Shrom-Main/Market-HFT-OS/blob/main/tests/acceptance/suite15_e2e_simulation_pipeline.test.ts) (13 tests)
 - **Key Invariants Implemented**:
   1. **Anchored Cumulative COGS Allocation (Fill-Partition Invariance)**:
      - Prior weighted-average implementations computed COGS incrementally against remaining aggregate cost and quantity, causing rounding path dependency across split fills.
@@ -92,14 +93,20 @@ Gate M2 represents the second major implementation milestone of **POC-001 Market
      - Complete liquidation ($s \ge Q_0$) flushes all remaining aggregate acquisition cost directly to zero, guaranteeing zero residual orphan fraction.
      - Subsequent purchases establish a new pool epoch baseline $(C_0 = \text{cost}_{\text{rem}} + \text{cost}_{\text{buy}}, Q_0 = Q_{\text{rem}} + Q_{\text{buy}}, s = 0)$.
      - Verified against reviewer's exact case ($C_0 = 5, Q_0 = 3$: Path A selling $1$ then $1$ yields cumulative COGS $3$, remaining cost $2$, and final liquidation COGS $2$, bit-for-bit identical to Path B selling $2$ in a single fill), as well as multi-partition tests ($C_0 = 37, Q_0 = 10, s = 7$ across partitions $[1,1,1,1,1,1,1]$, $[3,4]$, $[2,5]$, $[7]$, $[2,2,3]$ all yielding identical cumulative COGS $26$ and remaining cost $11$).
-  2. **Byte-Accurate WebSocket Payload Limit & Multibyte UTF-8 Defense**:
+  2. **Unsupported Short-Selling Prohibition (`E-ERR-044`)**:
+     - The cumulative COGS allocation model applies strictly to long inventory. Enabling short positions without an explicit short-liability accounting model would permit unbacked negative inventory and break basis conservation.
+     - Initializing `SimulationPortfolio` with `allowShort: true` throws `E-ERR-044: SHORT_POSITIONS_NOT_SUPPORTED` fail-closed. Selling excess quantity beyond available inventory always throws `E-ERR-042: INSUFFICIENT_INVENTORY`.
+  3. **Cumulative Safe-Integer Quantity Overflow Protection (`E-ERR-045`)**:
+     - Beyond verifying individual fill quantities, all accumulated quantities (`net_quantity`, `total_bought_quantity`, `total_sold_quantity`, `epoch_cumulative_sold_quantity`) are checked against `Number.MAX_SAFE_INTEGER` ($9,007,199,254,740,991$) via `assertSafeQuantity`.
+     - Quantities exceeding safe-integer bounds throw `E-ERR-045: QUANTITY_OVERFLOW` atomically before any ledger mutation.
+  4. **Byte-Accurate WebSocket Payload Limit & Multibyte UTF-8 Defense**:
      - Evaluates payload sizes using `Buffer.byteLength(data, 'utf8')` to prevent multibyte character expansion bypasses.
      - Configures native transport `maxPayload: MAX_WS_FRAME_BYTES` on both `WebSocketServer` and `WebSocket` client.
-  3. **Transport Native maxPayload Failure Lifecycle & Connection Stabilization Timer**:
+  5. **Transport Native maxPayload Failure Lifecycle & Connection Stabilization Timer**:
      - Prevents endless retry loops when an oversized frame causes immediate connection termination.
      - Incorporates a connection stabilization window timer (`stabilizationWindowMs`): `reconnectAttempts` resets to zero only after the connection has proven stable and remained open beyond the window.
      - Peer bombardment stress test (`M2-WS-LIFECYCLE-OVERSIZED-BOMB-012`): verifies that repeated oversized frame attacks trigger bounded backoff and transition cleanly to terminal `CLOSED` state once `maxReconnectAttempts` is reached, without unhandled exceptions, duplicate listeners, or infinite reconnect loops.
-  4. **End-to-End Simulation Pipeline (`SimulationPipeline`)**:
+  6. **End-to-End Simulation Pipeline (`SimulationPipeline`)**:
      - Coordinates ticks $\to$ `MarketFeedHandler` $\to$ `DryRunExecutionEngine` $\to$ `SimulatedExecutionGateway` $\to$ `SimulationPortfolio`.
      - Computes deterministic RFC 8785 JCS state digest (`computeStateDigest`) over portfolio balances, positions, orders, fills, and transition journals.
      - **Condition A (Reproducible Event Replay)**: Two independent pipeline runs ingesting identical inputs generate bit-identical state digests.
@@ -111,7 +118,7 @@ Gate M2 represents the second major implementation milestone of **POC-001 Market
 
 ## 3. Comprehensive Verification Matrix
 
-### 3.1 Full Test Suite Summary (15 Suites / 105 Tests)
+### 3.1 Full Test Suite Summary (15 Suites / 106 Tests)
 
 | Suite ID | Suite File / Scope | Tests Passed | Status |
 |---|---|:---:|:---:|
@@ -129,8 +136,8 @@ Gate M2 represents the second major implementation milestone of **POC-001 Market
 | **SUITE-12** | `suite12_durable_persistence.test.ts` (PostgreSQL Row-Locking, Ambiguous Commits) | 10 / 10 | PASS |
 | **SUITE-13** | `suite13_market_feed_execution.test.ts` (Feed Normalization, Gateway Slice) | 21 / 21 | PASS |
 | **SUITE-14** | `suite14_websocket_portfolio.test.ts` (WebSocket Transport, Portfolio Ledger) | 19 / 19 | PASS |
-| **SUITE-15** | `suite15_e2e_simulation_pipeline.test.ts` (Pipeline, Exact Math, Byte Limits, Invariance) | 12 / 12 | PASS |
-| **TOTAL** | **Full POC-001 System Acceptance Test Suite** | **105 / 105** | **PASS (100%)** |
+| **SUITE-15** | `suite15_e2e_simulation_pipeline.test.ts` (Pipeline, Exact Math, Byte Limits, Invariance, Guards) | 13 / 13 | PASS |
+| **TOTAL** | **Full POC-001 System Acceptance Test Suite** | **106 / 106** | **PASS (100%)** |
 
 ---
 
@@ -174,13 +181,13 @@ Gate M2 represents the second major implementation milestone of **POC-001 Market
 12. `M2-WS-PROVENANCE-ISOLATION-012`: Enforces simulated provenance on all socket frames, blocking authenticated claims.
 13. `M2-PORTFOLIO-BUY-ACCOUNTING-013`: Debits cash, credits inventory, and computes weighted average cost basis using exact BigInt subunits.
 14. `M2-PORTFOLIO-SELL-PNL-014`: Credits cash, debits inventory, and calculates realized P&L with BigInt precision.
-15. `M2-PORTFOLIO-SHORT-POLICY-015`: Disallows short-selling by default, rejecting excess sell fills without partial mutation.
+15. `M2-PORTFOLIO-SHORT-POLICY-015`: Disallows short-selling by default, rejecting excess sell fills and unsupported allowShort configurations without state corruption.
 16. `M2-PORTFOLIO-ATOMIC-FAIL-016`: Rejects insufficient cash and currency mismatch atomically without state corruption.
 17. `M2-PORTFOLIO-FILL-IDEMPOTENCY-017`: Replaying duplicate fill returns identical state without double counting.
 18. `M2-PORTFOLIO-CANCEL-INDEPENDENCE-018`: Cancelling gateway order does not alter or reverse prior fills.
 19. `M2-PORTFOLIO-IMMUTABILITY-019`: Deep immutability protects portfolio snapshot and journal from caller mutation.
 
-#### SUITE-15: End-to-End Simulation Pipeline & Integration Gate (12 Tests)
+#### SUITE-15: End-to-End Simulation Pipeline & Integration Gate (13 Tests)
 1. `M2-EXACT-MATH-001`: `divideHalfEven` implements deterministic banker's rounding on integer division across all edge-cases (odd rounds up, even rounds down, non-halves round to nearest).
 2. `M2-EXACT-MATH-002`: Exact rational cost basis prevents precision drift across fractional unit costs and partial sales, strictly conserving basis and clearing to 0 upon final liquidation.
 3. `M2-WS-HARDENING-003`: Stale connection isolation ignores frames delivered by superseded socket instances.
@@ -193,6 +200,7 @@ Gate M2 represents the second major implementation milestone of **POC-001 Market
 10. `M2-WS-BYTE-ACCURACY-010`: Byte-accurate payload enforcement guards against multibyte character expansion and native maxPayload violations.
 11. `M2-PORTFOLIO-PARTITION-INVARIANCE-011`: Anchored cumulative COGS allocation guarantees fill-partition invariance across arbitrary order splits (reviewer $C_0=5, Q_0=3$ case, multi-partitions, and interleaved purchase epochs).
 12. `M2-WS-LIFECYCLE-OVERSIZED-BOMB-012`: Native maxPayload failure handles oversized peer bombardment and transitions cleanly to terminal CLOSED state after retry exhaustion.
+13. `M2-PORTFOLIO-OVERFLOW-SHORT-GUARD-013`: Guards against Number.MAX_SAFE_INTEGER quantity overflow and enforces unsupported short prohibition fail-closed.
 
 ---
 
@@ -256,6 +264,8 @@ Across all fills, the portfolio strictly enforces:
 2. **Conservation of Capital**:
    $$\text{cash} + \text{aggregate\_cost} \equiv \text{initial\_cash} + \text{cumulative\_realized\_pnl}$$
 3. **Zero Residual Fraction**: On full liquidation ($s = Q_0$), remaining cost flushes exactly to zero.
+4. **Unsupported Short Prohibition**: Rejects `allowShort: true` fail-closed (`E-ERR-044`), ensuring inventory quantities remain non-negative.
+5. **Quantity Overflow Invariant**: Prohibits quantities exceeding `Number.MAX_SAFE_INTEGER` fail-closed (`E-ERR-045`).
 
 ---
 
@@ -288,12 +298,12 @@ git clone https://github.com/Shrom-Main/Market-HFT-OS.git
 cd Market-HFT-OS
 
 # Checkout verified commit
-git checkout d238774ac8c8e084e7c0107bf115be237695a72d
+git checkout da6238207acea56001073b7e96ebc4f791661861
 
 # Install pinned dependencies
 npm ci
 
-# Execute test suite (15 suites, 105 tests)
+# Execute test suite (15 suites, 106 tests)
 npm test -- --run
 
 # Run strict TypeScript compiler verification (0 errors)
@@ -304,4 +314,4 @@ npm run typecheck
 
 ## 7. Conclusion
 
-The Gate M2 simulation milestone is complete with all 15 suites and 105 tests passing. All review findings (exact aggregate cost basis, anchored cumulative COGS fill-partition invariance, byte-accurate WebSocket payload limits, multibyte UTF-8 tests, native `maxPayload` transport failure lifecycle, and README synchronization) are verified and committed. The project is positioned to begin Gate M3 pre-flight with the six explicit acceptance checklist items carried forward.
+The Gate M2 simulation milestone is complete with all 15 suites and 106 tests passing. All review findings (exact aggregate cost basis, anchored cumulative COGS fill-partition invariance, unsupported short-selling prohibition, cumulative safe-integer quantity overflow guards, byte-accurate WebSocket payload limits, multibyte UTF-8 tests, native `maxPayload` transport failure lifecycle, and README synchronization) are verified and committed. The project is positioned to begin Gate M3 pre-flight with the six explicit acceptance checklist items carried forward.
