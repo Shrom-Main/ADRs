@@ -14,6 +14,7 @@
 - **Byte-Accurate Payload Patch**: [`9a61e0ec6532d80d25bf088ca4d01b1382fe8f4a`](https://github.com/Shrom-Main/Market-HFT-OS/commit/9a61e0ec6532d80d25bf088ca4d01b1382fe8f4a) — Byte-accurate WebSocket payload limits (`Buffer.byteLength`), multibyte UTF-8 expansion tests, and native `maxPayload` bounds
 - **Partition Invariance & Transport Lifecycle Patch**: [`d238774ac8c8e084e7c0107bf115be237695a72d`](https://github.com/Shrom-Main/Market-HFT-OS/commit/d238774ac8c8e084e7c0107bf115be237695a72d) — Anchored cumulative COGS allocation ($A(s) = \operatorname{divideHalfEven}(C_0 \cdot s, Q_0)$) proving strict fill-partition invariance, connection stabilization window, and oversized peer bombardment recovery lifecycle verification
 - **Short Prohibition & Quantity Overflow Patch**: [`da6238207acea56001073b7e96ebc4f791661861`](https://github.com/Shrom-Main/Market-HFT-OS/commit/da6238207acea56001073b7e96ebc4f791661861) — Unsupported short-selling prohibition (`E-ERR-044`), safe-integer cumulative quantity overflow guards (`E-ERR-045`), and atomic accounting protections
+- **Overflow Snapshot Atomic Invariance Patch**: [`cbafb60fdb5926a649f90ec41e4493562703c564`](https://github.com/Shrom-Main/Market-HFT-OS/commit/cbafb60fdb5926a649f90ec41e4493562703c564) — Complete before-and-after snapshot atomic invariance verification on quantity overflow rejection
 **Machine-Readable Test Artifacts**:
 - [`test-results.json`](https://github.com/Shrom-Main/Market-HFT-OS/blob/main/test-results.json) in implementation repository
 - [`POC-001_Gate_M2_Test_Execution_Results.json`](https://github.com/Shrom-Main/ADRs/blob/main/POC-001_Gate_M2_Test_Execution_Results.json) in ADR repository
@@ -298,7 +299,7 @@ git clone https://github.com/Shrom-Main/Market-HFT-OS.git
 cd Market-HFT-OS
 
 # Checkout verified commit
-git checkout da6238207acea56001073b7e96ebc4f791661861
+git checkout cbafb60fdb5926a649f90ec41e4493562703c564
 
 # Install pinned dependencies
 npm ci
