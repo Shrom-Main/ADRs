@@ -1,0 +1,16 @@
+# Secrets and credentials (never commit)
+*.env
+*.env.*
+*.key
+*.token
+*.secret
+*Token*.txt
+*token*.txt
+*Key*.txt
+*key*.txt
+
+# OS and temporary files
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
