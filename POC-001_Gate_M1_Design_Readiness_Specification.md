@@ -33,7 +33,7 @@ This specification defines the normative design contract for **POC-001 Gate M1**
 14. **Dual-Ledger Cryptographic Write Isolation**: Absolute separation between paper simulation and actuals execution. Direct writes to the actuals ledger are blocked fail-closed at runtime unless authorized by an authenticated execution context bearing an Ed25519-signed `ActualsAuthTicketEnvelope` binding the exact RFC 8785 canonical hash of the mutation (`E-ERR-020`, `E-ERR-025`, `E-ERR-026`).
 15. **Auditable Hash-Chained Stream History**: Every state mutation appends an immutable event to a hash-chained stream ($H_n = \text{SHA-256}(H_{n-1} \parallel \text{canonicalizeJCS}(e_n))$), anchored by a virtual genesis event ($H_{-1}$). Periodically, streams are sealed via Ed25519-signed checkpoint receipts verifying hash continuity and active authority status.
 16. **Strict Production RFC 8785 Canonicalizer Contract & Disambiguated Package Provenance (AUDIT-22, AUDIT-32, AUDIT-39, AUDIT-45)**: Runtime canonicalization pins exact NPM registry metadata: `json-canonicalize` v3.0.1 (`https://github.com/snowyu/json-canonicalize.ts`, integrity `sha512-xEzkTucfHhDooWOSMOvrlll9oTk6/mXZIerF2DFWA2chHZsnc2zrmAKjVOyDbSYHr0e3Djx9F89nZ3U2Bn+lSw==`, sha1 `9da7f919f28e2622610b34a32e51f06a6c3c02cb`). Pinned RFC 8785 test suite fixtures originate from the separate normative reference repository `https://github.com/cyberphone/json-canonicalization` (Anders Rundgren, commit `19d51d7fe467d4706a3ff08adf8a748f29fc21e0`). Conformance testing of `json-canonicalize` against this suite is designated strictly as `Specified — Pending Verification` until implementation authorization. Input validation strictly prohibits non-finite numbers (`NaN`, `Infinity`), lone surrogates, and duplicate JSON parser keys.
-17. **In-Transaction Lock-Acquired Fail-Closed TrustedClock Boundary (AUDIT-39, AUDIT-43, AUDIT-49, AUDIT-51)**: The persistence boundary obtains wall-clock time internally via the designated `TrustedClock` interface (`clock.nowUtc()`) strictly **after** acquiring the stream head row lock inside the database transaction, formally designated as the Post-Lock Authorization Instant ($T_{\text{auth}}$, `tx_auth_time_utc`), preventing receipt expiration races during lock queue waits. The clock interface throws `E-ERR-007: TRUSTED_CLOCK_UNAVAILABLE` fail-closed if the clock source is unreachable, desynchronized (> 5,000 ms skew against trusted NTP/PTP reference), or non-monotonic. Receipt expiration enforces inclusive validity $T_{\text{auth}} \le T_{\text{expires}}$, and any pre-commit error, lock timeout, or clock failure causes an explicit database ROLLBACK preserving unburned nonces. Connection loss during COMMIT enters an ambiguous outcome state; the caller MUST execute pessimistic row-lock reconciliation (`SELECT ... FOR UPDATE` on the primary) to wait for resolution, inspect the event at `attempted_resulting_sequence` (returning `COMMITTED` upon verifying event identity, durable event hash, assessment hash, and stored assessment record even if head advanced subsequently), establish definitive rollback only when head is unchanged and event absent, or preserve `OUTCOME_UNKNOWN` on timeout/disconnect (AUDIT-51).
+17. **In-Transaction Lock-Acquired Fail-Closed TrustedClock Boundary (AUDIT-39, AUDIT-43, AUDIT-49, AUDIT-51)**: The persistence boundary obtains wall-clock time internally via the designated `TrustedClock` interface (`clock.nowUtc()`) strictly **after** acquiring the stream head row lock inside the database transaction, formally designated as the Post-Lock Authorization Instant ($T_{\text{auth}}$, `tx_auth_time_utc`), preventing receipt expiration races during lock queue waits. The clock interface throws `E-ERR-007: TRUSTED_CLOCK_UNAVAILABLE` fail-closed if the clock source is unreachable, desynchronized (> 5,000 ms skew against trusted NTP/PTP reference), or non-monotonic. Receipt expiration enforces inclusive validity $T_{\text{auth}} \le T_{\text{expires}}$, and any pre-commit error, lock timeout, or clock failure causes an explicit database ROLLBACK preserving unburned nonces. Connection loss during COMMIT enters an ambiguous outcome state; the caller MUST execute pessimistic row-lock reconciliation (`SELECT ... FOR UPDATE` on the primary) to wait for resolution, inspect the event at `attempted_resulting_sequence` (returning `COMMITTED` upon independently recomputing and verifying event digest and retrieved assessment bytes hash even if head advanced subsequently), establish definitive rollback only when head is unchanged and event absent, or preserve `OUTCOME_UNKNOWN` with truthful `stream_sequence: null` on timeout/disconnect (AUDIT-51).
 
 ---
 
@@ -68,7 +68,7 @@ This revision resolves the remaining contract and integrity findings identified 
 | **AUDIT-48** | **P1** | §7.1, §7.2, §7.3 | **Peak Funding Independent of Initial Bank Balance**: Separated Available Bank Liquidity ($L_{\text{bank}}(t) = B_0 + \sum F_j + \sum C_j^{\text{bank\_ops}}$) from Cumulative Operating Cash Flow Series ($B_{\text{ops}}(k) = \sum_{j=1}^k C_j^{\text{ops}}$ with pre-event baseline $B_{\text{ops}}(0) \equiv 0$ at position inception $t_0$, and operating transactions $j \in \{1, \dots, K\}$). Peak operating funding $C_{\text{peak, ops}} = \max(0, \max_{k \le K}(-\sum_{j=1}^k C_j^{\text{ops}}))$ measures the operating cycle's deficit independently of initial owner equity ($B_0$) or financing injections ($F_j$). Reconciled strictly to the $\text{RoPF}_{\text{mtm}}$ denominator while preserving the gross-clearing no-double-counting invariant. | `FIN-PEAK-INDEPENDENT-EQUITY-041` |
 | **AUDIT-49** | **P2** | §3.4, §4.1, §8.0 | **Conformance Semantics, Clock Fail-Closed & Sequence SQL Constraint**: Specified explicit error `E-ERR-007: TRUSTED_CLOCK_UNAVAILABLE` fail-closed if clock is unreachable, desynchronized (>5s), or non-monotonic. Added explicit uint64 upper bound to SQL `CHECK` constraint: `CHECK (sequence_number ~ '^(0|[1-9][0-9]*)$' AND CAST(sequence_number AS NUMERIC) <= 18446744073709551615)`. Formally defined 3-state acceptance semantics (`Specified — Pending Verification`, `Design Reviewed`, `Verified — Test Evidence Recorded`) with strict designated evidence criteria. | `CLOCK-FAIL-CLOSED-UNAVAILABLE-042`, `STREAM-SEQ-UINT64-BOUND-043` |
 | **AUDIT-50** | **P1** | §7.1, §7.3, §8.1 | **Operating Cash Flow Indexing & Disambiguated Baseline ($B_{\text{ops}}(0) \equiv 0$)**: Formally defined $B_{\text{ops}}(0) \equiv 0$ as the pre-event baseline state at position inception $t_0$, indexed subsequent operating transactions as $j \in \{1, \dots, K\}$, and defined $B_{\text{ops}}(k) = B_{\text{ops}}(0) + \sum_{j=1}^k C_j^{\text{ops}} = \sum_{j=1}^k C_j^{\text{ops}}$ for sequence steps $k \in \{0, \dots, K\}$. Eliminated mathematical collision between $B_{\text{ops}}(0) = 0$ and $C_0 \ne 0$. Provided complete step-by-step numerical proof for fixture `REC-OUTLAY-001` (Pre-event: $0$; $j=1$ advance $+500 \implies B=+500$; $j=2$ outlay $-1,500 \implies B=-1,000$, $k_{\text{outlay}}=2$, Day 10; $j=3$ recovery $+1,200 \implies B=+200$, $k_{\text{rec}}=3$, Day 25; Outlay Recovery = 15 days, Lifecycle Recovery = 25 days, $C_{\text{peak, ops}} = 1,000$). | `REC-OUTLAY-001` |
-| **AUDIT-51** | **P1** | §3.4, §4.1, §8.1 | **Post-Lock Authorization Instant ($T_{\text{auth}}$), Expiration Inclusivity & Pessimistic Row-Lock Reconciliation**: Formally designated in-transaction clock sampling post-row-lock as Post-Lock Authorization Instant ($T_{\text{auth}} = \text{clock.nowUtc()}$, `tx_auth_time_utc`). Defined strict boundary inclusivity ($T_{\text{auth}} \le T_{\text{expires}}$). Replaced flawed unchanged-read rollback inference with mandatory pessimistic row-lock reconciliation (`reconcileAmbiguousPromotionCommit`, `SELECT ... FOR UPDATE` on primary): waits for in-flight transaction resolution before classifying outcome; inspects event at `attempted_resulting_sequence` verifying event identity, durable event hash, assessment hash, and durable assessment record (returning `COMMITTED` even if subsequent events advanced head); establishes definitive rollback only when event absent and head unchanged; invalidates stale drafts on unrelated stream advance; and preserves `OUTCOME_UNKNOWN` without retrying on lock timeout or database unavailability. | `COMMIT-TX-RECEIPT-REVALIDATION-040`, `RECONCILE-AMBIGUOUS-COMMIT-045`, `RECONCILE-SUBSEQUENT-EVENT-HEAD-046`, `RECONCILE-EVENT-HASH-MISMATCH-047`, `RECONCILE-ASSESSMENT-HASH-MISMATCH-048`, `RECONCILE-LOCK-TIMEOUT-UNKNOWN-049` |
+| **AUDIT-51** | **P1** | §3.4, §4.1, §8.1 | **Post-Lock Authorization Instant ($T_{\text{auth}}$), Expiration Inclusivity & Pessimistic Row-Lock Reconciliation**: Formally designated in-transaction clock sampling post-row-lock as Post-Lock Authorization Instant ($T_{\text{auth}} = \text{clock.nowUtc()}$, `tx_auth_time_utc`). Defined strict boundary inclusivity ($T_{\text{auth}} \le T_{\text{expires}}$). Replaced flawed unchanged-read rollback inference with mandatory pessimistic row-lock reconciliation (`reconcileAmbiguousPromotionCommit`, `SELECT ... FOR UPDATE` on primary): waits for in-flight transaction resolution before classifying outcome; inspects event at `attempted_resulting_sequence` with mandatory independent cryptographic recomputation of event digest and retrieved assessment bytes hash (returning `COMMITTED` even if subsequent events advanced head); establishes definitive rollback only when event absent and head unchanged; invalidates stale drafts on unrelated stream advance; and preserves `OUTCOME_UNKNOWN` with `stream_sequence: null` without retrying on lock timeout or database unavailability. | `COMMIT-TX-RECEIPT-REVALIDATION-040`, `RECONCILE-AMBIGUOUS-COMMIT-045`, `RECONCILE-SUBSEQUENT-EVENT-HEAD-046`, `RECONCILE-EVENT-HASH-MISMATCH-047`, `RECONCILE-ASSESSMENT-HASH-MISMATCH-048`, `RECONCILE-LOCK-TIMEOUT-UNKNOWN-049` |
 | **AUDIT-52** | **P2** | §8.0 | **Automated Consistency Check Scoping & Invariant Auditing**: Explicitly scoped `verify_spec_final.py` as an automated document-level structural and syntax regression check (verifying cross-section invariant phrasing, regex bounds, type signatures, and absence of deprecated terms), explicitly distinguished from runtime cryptographic proof, test execution, or mathematical theorem proving. | `SPEC-CONSISTENCY-CHECK-044` |
 
 ---
@@ -87,7 +87,7 @@ Using the auditable three-state convention:
 | **3. Exact Assessment Claim Derivation & Evaluator Provenance** | **Design Reviewed** | `validateEvaluationDraftIntegrity()` unpacks 4 assessment claims, verifies parameter digests, verifies evaluator auth token via `EvaluatorTokenVerifier` with `timingSafeEqual` (AUDIT-46), strictly compares all fields, derives nonces with 1-to-1 bijection, and deep-freezes validated snapshot. |
 | **4. Single Canonicalization & In-Transaction Assessment Storage** | **Design Reviewed** | Assessment canonicalized once into `canonical_assessment_bytes`. Retained bytes stored in `offer_assessment_store` within same transaction as nonce consumption, stream head update, and event append. |
 | **5. Normative PostgreSQL Contract & Atomic Stream Head Update** | **Design Reviewed** | PostgreSQL `READ COMMITTED` with `SELECT ... FOR UPDATE` on `offer_stream_heads`, database primary key constraints, `updateOfferStreamHead()`, and BigInt numeric sequence comparisons on canonical decimal strings (`CanonicalStreamSequence`, bounded by uint64 max in SQL `CHECK`). |
-| **6. In-Transaction Lock-Acquired Fail-Closed Clock & Revalidation** | **Design Reviewed** | Clock sampled after row-lock acquisition at Post-Lock Authorization Instant ($T_{\text{auth}} = \text{clock.nowUtc()}$, `tx_auth_time_utc`, fails closed with `E-ERR-007: TRUSTED_CLOCK_UNAVAILABLE`), revalidating receipt expiration ($T_{\text{auth}} \le T_{\text{expires}}$), gateway key, attester role/revocation, and digest binding inside tx. Pre-commit failures trigger explicit ROLLBACK; connection loss during COMMIT mandates pessimistic row-lock reconciliation (`reconcileAmbiguousPromotionCommit`, `SELECT ... FOR UPDATE`) inspecting attempted event for `COMMITTED` across subsequent head advances before inferring rollback (AUDIT-47, AUDIT-49, AUDIT-51). |
+| **6. In-Transaction Lock-Acquired Fail-Closed Clock & Revalidation** | **Design Reviewed** | Clock sampled after row-lock acquisition at Post-Lock Authorization Instant ($T_{\text{auth}} = \text{clock.nowUtc()}$, `tx_auth_time_utc`, fails closed with `E-ERR-007: TRUSTED_CLOCK_UNAVAILABLE`), revalidating receipt expiration ($T_{\text{auth}} \le T_{\text{expires}}$), gateway key, attester role/revocation, and digest binding inside tx. Pre-commit failures trigger explicit ROLLBACK; connection loss during COMMIT mandates pessimistic row-lock reconciliation (`reconcileAmbiguousPromotionCommit`, `SELECT ... FOR UPDATE`) inspecting attempted event with independent cryptographic recomputation for `COMMITTED` across subsequent head advances before inferring rollback (AUDIT-47, AUDIT-49, AUDIT-51). |
 | **7. Two-Tier Gross-Clearing Model & Cumulative Operating Series** | **Design Reviewed** | Two-tier gross-clearing model partitions Trade Clearing Asset ($B_{\text{clearing}}$) from Operating Bank Cash ($B_{\text{bank}}$). Net merchant payouts are clearing-to-bank transfers, not secondary revenue. Available liquidity $L_{\text{bank}}$ separated from cumulative operating series $B_{\text{ops}}(k) = B_{\text{ops}}(0) + \sum_{j=1}^k C_j^{\text{ops}}$ with pre-event baseline $B_{\text{ops}}(0) \equiv 0$ (AUDIT-44, AUDIT-48, AUDIT-50). |
 | **8. Disambiguated Peak Operating Funding & Equity Independence** | **Design Reviewed** | $C_{\text{peak, ops}} = \max(0, \max_{k \le K}(-\sum_{j=1}^k C_j^{\text{ops}}))$ evaluated from pre-event baseline $B_{\text{ops}}(0) = 0$ is strictly invariant to initial bank equity $B_0$ or owner financing injections $F_j$ (AUDIT-48, AUDIT-50). Realized Cash Multiple distinguished from Marked-to-Market RoPF. |
 | **9. Deterministic Product Identity & HSN Syntax Scope** | **Design Reviewed** | `normalizeProductIdentityCore()` applies Unicode NFC, dimension key deduplication, and MPN casing preservation. HSN syntax validation explicitly scoped as format check, not legal assignment. |
@@ -1971,12 +1971,9 @@ export async function commitPromotionIfVersionAndConsumeNonces(
 /**
  * Result of Authoritative Pessimistic Reconciliation for Ambiguous Commit Outcomes (AUDIT-51)
  */
-/**
- * Result of Authoritative Pessimistic Reconciliation for Ambiguous Commit Outcomes (AUDIT-51)
- */
 export interface AmbiguousCommitReconciliationResult {
   outcome: 'COMMITTED' | 'ROLLED_BACK' | 'STREAM_ADVANCED_UNRELATED' | 'OUTCOME_UNKNOWN';
-  stream_sequence: string;
+  stream_sequence: string | null;
   promotion_event?: OfferPromotionEventPayload;
   event_sha256?: string;
   reason: string;
@@ -2002,31 +1999,57 @@ export async function reconcileAmbiguousPromotionCommit(
       const attemptedSeq = parseCanonicalStreamSequence(attempted_resulting_sequence);
       const eventRecord = await tx.getOfferStreamEvent(stream_id, attemptedSeq);
 
-      // 3 & 4. If an event exists at attempted_resulting_sequence, verify its identity and integrity
+      // 3 & 4. If an event exists at attempted_resulting_sequence, independently recompute and verify all cryptographic digests
       if (eventRecord && eventRecord.payload) {
         const payload = eventRecord.payload;
         const matchesOffer = payload.offer_id === offer_id;
-        const matchesAssessment = payload.assessment_sha256 === attempted_assessment_sha256;
-        const matchesEventHash = !expected_event_sha256 || eventRecord.event_sha256 === expected_event_sha256;
+        const matchesAssessmentId = payload.assessment_sha256 === attempted_assessment_sha256;
 
-        // Verify corresponding durable assessment record in store
+        // Mandatory cryptographic verification: independently recompute event hash from canonical payload bytes
+        const canonicalEventJson = canonicalizeJcs(payload);
+        const recomputedEventSha256 = crypto.createHash('sha256').update(Buffer.from(canonicalEventJson, 'utf8')).digest('hex');
+        
+        // Constant-time check: stored event_sha256 must match recomputed event hash
+        const storedMatchesRecomputed = (eventRecord.event_sha256.length === 64) && crypto.timingSafeEqual(
+          Buffer.from(eventRecord.event_sha256, 'hex'),
+          Buffer.from(recomputedEventSha256, 'hex')
+        );
+
+        // If expected_event_sha256 is supplied, verify caller's expected digest matches recomputed digest
+        const callerHashMatches = !expected_event_sha256 || (
+          expected_event_sha256.length === 64 && crypto.timingSafeEqual(
+            Buffer.from(expected_event_sha256, 'hex'),
+            Buffer.from(recomputedEventSha256, 'hex')
+          )
+        );
+
+        const eventHashValid = storedMatchesRecomputed && callerHashMatches;
+
+        // Mandatory cryptographic verification: retrieve assessment bytes and recompute assessment SHA-256
         const assessmentBytes = await tx.getAssessment(attempted_assessment_sha256);
-        const assessmentDurable = assessmentBytes !== null && assessmentBytes.length > 0;
+        let assessmentHashValid = false;
+        if (assessmentBytes && assessmentBytes.length > 0) {
+          const recomputedAssessmentSha256 = crypto.createHash('sha256').update(assessmentBytes).digest('hex');
+          assessmentHashValid = crypto.timingSafeEqual(
+            Buffer.from(recomputedAssessmentSha256, 'hex'),
+            Buffer.from(attempted_assessment_sha256, 'hex')
+          );
+        }
 
-        if (matchesOffer && matchesAssessment && matchesEventHash && assessmentDurable) {
+        if (matchesOffer && matchesAssessmentId && eventHashValid && assessmentHashValid) {
           return {
             outcome: 'COMMITTED',
             stream_sequence: head.sequence_number,
             promotion_event: payload,
-            event_sha256: eventRecord.event_sha256,
-            reason: 'Original promotion transaction committed successfully; verified event identity, durable event hash, assessment hash, and durable assessment record on disk (regardless of subsequent stream advance).'
+            event_sha256: recomputedEventSha256,
+            reason: 'Original promotion transaction committed successfully; independently recomputed and verified event digest and durable assessment digest on disk (regardless of subsequent stream advance).'
           };
         } else {
-          // Event exists at sequence, but failed hash/identity/assessment integrity checks
+          // Event exists at sequence, but failed mandatory cryptographic or identity verification
           return {
             outcome: 'STREAM_ADVANCED_UNRELATED',
             stream_sequence: head.sequence_number,
-            reason: `Event at sequence ${attempted_resulting_sequence} does not match attempted promotion (integrity/hash mismatch: offer=${matchesOffer}, assessment=${matchesAssessment}, event_hash=${matchesEventHash}, assessment_durable=${assessmentDurable}). Stale draft must be discarded.`
+            reason: `Event at sequence ${attempted_resulting_sequence} failed cryptographic integrity verification (offer_match=${matchesOffer}, assessment_id_match=${matchesAssessmentId}, event_hash_valid=${eventHashValid}, assessment_hash_valid=${assessmentHashValid}). Stale draft must be discarded.`
           };
         }
       }
@@ -2050,11 +2073,11 @@ export async function reconcileAmbiguousPromotionCommit(
       };
     });
   } catch (err) {
-    // 7. Lock acquisition timed out or database unreachable -> OUTCOME_UNKNOWN (NEVER infer rollback)
+    // 7. Lock acquisition timed out or database unreachable -> OUTCOME_UNKNOWN (NEVER infer rollback; sequence is strictly unknown)
     return {
       outcome: 'OUTCOME_UNKNOWN',
-      stream_sequence: expected_prior_sequence,
-      reason: `Reconciliation lock acquisition failed or timed out: ${err instanceof Error ? err.message : String(err)}. State preserved as unknown; retry prohibited until authoritative resolution.`
+      stream_sequence: null,
+      reason: `Reconciliation lock acquisition failed or timed out: ${err instanceof Error ? err.message : String(err)}. State preserved as unknown (no stream head observed); retry prohibited until authoritative resolution.`
     };
   }
 }
@@ -2156,10 +2179,13 @@ All persistence operations for offer promotion, canonical assessment storage, st
         ```
         Because the stream head was locked by the original transaction, this reconciliation query blocks until the original in-flight transaction definitively resolves (either commits and releases the lock, or aborts/rolls back). Acquiring this lock proves that the original transaction is no longer in progress.
      2. **Inspect Attempted Event Independent of Stream Head (`attempted_resulting_sequence`)**: Query `offer_stream_events` for the event at `attempted_resulting_sequence`, regardless of whether `sequence_number` equals `attempted_resulting_sequence` or has advanced to a higher sequence due to subsequent legitimate events (e.g. promotion committed at sequence 12, subsequent event advanced head to 13).
-     3. **Outcome A — Original Transaction Committed (`COMMITTED`)**: If an event exists at `attempted_resulting_sequence`, verify its payload identity (`offer_id`), stored `event_sha256`, `assessment_sha256`, and confirm the corresponding durable record exists in `offer_assessment_store`. If these integrity checks pass, the promotion committed successfully. Return `COMMITTED` with the verified `OfferPromotionEventPayload` and current stream sequence, regardless of whether subsequent events have advanced the head. The promotion is definitively complete; do NOT retry.
+     3. **Outcome A — Original Transaction Committed (`COMMITTED`)**: If an event exists at `attempted_resulting_sequence`, verify its payload identity (`offer_id`) and execute mandatory cryptographic verification:
+        - Independently recompute the SHA-256 of the stored canonical event payload (`crypto.createHash('sha256').update(canonicalizeJcs(payload))`) and verify with `crypto.timingSafeEqual` that it matches both the stored `event_sha256` and any caller-specified expected event hash.
+        - Retrieve the assessment bytes from `offer_assessment_store` (`tx.getAssessment`), recompute their SHA-256 digest, and verify with `crypto.timingSafeEqual` that it matches `attempted_assessment_sha256`.
+        If these cryptographic integrity checks pass, the promotion committed successfully. Return `COMMITTED` with the verified `OfferPromotionEventPayload`, recomputed event digest, and current stream sequence, regardless of whether subsequent events have advanced the head. The promotion is definitively complete; do NOT retry.
      4. **Outcome B — Original Transaction Rolled Back (`ROLLED_BACK`)**: If the attempted event at `attempted_resulting_sequence` is absent AND the current stream sequence equals `expected_prior_sequence` *after* the row lock has been granted, the original transaction definitively resolved via rollback. Because the lock was acquired, no in-flight commit remains pending. The system now formally establishes that zero promotion events were appended, zero assessment records were stored, and zero nonces were consumed. Only after this lock-acquired verification is complete may the caller permit a fresh Phase 1 evaluation and retry (subject to gateway receipt freshness).
-     5. **Outcome C — Advanced Stream / Inconclusive Event (`STREAM_ADVANCED_UNRELATED`)**: If the stream sequence has advanced beyond `expected_prior_sequence` and the attempted promotion event at `attempted_resulting_sequence` is absent or fails integrity validation (e.g. event-hash or assessment-hash mismatch), an unrelated transaction modified the stream. The current promotion evaluation draft is permanently stale. The caller MUST NOT infer rollback from an absent event or higher sequence, MUST NOT attempt to commit the stale draft, and MUST re-evaluate against the current stream head.
-     6. **Outcome D — Lock Timeout / Database Unavailability (`OUTCOME_UNKNOWN`)**: If the reconciliation transaction encounters a `lock_timeout` (e.g. 5,000 ms) while waiting for the row lock, or if primary database connectivity remains unavailable, the outcome is strictly preserved as `OUTCOME_UNKNOWN`. The caller MUST NOT infer rollback, MUST NOT assume nonces are unburned, and MUST NOT initiate a retry. The system preserves the pending transaction state and schedules a reconciliation retry once authoritative primary connectivity and lock acquisition succeed.
+     5. **Outcome C — Advanced Stream / Inconclusive Event (`STREAM_ADVANCED_UNRELATED`)**: If the stream sequence has advanced beyond `expected_prior_sequence` and the attempted promotion event at `attempted_resulting_sequence` is absent or fails cryptographic integrity validation (e.g. event-hash or assessment-hash recomputation mismatch), an unrelated transaction modified the stream. The current promotion evaluation draft is permanently stale. The caller MUST NOT infer rollback from an absent event or higher sequence, MUST NOT attempt to commit the stale draft, and MUST re-evaluate against the current stream head.
+     6. **Outcome D — Lock Timeout / Database Unavailability (`OUTCOME_UNKNOWN`)**: If the reconciliation transaction encounters a `lock_timeout` (e.g. 5,000 ms) while waiting for the row lock, or if primary database connectivity remains unavailable, the outcome is strictly preserved as `OUTCOME_UNKNOWN` with truthful `stream_sequence: null`. The caller MUST NOT infer rollback, MUST NOT report an assumed sequence, MUST NOT assume nonces are unburned, and MUST NOT initiate a retry. The system preserves the pending transaction state and schedules a reconciliation retry once authoritative primary connectivity and lock acquisition succeed.
 
 ```
 [INDICATIVE_QUOTE] ──(T1: commitPromotionIfVersionAndConsumeNonces() Passes)──> [VERIFIED_EXECUTABLE_OFFER]
@@ -2665,11 +2691,11 @@ Eleven test suites are mapped with explicit test IDs, positive/negative assertio
 | **SUITE-01** | `JCS-PROVENANCE-SEPARATION-038` | Positive | Verify registry metadata for snowyu/json-canonicalize.ts and test suite link to cyberphone/json-canonicalization | Provenance records match npm registry metadata and IETF reference suite | Specified — Pending Verification |
 | **SUITE-03** | `EVAL-DECISION-HMAC-COVERAGE-039` | Positive/Negative | Submit evaluation draft with modified statuses, rejection reason, evaluator version, or claims summary; verify HMAC | RFC 8785 canonical EvaluatorDecisionSigningPayload HMAC fails; rejected via `crypto.timingSafeEqual` fail-closed | Specified — Pending Verification |
 | **SUITE-03** | `COMMIT-TX-RECEIPT-REVALIDATION-040` | Negative | Post-Lock Authorization Instant $T_{\text{auth}}$ sampled post-row-lock exceeds receipt expiry ($T_{\text{auth}} > T_{\text{expires}}$) or attester revoked | Revalidation inside row-locked transaction detects revocation/expiration and aborts tx with explicit pre-commit ROLLBACK | Specified — Pending Verification |
-| **SUITE-03** | `RECONCILE-AMBIGUOUS-COMMIT-045` | Positive/Negative | Simulate connection severed during COMMIT; execute `reconcileAmbiguousPromotionCommit()` with `SELECT ... FOR UPDATE` row lock | Waits for in-flight resolution; verifies event identity, durable event hash, assessment hash, and durable assessment record on disk | Specified — Pending Verification |
+| **SUITE-03** | `RECONCILE-AMBIGUOUS-COMMIT-045` | Positive/Negative | Simulate connection severed during COMMIT; execute `reconcileAmbiguousPromotionCommit()` with `SELECT ... FOR UPDATE` row lock | Waits for in-flight resolution; independently recomputes event SHA-256 and assessment SHA-256 on disk | Specified — Pending Verification |
 | **SUITE-03** | `RECONCILE-SUBSEQUENT-EVENT-HEAD-046` | Positive | Promotion commits at sequence $S_n$; subsequent event advances stream to $S_{n+1}$; reconciliation inspects event at $S_n$ | Returns `COMMITTED` with verified event payload and current head $S_{n+1}$ (subsequent event does not undo committed promotion) | Specified — Pending Verification |
-| **SUITE-03** | `RECONCILE-EVENT-HASH-MISMATCH-047` | Negative | Event exists at attempted sequence but `event_sha256` does not match expected digest | Rejects with `STREAM_ADVANCED_UNRELATED`; invalidates draft and prohibits retry | Specified — Pending Verification |
-| **SUITE-03** | `RECONCILE-ASSESSMENT-HASH-MISMATCH-048` | Negative | Event exists at attempted sequence but `assessment_sha256` does not match or durable assessment record missing in store | Rejects with `STREAM_ADVANCED_UNRELATED`; invalidates draft | Specified — Pending Verification |
-| **SUITE-03** | `RECONCILE-LOCK-TIMEOUT-UNKNOWN-049` | Negative | Primary database unreachable or row lock wait exceeds `lock_timeout` (5,000 ms) | Preserves `OUTCOME_UNKNOWN` fail-closed; zero nonces burned, retry strictly blocked | Specified — Pending Verification |
+| **SUITE-03** | `RECONCILE-EVENT-HASH-MISMATCH-047` | Negative | Event exists at attempted sequence but stored `event_sha256` does not match independently recomputed digest of canonical payload | Rejects with `STREAM_ADVANCED_UNRELATED`; invalidates draft and prohibits retry | Specified — Pending Verification |
+| **SUITE-03** | `RECONCILE-ASSESSMENT-HASH-MISMATCH-048` | Negative | Recomputed SHA-256 of stored assessment bytes fails to match `attempted_assessment_sha256` or assessment record missing | Rejects with `STREAM_ADVANCED_UNRELATED`; invalidates draft | Specified — Pending Verification |
+| **SUITE-03** | `RECONCILE-LOCK-TIMEOUT-UNKNOWN-049` | Negative | Primary database unreachable or row lock wait exceeds `lock_timeout` (5,000 ms) | Preserves `OUTCOME_UNKNOWN` fail-closed with truthful `stream_sequence: null`; zero nonces burned, retry strictly blocked | Specified — Pending Verification |
 | **SUITE-02** | `FIN-PEAK-INDEPENDENT-EQUITY-041` | Positive | Compute peak operating funding requirement $C_{\text{peak, ops}}$ on identical operating flows with ₹0 vs ₹100,000 initial bank equity $B_0$ | $C_{\text{peak, ops}}$ is identical bitwise in both cases; RoPF denominator is strictly invariant to initial owner capital | Specified — Pending Verification |
 | **SUITE-03** | `CLOCK-FAIL-CLOSED-UNAVAILABLE-042` | Negative | Simulate clock source unreachable, desynchronized (>5s), or non-monotonic | `TrustedClock.nowUtc()` throws `E-ERR-007: TRUSTED_CLOCK_UNAVAILABLE` fail-closed | Specified — Pending Verification |
 | **SUITE-03** | `STREAM-SEQ-UINT64-BOUND-043` | Negative | Insert sequence number exceeding uint64 max (`18446744073709551616`) or malformed string | SQL CHECK constraint rejects insert fail-closed | Specified — Pending Verification |
