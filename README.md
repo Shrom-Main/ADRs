@@ -1,28 +1,75 @@
 # Market HFT OS — Architecture Decision Records & Conformance Reports
 
-Repository index for architecture decision records, frozen specifications, and gate conformance reports.
+Repository index for architecture decision records (ADRs), frozen specifications, gate authorization ledgers, and conformance reports across [`Shrom-Main/ADRs`](https://github.com/Shrom-Main/ADRs) and [`Shrom-Main/Market-HFT-OS`](https://github.com/Shrom-Main/Market-HFT-OS).
 
-## Governance & Gate Authorization
-* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md)
+---
 
-## Gate Conformance Reports & Addenda
-* **Gate M3 Pre-flight Conformance Report:** [`POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md`](./POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md) (`POC-001-M3-CONF-001`)
+## 1. Architecture Decision Records (ADRs)
+
+| ADR Identifier | Title | Status | Date | Core Scope |
+| :--- | :--- | :--- | :--- | :--- |
+| [`ADR-0001`](./ADR-0001_Governance_and_Gate_Authorization_Baseline.md) | Governance and Gate Authorization Baseline | Accepted | 2026-10-14 | Formalizes Gate M0–M3 lifecycle authority and simulation boundaries. |
+| [`ADR-0002`](./ADR-0002_Anchored_Cumulative_COGS_and_Long_Only_Inventory.md) | Anchored Cumulative COGS Allocation and Long-Only Inventory Policy | Accepted | 2026-10-14 | $A(s) = \operatorname{divideHalfEven}(C_0 \cdot s, Q_0)$ and `E-ERR-044` short position ban. |
+| [`ADR-0003`](./ADR-0003_File_Backed_WAL_Durability_and_Crash_Recovery.md) | File-Backed WAL Durability, Torn-Tail Recovery Policy, and Crash Recovery Contract | Accepted | 2026-10-14 | `FileBackedDurableRecoveryJournal`, CRLF/LF normalization, poisoning, and recovery parity. |
+| [`ADR-0004`](./ADR-0004_Runtime_Dependency_Adoption_and_Version_Pinning.md) | Runtime Dependency Adoption and Version Pinning Policy | Accepted | 2026-10-14 | Strict exact version pinning for `json-canonicalize@3.0.1`, `ws@8.19.0`, and `pg@8.23.1`. |
+
+---
+
+## 2. Governance & Gate Authorization
+
+* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md) — Authoritative sign-off record for Gates M0, M1, M2, and M3.
+
+---
+
+## 3. Gate Conformance Reports & Audit Evidence
+
+* **Gate M3 Conformance Report (v1.4.0 Final):** [`POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md`](./POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md) (`POC-001-M3-CONF-001`) — 19 test files / 153 tests passed.
 * **Gate M3 WAL Boundary Normalization Addendum:** [`POC-001_Gate_M3_WAL_Boundary_Normalization_Audit_Addendum.md`](./POC-001_Gate_M3_WAL_Boundary_Normalization_Audit_Addendum.md) (`POC-001-M3-ADDENDUM-001`)
-* **Gate M3 Test Execution Results:** [`POC-001_Gate_M3_Test_Execution_Results.json`](./POC-001_Gate_M3_Test_Execution_Results.json)
-* **Gate M3 Typecheck Results:** [`POC-001_Gate_M3_Typecheck_Execution_Results.txt`](./POC-001_Gate_M3_Typecheck_Execution_Results.txt)
-* **Gate M2 Final:** [`POC-001_Gate_M2_Execution_and_Integration_Conformance_Report.md`](./POC-001_Gate_M2_Execution_and_Integration_Conformance_Report.md)
-* **Gate M1 Comprehensive:** [`POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md`](./POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md)
-* **Gate M1 Implementation:** [`POC-001_Gate_M1_Implementation_Execution_Report.md`](./POC-001_Gate_M1_Implementation_Execution_Report.md)
+* **Gate M3 Test Execution Results (JSON):** [`POC-001_Gate_M3_Test_Execution_Results.json`](./POC-001_Gate_M3_Test_Execution_Results.json) — Vitest v1.6.0 machine-readable output (153 passed tests).
+* **Gate M3 Typecheck Results (UTF-8):** [`POC-001_Gate_M3_Typecheck_Execution_Results.txt`](./POC-001_Gate_M3_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output with commit SHA and UTC timestamp.
+* **Gate M2 Conformance Report:** [`POC-001_Gate_M2_Execution_and_Integration_Conformance_Report.md`](./POC-001_Gate_M2_Execution_and_Integration_Conformance_Report.md) (15 suites / 106 tests).
+* **Gate M2 Test Execution Results (JSON):** [`POC-001_Gate_M2_Test_Execution_Results.json`](./POC-001_Gate_M2_Test_Execution_Results.json)
+* **Gate M1 Comprehensive Conformance Matrix:** [`POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md`](./POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md) (12 suites / 53 tests).
+* **Gate M1 Implementation Report:** [`POC-001_Gate_M1_Implementation_Execution_Report.md`](./POC-001_Gate_M1_Implementation_Execution_Report.md) (11 suites / 43 tests).
 
-## Frozen Specifications
-* **Gate M1 Specification:** [`POC-001_Gate_M1_Design_Readiness_Specification.md`](./POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.14 Normative Contract incorporating AUDIT-01 through AUDIT-52 and Review Notes Erratum v1.14)
+---
 
-## Independent Review Notes & Remediation
+## 4. Frozen Normative Specifications
+
+* **Gate M1 Specification:** [`POC-001_Gate_M1_Design_Readiness_Specification.md`](./POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.13 Final / Erratum v1.14 Normative Contract, blob `ac8899da3a6dcccb2c612247302e6f57fc566472`).
+* **Rendered PDF Review Copy:** [`ADRXX3.pdf`](./ADRXX3.pdf) (Subordinate rendered reference snapshot).
+
+---
+
+## 5. Independent Review Notes & Remediation
+
+* **Review Note 002 (ARGON-REV-POC001-20261014):** [`Review notes/Review_notes002.md`](./Review%20notes/Review_notes002.md)
 * **Comprehensive Review Notes Remediation Report:** [`Review notes/ARGON_REVIEW_NOTES_REMEDIATION_REPORT.md`](./Review%20notes/ARGON_REVIEW_NOTES_REMEDIATION_REPORT.md) (`POC-001-REM-001`)
-* **Master Review Notes Register:** [`Review notes/Review_notes001.md`](./Review%20notes/Review_notes001.md)
+* **Review Note 001:** [`Review notes/Review_notes001.md`](./Review%20notes/Review_notes001.md)
 * **ADRs Governance Review Note:** [`Review notes/argon_review_note_adrs.md`](./Review%20notes/argon_review_note_adrs.md)
 * **Market-HFT-OS Implementation Review Note:** [`Review notes/argon_review_note_market_hft_os.md`](./Review%20notes/argon_review_note_market_hft_os.md)
 
-## Synchronization
-This repository is synchronized with GitHub using the secure synchronization helper scripts in `Market-HFT-OS/scripts/sync_repos.py`.
+---
 
+## 6. Pre-Charter Foundational Research Memos (Non-Normative)
+
+The following documents represent pre-charter conceptual discussions and design exploration memos. They are non-normative foundational research materials, cross-referenced in `Market-HFT-OS/RESEARCH_CORPUS_INDEX.md`:
+
+| File | Document Role | Context |
+| :--- | :--- | :--- |
+| `002.docx` | Pre-Charter Memo | Autonomous discovery loops and feedback mechanisms. |
+| `003.docx` | Pre-Charter Memo | Global discovery and India-first commercialization. |
+| `004.docx` | Pre-Charter Memo | Investment Thesis as primary portfolio allocation unit. |
+| `005.docx` | Pre-Charter Memo | Six-Engine mapping of financial HFT concepts to commodity arbitrage. |
+| `006.docx` | Pre-Charter Memo | Development environment split (Antigravity primary vs AI Studio). |
+| `007.docx` | Pre-Charter Memo | 7-stage commercial pipeline architecture. |
+| `008.docx` | Pre-Charter Memo | Market simulation, tail-risk management, and emergent profitability. |
+| `009.docx` | Pre-Charter Memo | Initial read-only codebase audit plan. |
+
+*(Note: `001.docx` resides in foundational project archives as indexed in `RESEARCH_CORPUS_INDEX.md`).*
+
+---
+
+## 7. Synchronization
+
+Both repositories are synchronized with GitHub using the secure synchronization helper scripts in `Market-HFT-OS/scripts/sync_repos.py`.

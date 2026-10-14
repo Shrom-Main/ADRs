@@ -1,10 +1,10 @@
 # POC-001 — Gate M3 WAL Boundary Normalization Audit Addendum
 
 **Document ID:** `POC-001-M3-ADDENDUM-001`  
-**Version:** `1.0.0`  
+**Version:** `1.1.0`  
 **Date:** `2026-10-14`  
-**Status:** `LOCAL AUDIT VERIFIED — AWAITING REVIEW DECISION`  
-**Target Baseline:** `Market-HFT-OS` commit [`a1bd359`](https://github.com/Shrom-Main/Market-HFT-OS/commit/a1bd359) (local), expanding on [`8a89cf0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/8a89cf051bc253fb82c1a685a74a0ddf1e0a7d36) (local)  
+**Status:** `PUBLISHED ON MAIN — AWAITING OWNER REVIEW & APPROVAL`  
+**Target Baseline:** `Market-HFT-OS` commit [`a1bd359`](https://github.com/Shrom-Main/Market-HFT-OS/commit/a1bd359) (published on `main`), expanding on [`8a89cf0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/8a89cf051bc253fb82c1a685a74a0ddf1e0a7d36) (published on `main`)  
 **Parent Baseline:** [`7415c61`](https://github.com/Shrom-Main/Market-HFT-OS/commit/7415c617be2cd680217ebb07b4209466c1084918) (published)  
 **Frozen Specification:** [`POC-001_Gate_M1_Design_Readiness_Specification.md`](https://github.com/Shrom-Main/ADRs/blob/77eff71c3807c8852b49355f50e814bd75eb90ad/POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.13 Final, pinned at `77eff71`)
 
@@ -20,13 +20,14 @@ At baseline `7415c61`, `FileBackedDurableRecoveryJournal` had an accounting defe
 
 ## 2. Engineering Correction
 
-1. **Exact Delimiter Detection:**
-   The loader inspects the raw file buffer to determine physical termination:
+1. **Exact Delimiter Detection & CRLF Normalization:**
+   The loader inspects the raw file buffer to determine physical termination and delimiter type:
    ```typescript
    const endsWithNewline = fileBuffer.length === 0 || fileBuffer[fileBuffer.length - 1] === 0x0a;
    ```
+   Lines are parsed by stripping trailing carriage returns (`\r`), charging `2` bytes for `\r\n` and `1` byte for `\n`.
 2. **Accurate Valid-Byte Accounting:**
-   If the terminal line lacks a trailing newline, `validBytesLength` increments strictly by `Buffer.byteLength(line, 'utf8')` (without `+ 1`), and `needsNormalization` is flagged as `true`.
+   If the terminal line lacks a trailing newline, `validBytesLength` increments strictly by `Buffer.byteLength(cleanLine, 'utf8')` (without delimiter bytes), and `needsNormalization` is flagged as `true`.
 3. **Safe Normalization Prior to Append:**
    Before any subsequent write can proceed, `normalizeTrailingNewline()` appends `\n` to disk and synchronously flushes via `fs.fsyncSync(this.fileDescriptor)`. The valid record and its cryptographic SHA-256 header digest are completely preserved.
 4. **Normalization Failure Poisoning:**
@@ -39,30 +40,22 @@ At baseline `7415c61`, `FileBackedDurableRecoveryJournal` had an accounting defe
 
 ## 3. Test Evidence & Regression Suite
 
-Expanded regression test [`M3-WAL-VALID-UNTERMINATED-RECORD-017`](file:///d:/Market%20HFT%20OS/tests/acceptance/suite16_crash_recovery_persistence.test.ts#L1175-L1330) validates the complete 5-point verification checklist:
-1. **Physical Unterminated Detection & Preservation:**
-   - Writes valid initial entry stripped of its trailing `\n`.
-   - Reopens journal, normalizes newline delimiter, and appends sequence 2 without record concatenation.
-   - Third reopen validates both records independently parse with unbroken SHA-256 hash chaining.
-2. **Constructor-Time Flush Fault Injection (`fsyncSync` failure):**
-   - Injects simulated I/O failure into `fs.fsyncSync` during constructor normalization.
-   - Asserts `normalizationFsyncCalls === 1`.
-   - Asserts instance is poisoned fail-closed (`getIsPoisoned() === true`) while valid pre-existing entries remain readable (`getEntryCount() === 1`).
-3. **Fail-Closed Mutation Rejection:**
-   - Asserts subsequent mutations (`appendEvent('ORDER_SUBMITTED')` and `appendEvent('PORTFOLIO_APPLIED')`) reject fail-closed with `E-ERR-024: JOURNAL_POISONED`.
-   - Asserts mock restoration is guaranteed inside a `finally` block to protect test runner environment.
-4. **Documented Recovery Policy on Clean Restart:**
-   - Reopening the file after flush failure verifies integrity (`isValid === true`), accepts new appends, and verifies disk persistence with sequence 2 and intact hash chain.
-5. **Constructor-Time Write Fault Injection (`writeSync` failure):**
-   - Injects simulated I/O failure into `fs.writeSync` prior to newline writing.
-   - Asserts immediate poisoning and fail-closed rejection.
-   - Asserts clean subsequent reopen, normalization, and sequence 2 append.
+Expanded regression tests in `tests/acceptance/suite16_crash_recovery_persistence.test.ts` validate the complete verification checklist:
+
+1. **`M3-WAL-VALID-UNTERMINATED-RECORD-017`:**
+   - **Physical Unterminated Detection & Preservation:** Writes valid initial entry stripped of trailing `\n`. Reopens journal, normalizes newline delimiter, and appends sequence 2 without record concatenation. Third reopen validates both records independently parse with unbroken SHA-256 hash chaining.
+   - **Constructor-Time Flush Fault Injection (`fsyncSync` failure):** Injects simulated I/O failure into `fs.fsyncSync` during constructor normalization. Asserts `normalizationFsyncCalls === 1`, asserts instance is poisoned fail-closed (`getIsPoisoned() === true`) while valid pre-existing entries remain readable (`getEntryCount() === 1`).
+   - **Fail-Closed Mutation Rejection:** Asserts subsequent mutations reject fail-closed with `E-ERR-024: JOURNAL_POISONED`. Asserts mock restoration is guaranteed inside `finally`.
+   - **Documented Recovery Policy on Clean Restart:** Reopening the file after flush failure verifies integrity, accepts new appends, and verifies disk persistence with sequence 2 and intact hash chain.
+   - **Constructor-Time Write Fault Injection (`writeSync` failure):** Injects simulated I/O failure into `fs.writeSync` prior to newline writing. Asserts immediate poisoning and fail-closed rejection.
+2. **`M3-WAL-CRLF-DELIMITER-NORMALIZATION-018`:**
+   - Verifies CRLF (`\r\n`) formatted WAL files with interior blank lines and unterminated records normalize and append cleanly across successive reopens.
 
 ### Execution Output
 ```
-Test Files  17 passed (17)
-     Tests  129 passed (129 total, 0 skipped, 0 failed)
-  Duration  5.94s
+Test Files  19 passed (19)
+     Tests  153 passed (153 total, 0 skipped, 0 failed)
+  Duration  6.36s
 Type Check  0 diagnostics (tsc --noEmit)
 ```
 
@@ -71,7 +64,7 @@ Type Check  0 diagnostics (tsc --noEmit)
 ## 4. Epistemic Separation of Claims & Verified Evidence
 
 1. **Locally Verified in Child Processes / File I/O:**
-   - Physical newline detection and normalization of unterminated valid WAL records.
+   - Physical newline and CRLF detection and normalization of unterminated valid WAL records.
    - Prevention of record concatenation across reopen cycles.
    - Live journal poisoning upon normalization flush failure.
    - Bit-level recovery parity across independent operating system process crash workers.
@@ -89,6 +82,3 @@ Type Check  0 diagnostics (tsc --noEmit)
    - The reopen test after a simulated `fsyncSync` failure demonstrates clean process recovery within the test environment where the operating system's page cache retains written bytes, rather than physical media durability across complete unbuffered power loss.
    - The journal's fail-closed poisoning and descriptor closure is the correct programmatic defense to protect application state.
    - This test harness does not assert or prove physical media durability under sudden host power disruption.
-
-
-
