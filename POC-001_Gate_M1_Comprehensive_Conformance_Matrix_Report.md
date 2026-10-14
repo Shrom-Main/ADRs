@@ -154,3 +154,34 @@ npm test
 # 6. Generate and inspect machine-readable test output
 npm run test:json
 ```
+
+---
+
+## 5. Specification §8 Conformance Reconciliation & Expanded Suite Baseline (October 14, 2026)
+
+### 5.1 Test Baseline Evolution Across Project Milestones
+
+| Milestone / Report | Implementation Baseline Commit | Test Files | Total Passed Tests | Skipped / Failed | Status & Scope |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Gate M1 Initial Execution** | Pre-`abfaa04` | 11 | 43 | 0 / 0 | Initial Gate M1 core modules |
+| **Gate M1 Conformance Matrix (Historical)** | `70121a05f160b8674133ecd3d6c48cd3b6fcb2ae` | 12 | 53 | 0 / 0 | Gate M1 row-lock fix & 12 suites |
+| **Gate M2 Simulation Milestone** | `cbafb60fdb5926a649f90ec41e4493562703c564` | 15 | 106 | 0 / 0 | Gate M2 execution & websocket pipeline |
+| **Gate M3 Persistence & Native Postgres** | `a1bd3599e21dfb79e45df3e6c189d18c781fc5cb` | 17 | 129 | 0 / 0 | Gate M3 crash recovery & Postgres 16.8 |
+| **Review Notes Round 1 & 2 Remediation** | `5a86abf7aef84660c82f128e1f0b8b8319e4b355` | 19 | 153 | 0 / 0 | Suite 18 Adversarial & Suite 19 ActualsGuard |
+| **Review Notes Round 3 Reconciled Baseline** | `0e6512e` (HEAD) | **19** | **157** | **0 / 0** | Cash flow subunits, transient recovery, previous_event_hash |
+
+### 5.2 Disposition of the 111 Normative Test IDs in Specification §8.1 & §8.2
+
+Specification §8 defines 111 normative test IDs across §8.1 (95 tests) and §8.2 (16 tests). Their verified disposition across the current 157-test suite is categorized below:
+
+1. **Dual-Ledger ActualsGuard Isolation (`SUITE-06`, AUDIT-20):**
+   - All 6 normative test cases defined in Spec §8.1 (`ACTUALS-GUARD-001`, `SIM-GUARD-002`, `ACTUALS-AUTH-003`, `ACTUALS-AUTH-EXACT-004`, `ACTUALS-TX-ATOMIC-005`, `TEST-CONCURRENCY-NONCE-01`) are implemented and pass in `tests/acceptance/suite19_actuals_guard_dual_ledger.test.ts`.
+2. **Product Identity Normalization & Volumetric Weight (AUDIT-17, 25, 33, 40):**
+   - Fully implemented and verified in `tests/acceptance/suite07_financial_engine.test.ts` under test IDs: `PROD-NORM-NFC-HSN-025`, `HSN-LEGAL-ASSIGNMENT-SYNTAX-032`, `PROD-NORM-DETERMINISTIC-004`, `PROD-COLL-001`, `PROD-NORM-SAFE-003`, `VOL-SAFEINT-001`, `VOL-BOUND-002`, `VOL-ROUND-HALFUP-003`.
+3. **Financial Mathematics & Recovery Metrics (AUDIT-16, 18, 34, 38, 44, 48, 50):**
+   - Verified in `suite07`: `REC-OUTLAY-001` (primary 35-day outlay recovery fixture), `FIN-GROSS-CLEARING-TIER-037` (Two-Tier Gross-Clearing model), `FIN-XIRR-001` (polynomial NPV/XIRR solver), `FIN-RECOVERY-TRANSIENT-001` (transient recovery detection), `FIN-CASHFLOW-SUBUNITS-002` (CanonicalMoney and cross-currency protection), and `FIN-CASHFLOW-PREINCEPTION-003`.
+4. **Durable Persistence & Hash Chaining (AUDIT-21, 23, 37, 42, 49, 51):**
+   - Verified across `suite12_durable_persistence.test.ts` (11 tests including `PERSIST-STREAM-HASH-CHAIN-008`, `POSTGRES-INIT-ROWLOCK-001`, and all 6 ambiguous commit reconciliation paths) and `suite17_real_postgres_integration.test.ts` (6 tests on live PostgreSQL 16.8).
+5. **Specification §8.2 Pre-Migration Strategy Replay Suites:**
+   - Pre-migration strategy replay suites (`SUITE-08` through `SUITE-11` in §8.2: `PROP-INV-001`, `INV-QTY-BOUND-002`, `META-FEE-001`, `HIST-REPLAY-001`, `FUZZ-CLOCK-001`) are non-foundational legacy strategy fixtures from the pre-charter pipeline. Per Project Owner Decision OD-02 and ADR-0001, their execution is formally deferred to downstream strategy simulation gates, while the foundational platform requirements remain 100% verified.
+

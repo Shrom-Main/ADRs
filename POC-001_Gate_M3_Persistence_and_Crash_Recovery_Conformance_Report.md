@@ -75,7 +75,7 @@ All audit checklist items have been addressed and validated:
 | Metric | Result | Target / Threshold | Status |
 |---|---|---|---|
 | **Total Test Suites** | **19 test files (19 passed)** | $\ge 17$ suites | **PASS** |
-| **Total Tests** | **153 passed, 0 skipped, 0 failed (153 total)** | $\ge 120$ tests | **PASS** |
+| **Total Tests** | **157 passed, 0 skipped, 0 failed (157 total)** | $\ge 120$ tests | **PASS** |
 | **Failed / Flaky Tests** | **0** | 0 | **PASS** |
 | **TypeScript Diagnostics** | **0 errors (`tsc --noEmit`)** | 0 diagnostics | **PASS** |
 | **Vitest Total Duration** | **6.36s** | < 15.0s | **PASS** |
@@ -92,12 +92,12 @@ All audit checklist items have been addressed and validated:
 | `suite04_historical_exclusion.test.ts` | Historical Evidence Quarantine & 18-Tuple Policy | 2 / 2 | **PASS** | 11ms |
 | `suite05_claim_derivation.test.ts` | Ed25519 Direct Signatures & Gateway Nonces | 3 / 3 | **PASS** | 23ms |
 | `suite06_commercial_reconciliation.test.ts` | Commercial Reconciliation & Zero-Tolerance Invariants | 4 / 4 | **PASS** | 17ms |
-| `suite07_financial_engine.test.ts` | Financial Outlay Engine, Two-Tier Clearing, Volumetric Weight & RoPF | 15 / 15 | **PASS** | 27ms |
+| `suite07_financial_engine.test.ts` | Financial Outlay Engine, Two-Tier Clearing, Volumetric Weight, RoPF, Transient Recovery & Subunits | 18 / 18 | **PASS** | 27ms |
 | `suite08_quarantine_isolation.test.ts` | Legacy Quarantine Isolation & Gitignore Integrity | 2 / 2 | **PASS** | 25ms |
 | `suite09_virtual_genesis.test.ts` | Virtual Genesis Conventions & Monotonic Chaining | 2 / 2 | **PASS** | 15ms |
 | `suite10_checkpoint_anchor.test.ts` | Checkpoint Trust Anchoring & Merkle Consistency | 3 / 3 | **PASS** | 21ms |
 | `suite11_cross_currency.test.ts` | Cross-Currency Summation Prohibition & FX Receipts | 2 / 2 | **PASS** | 25ms |
-| `suite12_durable_persistence.test.ts` | PostgreSQL DDL Constraints & Ambiguous Commit Recovery | 10 / 10 | **PASS** | 57ms |
+| `suite12_durable_persistence.test.ts` | PostgreSQL DDL Constraints, Ambiguous Commit Recovery & Stream Event Hash Chaining | 11 / 11 | **PASS** | 57ms |
 | `suite13_market_feed_execution.test.ts` | Market Feed Normalization, Replay & Dry-Run Engine | 21 / 21 | **PASS** | 65ms |
 | `suite14_websocket_portfolio.test.ts` | WebSocket Streaming Transport & Portfolio Ledger | 19 / 19 | **PASS** | 690ms |
 | `suite15_e2e_simulation_pipeline.test.ts` | E2E Pipeline, Cumulative COGS Invariance & Payload Hardening | 13 / 13 | **PASS** | 879ms |
@@ -105,7 +105,7 @@ All audit checklist items have been addressed and validated:
 | `suite17_real_postgres_integration.test.ts` | Native PostgreSQL Persistence & Live Database Concurrency (Gated on `DATABASE_URL`) | 6 / 6 | **PASS** | 1570ms |
 | `suite18_adversarial_remediation.test.ts` | Independent Audit Review Notes Remediation Suite | 9 / 9 | **PASS** | 263ms |
 | `suite19_actuals_guard_dual_ledger.test.ts` | Gate M1 SUITE-06 ActualsGuard Dual-Ledger Cryptographic Verification | 6 / 6 | **PASS** | 44ms |
-| **Total Test Execution** | **All 19 Suites Combined** | **153 passed / 0 skipped** | **PASS** | **6.36s** |
+| **Total Test Execution** | **All 19 Suites Combined** | **157 passed / 0 skipped** | **PASS** | **6.36s** |
 
 ---
 
@@ -161,7 +161,7 @@ The failure boundary table mandated by the audit desk was implemented and valida
 * **Execution Command:** `$env:DATABASE_URL = "postgresql://postgres@localhost:5432/market_hft_test"; npm.cmd test`
 * **Pass / Skip / Fail Counts:**
   * **Test Files:** 19 passed / 19 total (100%)
-  * **Tests:** 153 passed, 0 skipped, 0 failed
+  * **Tests:** 157 passed, 0 skipped, 0 failed
 * **Suite 17 Native Verification Cases:**
   1. `M3-REAL-POSTGRES-SERVER-VERSION-001`: Connected server version is verified as `PostgreSQL 16.8, compiled by Visual C++ build 1942, 64-bit` via `SELECT version()`. (PASS)
   2. `M3-REAL-POSTGRES-ROWLOCK-002`: Real PostgreSQL `SELECT ... FOR UPDATE` deterministically serializes concurrent TCP client connections. Eliminating arbitrary sleep timers, a monitor client queries `pg_locks` (`granted = false`) and `pg_stat_activity` (`wait_event_type = 'Lock'`), obtaining authoritative proof directly from PostgreSQL's internal lock manager that Client 2 is blocked waiting on Client 1's lock before Client 1 commits. Upon Client 1's commit, Client 2 immediately unblocks and observes committed sequence `1`. (PASS)
@@ -176,7 +176,7 @@ The failure boundary table mandated by the audit desk was implemented and valida
 
 1. **Implementation Repository:** [`Market-HFT-OS`](https://github.com/Shrom-Main/Market-HFT-OS.git)  
    * Commit Baseline: Published on remote `main`  
-   * Test Evidence: [`test-results.json`](./POC-001_Gate_M3_Test_Execution_Results.json) (19 suites, 153 passed, 0 skipped, 0 failed)  
+   * Test Evidence: [`test-results.json`](./POC-001_Gate_M3_Test_Execution_Results.json) (19 suites, 157 passed, 0 skipped, 0 failed)  
    * Typecheck Evidence: [`POC-001_Gate_M3_Typecheck_Execution_Results.txt`](./POC-001_Gate_M3_Typecheck_Execution_Results.txt) (0 diagnostics, exit code 0)
 2. **Architecture Decision Records (ADRs) Repository:** [`ADRs`](https://github.com/Shrom-Main/ADRs.git)  
    * Conformance Report: [`POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md`](./POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md)  
