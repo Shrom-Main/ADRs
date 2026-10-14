@@ -4,7 +4,7 @@
 **Version:** `1.0.0`  
 **Date:** `2026-10-14`  
 **Status:** `LOCAL AUDIT VERIFIED — AWAITING REVIEW DECISION`  
-**Target Baseline:** `Market-HFT-OS` commit [`8a89cf0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/8a89cf051bc253fb82c1a685a74a0ddf1e0a7d36) (local)  
+**Target Baseline:** `Market-HFT-OS` commit [`46ec8f7`](https://github.com/Shrom-Main/Market-HFT-OS/commit/46ec8f7) (local), expanding on [`8a89cf0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/8a89cf051bc253fb82c1a685a74a0ddf1e0a7d36) (local)  
 **Parent Baseline:** [`7415c61`](https://github.com/Shrom-Main/Market-HFT-OS/commit/7415c617be2cd680217ebb07b4209466c1084918) (published)  
 **Frozen Specification:** [`POC-001_Gate_M1_Design_Readiness_Specification.md`](https://github.com/Shrom-Main/ADRs/blob/77eff71c3807c8852b49355f50e814bd75eb90ad/POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.13 Final, pinned at `77eff71`)
 
@@ -39,17 +39,30 @@ At baseline `7415c61`, `FileBackedDurableRecoveryJournal` had an accounting defe
 
 ## 3. Test Evidence & Regression Suite
 
-New regression test [`M3-WAL-VALID-UNTERMINATED-RECORD-017`](file:///d:/Market%20HFT%20OS/tests/acceptance/suite16_crash_recovery_persistence.test.ts#L1175-L1260) validates:
-1. Creation of valid initial entry without trailing newline on disk.
-2. Safe reopening and subsequent append of sequence 2 without record concatenation.
-3. Third reopening verifying both entries independently parse with unbroken SHA-256 hash chaining.
-4. Injected normalization write/flush failure immediately poisons live journal and prevents further writes.
+Expanded regression test [`M3-WAL-VALID-UNTERMINATED-RECORD-017`](file:///d:/Market%20HFT%20OS/tests/acceptance/suite16_crash_recovery_persistence.test.ts#L1175-L1330) validates the complete 5-point verification checklist:
+1. **Physical Unterminated Detection & Preservation:**
+   - Writes valid initial entry stripped of its trailing `\n`.
+   - Reopens journal, normalizes newline delimiter, and appends sequence 2 without record concatenation.
+   - Third reopen validates both records independently parse with unbroken SHA-256 hash chaining.
+2. **Constructor-Time Flush Fault Injection (`fsyncSync` failure):**
+   - Injects simulated I/O failure into `fs.fsyncSync` during constructor normalization.
+   - Asserts `normalizationFsyncCalls === 1`.
+   - Asserts instance is poisoned fail-closed (`getIsPoisoned() === true`) while valid pre-existing entries remain readable (`getEntryCount() === 1`).
+3. **Fail-Closed Mutation Rejection:**
+   - Asserts subsequent mutations (`appendEvent('ORDER_SUBMITTED')` and `appendEvent('PORTFOLIO_APPLIED')`) reject fail-closed with `E-ERR-024: JOURNAL_POISONED`.
+   - Asserts mock restoration is guaranteed inside a `finally` block to protect test runner environment.
+4. **Documented Recovery Policy on Clean Restart:**
+   - Reopening the file after flush failure verifies integrity (`isValid === true`), accepts new appends, and verifies disk persistence with sequence 2 and intact hash chain.
+5. **Constructor-Time Write Fault Injection (`writeSync` failure):**
+   - Injects simulated I/O failure into `fs.writeSync` prior to newline writing.
+   - Asserts immediate poisoning and fail-closed rejection.
+   - Asserts clean subsequent reopen, normalization, and sequence 2 append.
 
 ### Execution Output
 ```
 Test Files  17 passed (17)
      Tests  124 passed | 3 skipped (127 total)
-  Duration  5.84s
+  Duration  7.16s
 Type Check  0 diagnostics (tsc --noEmit)
 ```
 
