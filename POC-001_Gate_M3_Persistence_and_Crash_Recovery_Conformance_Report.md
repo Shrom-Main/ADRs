@@ -5,8 +5,8 @@
 **Date:** `2026-10-14`  
 **Status:** `GATE M3 CONFORMANCE VERIFIED — PHYSICAL DURABILITY HARDENED, RECOVERY PARITY PROVEN, DUAL-LEDGER CRYPTOGRAPHIC VERIFICATION & NATIVE POSTGRESQL 16.8 CONCURRENCY ACCEPTED`  
 **Implementation Repository:** `https://github.com/Shrom-Main/Market-HFT-OS.git`  
-**Implementation Commit Baseline:** Published on `main`  
-**Prior Gate Baselines:** Gate M0 Initial [`582637b`](https://github.com/Shrom-Main/Market-HFT-OS/commit/582637b) · Gate M1 Final [`70121a0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/70121a05f160b8674133ecd3d6c48cd3b6fcb2ae) · Gate M2 Final Closure [`cbafb60`](https://github.com/Shrom-Main/Market-HFT-OS/commit/cbafb60fdb5926a649f90ec41e4493562703c564) · Gate M3 Baseline [`a1bd359`](https://github.com/Shrom-Main/Market-HFT-OS/commit/a1bd359)  
+**Implementation Commit Baseline:** Published on `main` @ [`0e6512e`](https://github.com/Shrom-Main/Market-HFT-OS/commit/0e6512edb31b6124a014e0d4b44331b6fdba0b97)  
+**Prior Gate Baselines:** Gate M0 Initial [`582637b`](https://github.com/Shrom-Main/Market-HFT-OS/commit/582637b) · Gate M1 Final [`70121a0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/70121a05f160b8674133ecd3d6c48cd3b6fcb2ae) · Gate M2 Final Closure [`cbafb60`](https://github.com/Shrom-Main/Market-HFT-OS/commit/cbafb60fdb5926a649f90ec41e4493562703c564) · Gate M3 Intermediate [`a1bd359`](https://github.com/Shrom-Main/Market-HFT-OS/commit/a1bd359) · Remediation [`efa6d81`](https://github.com/Shrom-Main/Market-HFT-OS/commit/efa6d81) · ActualsGuard & CRLF [`5a86abf`](https://github.com/Shrom-Main/Market-HFT-OS/commit/5a86abf)  
 **Frozen Specification:** [`POC-001_Gate_M1_Design_Readiness_Specification.md`](https://github.com/Shrom-Main/ADRs/blob/77eff71c3807c8852b49355f50e814bd75eb90ad/POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.13 Final, commit `77eff71c3807c8852b49355f50e814bd75eb90ad`)
 
 ---
@@ -175,7 +175,7 @@ The failure boundary table mandated by the audit desk was implemented and valida
 ## 5. Artifact Audit Manifest
 
 1. **Implementation Repository:** [`Market-HFT-OS`](https://github.com/Shrom-Main/Market-HFT-OS.git)  
-   * Commit Baseline: Published on remote `main`  
+   * Commit Baseline: Published on remote `main` @ [`0e6512e`](https://github.com/Shrom-Main/Market-HFT-OS/commit/0e6512edb31b6124a014e0d4b44331b6fdba0b97)  
    * Test Evidence: [`test-results.json`](./POC-001_Gate_M3_Test_Execution_Results.json) (19 suites, 157 passed, 0 skipped, 0 failed)  
    * Typecheck Evidence: [`POC-001_Gate_M3_Typecheck_Execution_Results.txt`](./POC-001_Gate_M3_Typecheck_Execution_Results.txt) (0 diagnostics, exit code 0)
 2. **Architecture Decision Records (ADRs) Repository:** [`ADRs`](https://github.com/Shrom-Main/ADRs.git)  
