@@ -79,3 +79,8 @@ Type Check  0 diagnostics (tsc --noEmit)
    - Suite 17 native PostgreSQL integration tests 2, 3, 4 (require external `DATABASE_URL`).
 3. **Guarantees Not Established:**
    - Native PostgreSQL concurrency and transaction rollback on real database instances remains unverified and **OPEN**.
+4. **Operating System Cache vs. Power Loss Boundary:**
+   - The reopen test after a simulated `fsyncSync` failure demonstrates clean process recovery within the test environment where the operating system's page cache retains written bytes, rather than physical media durability across complete unbuffered power loss.
+   - The journal's fail-closed poisoning and descriptor closure is the correct programmatic defense to protect application state.
+   - This test harness does not assert or prove physical media durability under sudden host power disruption.
+
