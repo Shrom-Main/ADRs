@@ -4,7 +4,7 @@
 **Version:** `1.0.0`  
 **Date:** `2026-10-14`  
 **Status:** `LOCAL AUDIT VERIFIED — AWAITING REVIEW DECISION`  
-**Target Baseline:** `Market-HFT-OS` commit [`46ec8f7`](https://github.com/Shrom-Main/Market-HFT-OS/commit/46ec8f7) (local), expanding on [`8a89cf0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/8a89cf051bc253fb82c1a685a74a0ddf1e0a7d36) (local)  
+**Target Baseline:** `Market-HFT-OS` commit [`a1bd359`](https://github.com/Shrom-Main/Market-HFT-OS/commit/a1bd359) (local), expanding on [`8a89cf0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/8a89cf051bc253fb82c1a685a74a0ddf1e0a7d36) (local)  
 **Parent Baseline:** [`7415c61`](https://github.com/Shrom-Main/Market-HFT-OS/commit/7415c617be2cd680217ebb07b4209466c1084918) (published)  
 **Frozen Specification:** [`POC-001_Gate_M1_Design_Readiness_Specification.md`](https://github.com/Shrom-Main/ADRs/blob/77eff71c3807c8852b49355f50e814bd75eb90ad/POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.13 Final, pinned at `77eff71`)
 
@@ -61,8 +61,8 @@ Expanded regression test [`M3-WAL-VALID-UNTERMINATED-RECORD-017`](file:///d:/Mar
 ### Execution Output
 ```
 Test Files  17 passed (17)
-     Tests  126 passed (126 total, 0 skipped, 0 failed)
-  Duration  5.96s
+     Tests  129 passed (129 total, 0 skipped, 0 failed)
+  Duration  5.94s
 Type Check  0 diagnostics (tsc --noEmit)
 ```
 
@@ -78,13 +78,17 @@ Type Check  0 diagnostics (tsc --noEmit)
 2. **Native PostgreSQL 16.8 Verification (Suite 17):**
    - **Database Instance:** Native `PostgreSQL 16.8, compiled by Visual C++ build 1942, 64-bit` on `localhost:5432`.
    - **Environment:** `DATABASE_URL=postgresql://postgres@localhost:5432/market_hft_test`.
-   - **Test Results:** 3/3 passed (0 skipped, 0 failed):
-     - `M3-REAL-POSTGRES-ROWLOCK-002`: TCP client concurrency serialization via `SELECT ... FOR UPDATE` (PASS).
-     - `M3-REAL-POSTGRES-ROLLBACK-003`: Transaction abort & rollback without dirty records (PASS).
-     - `M3-REAL-POSTGRES-AMBIGUOUS-COMMIT-004`: Ambiguous commit disconnect recovery via authoritative stream head reconciliation (PASS).
+   - **Test Results:** 6/6 passed (0 skipped, 0 failed):
+     - `M3-REAL-POSTGRES-SERVER-VERSION-001`: Exact database engine banner verified as `PostgreSQL 16.8, compiled by Visual C++ build 1942, 64-bit` via `SELECT version()`. (PASS)
+     - `M3-REAL-POSTGRES-ROWLOCK-002`: Deterministic row lock wait verification via `pg_locks` (`granted = false`) and `pg_stat_activity` (`wait_event_type = 'Lock'`), eliminating arbitrary timer guesswork. (PASS)
+     - `M3-REAL-POSTGRES-ROLLBACK-003`: Transaction abort & rollback isolation. (PASS)
+     - `M3-REAL-POSTGRES-AMBIGUOUS-COMMIT-004`: Genuine lost-acknowledgment commit disconnect reconciled to `COMMITTED` via authoritative stream inspection and SHA-256 digest recomputation. (PASS)
+     - `M3-REAL-POSTGRES-AMBIGUOUS-ROLLBACK-005`: Genuine pre-commit socket severance reconciled to `ROLLED_BACK`. (PASS)
+     - `M3-REAL-POSTGRES-CLEANUP-REPEATABILITY-006`: Complete table cleanup, zero row leakage, and repeated execution without collision. (PASS)
 3. **Operating System Cache vs. Power Loss Boundary:**
    - The reopen test after a simulated `fsyncSync` failure demonstrates clean process recovery within the test environment where the operating system's page cache retains written bytes, rather than physical media durability across complete unbuffered power loss.
    - The journal's fail-closed poisoning and descriptor closure is the correct programmatic defense to protect application state.
    - This test harness does not assert or prove physical media durability under sudden host power disruption.
+
 
 

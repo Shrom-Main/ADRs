@@ -150,22 +150,28 @@ The failure boundary table mandated by the audit desk was implemented and valida
 * **Execution Command:** `$env:DATABASE_URL = "postgresql://postgres@localhost:5432/market_hft_test"; npm.cmd test`
 * **Pass / Skip / Fail Counts:**
   * **Test Files:** 17 passed / 17 total (100%)
-  * **Tests:** 126 passed, 0 skipped, 0 failed
-* **Suite 17 Native Tests Executed:**
-  1. `M3-REAL-POSTGRES-ROWLOCK-002`: Real PostgreSQL `SELECT ... FOR UPDATE` serializes concurrent TCP client connections. Verified that Client 2 transaction is blocked while Client 1 holds row lock; unblocks and reads committed sequence upon Client 1 commit. (PASS)
-  2. `M3-REAL-POSTGRES-ROLLBACK-003`: Real PostgreSQL transaction rollback discards staged writes without dirty records. Verified aborted sequence update drops staged writes, preserving uninitialized default `0`. (PASS)
-  3. `M3-REAL-POSTGRES-AMBIGUOUS-COMMIT-004`: Real PostgreSQL ambiguous commit reconciliation recovers committed stream head. Verified that when client disconnects during commit ACK, `reconcileAmbiguousPromotionCommit` recovers durable stream head with verified event digest and canonical assessment SHA-256. (PASS)
+  * **Tests:** 129 passed, 0 skipped, 0 failed
+* **Suite 17 Native Verification Cases:**
+  1. `M3-REAL-POSTGRES-SERVER-VERSION-001`: Connected server version is verified as `PostgreSQL 16.8, compiled by Visual C++ build 1942, 64-bit` via `SELECT version()`. (PASS)
+  2. `M3-REAL-POSTGRES-ROWLOCK-002`: Real PostgreSQL `SELECT ... FOR UPDATE` deterministically serializes concurrent TCP client connections. Eliminating arbitrary sleep timers, a monitor client queries `pg_locks` (`granted = false`) and `pg_stat_activity` (`wait_event_type = 'Lock'`), obtaining authoritative proof directly from PostgreSQL's internal lock manager that Client 2 is blocked waiting on Client 1's lock before Client 1 commits. Upon Client 1's commit, Client 2 immediately unblocks and observes committed sequence `1`. (PASS)
+  3. `M3-REAL-POSTGRES-ROLLBACK-003`: Real PostgreSQL transaction rollback discards staged writes without dirty records. Verified aborted sequence update drops staged writes, preserving uninitialized default `0`. (PASS)
+  4. `M3-REAL-POSTGRES-AMBIGUOUS-COMMIT-004`: Genuine lost-acknowledgment disconnect during commit ACK is authoritatively reconciled to `COMMITTED`. The test genuinely executes a promotion transaction, writes the `COMMIT` packet to the TCP stream, and abruptly severs the client socket with `ECONNRESET` as the ACK is returned. The caller catches the network failure, invokes `reconcileAmbiguousPromotionCommit`, which inspects durable tables, verifies canonical assessment digest and promotion event SHA-256, and confirms `outcome === 'COMMITTED'`. (PASS)
+  5. `M3-REAL-POSTGRES-AMBIGUOUS-ROLLBACK-005`: Genuine network severance before commit is authoritatively reconciled to `ROLLED_BACK`. The test stages transaction writes and severs the socket before calling `COMMIT`. PostgreSQL aborts the transaction, and `reconcileAmbiguousPromotionCommit` authoritatively discovers sequence `0` and confirms `outcome === 'ROLLED_BACK'`. (PASS)
+  6. `M3-REAL-POSTGRES-CLEANUP-REPEATABILITY-006`: Clean repeatability verification proves zero row leakage across successive test executions. Verifies explicit table truncation in `beforeAll` and `afterAll`, asserts 0 lingering rows across all 4 tables, and demonstrates clean re-execution on identical offer IDs without constraint collisions. (PASS)
 
 ---
 
 ## 5. Artifact Audit Manifest
 
 1. **Implementation Repository:** [`Market-HFT-OS`](https://github.com/Shrom-Main/Market-HFT-OS.git)  
-   * Local Commit Baseline: [`b1f1a16`](https://github.com/Shrom-Main/Market-HFT-OS/commit/b1f1a16) (unpushed)  
-   * Test Evidence: [`test-results.json`](file:///d:/Market%20HFT%20OS/test-results.json) (17 suites, 126 passed, 0 skipped, 0 failed)
+   * Local Commit Baseline: [`a1bd359`](https://github.com/Shrom-Main/Market-HFT-OS/commit/a1bd359) (unpushed)  
+   * Test Evidence: [`test-results.json`](file:///d:/Market%20HFT%20OS/test-results.json) (17 suites, 129 passed, 0 skipped, 0 failed)  
+   * Typecheck Evidence: [`typecheck-results.log`](file:///d:/Market%20HFT%20OS/typecheck-results.log) (0 diagnostics, exit code 0)
 2. **Architecture Decision Records (ADRs) Repository:** [`ADRs`](https://github.com/Shrom-Main/ADRs.git)  
    * Conformance Report: [`POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md`](file:///d:/ADRs/POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md)  
    * WAL Boundary Addendum: [`POC-001_Gate_M3_WAL_Boundary_Normalization_Audit_Addendum.md`](file:///d:/ADRs/POC-001_Gate_M3_WAL_Boundary_Normalization_Audit_Addendum.md)  
    * Machine-Readable Test Results: [`POC-001_Gate_M3_Test_Execution_Results.json`](file:///d:/ADRs/POC-001_Gate_M3_Test_Execution_Results.json)  
+   * Tracked Typecheck Results: [`POC-001_Gate_M3_Typecheck_Execution_Results.txt`](file:///d:/ADRs/POC-001_Gate_M3_Typecheck_Execution_Results.txt)  
    * Pinned Frozen Specification: [`POC-001_Gate_M1_Design_Readiness_Specification.md`](https://github.com/Shrom-Main/ADRs/blob/77eff71c3807c8852b49355f50e814bd75eb90ad/POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.13 Final, pinned at `77eff71`)
+
 
