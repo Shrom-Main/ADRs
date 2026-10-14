@@ -27,7 +27,9 @@ This created an authority ambiguity (`F-03`): a literal reading of `PROJECT_CHAR
 
 ## Decision Outcome
 
-Chosen option: **Option 2**. We preserve `PROJECT_CHARTER.md` v0.2.4 as the historical foundation and record explicit gate authorizations through this ADR and `GATE_AUTHORIZATION_LEDGER.md`.
+Chosen option: **Ratified Dual Approach (Owner Ratified October 15, 2026)**.
+1. The Human Project Owner explicitly ratified the status header update in `PROJECT_CHARTER.md` (transitioning Line 4 to `APPROVED / IN-FLIGHT` and Line 9 to `DRY_RUN / Paper Simulation only`).
+2. Historical gate lineage, normative errata, and ongoing gate transitions are authoritatively maintained through this ADR and `GATE_AUTHORIZATION_LEDGER.md`.
 
 ### Gate Authorization Lineage
 
@@ -36,13 +38,14 @@ Chosen option: **Option 2**. We preserve `PROJECT_CHARTER.md` v0.2.4 as the hist
    - **Approved Scope:** Acceptance of Charter v0.2.4; strict quarantine isolation of legacy `_salvage/`; zero-credential environment; root Git initialization.
 2. **Gate M1 (Design Readiness Specification Freeze):**
    - **Baseline:** `ADRs` @ `77eff71` / `Market-HFT-OS` @ `70121a0`.
-   - **Approved Scope:** Frozen Normative Design Specification v1.13; 4-claim promotion state machine; JCS canonicalization (RFC 8785); integer subunit money; AUDIT-01 through AUDIT-52 compliance.
+   - **Approved Scope:** Frozen Normative Design Specification v1.13; 4-claim promotion state machine; JCS canonicalization (RFC 8785); integer subunit money; AUDIT-01 through AUDIT-52 compliance. (Amended under versioned Erratum v1.14 ratified by Owner).
 3. **Gate M2 (Simulated Execution & Dual-Ledger Isolation):**
    - **Baseline:** `Market-HFT-OS` @ `cbafb60`.
    - **Approved Scope:** Paper execution pipeline; monotonic virtual clock; simulated gateway; loopback WebSocket feed; dual-ledger safety isolation (15 suites, 106 tests).
-4. **Gate M3 (Persistence, Crash Recovery & Native PostgreSQL Concurrency):**
-   - **Baseline:** `Market-HFT-OS` @ `a1bd359` / `ADRs` @ `c52f668`.
-   - **Approved Scope:** File-backed recovery journal; separate-process crash worker recovery; native PostgreSQL 16.8 concurrency & commit reconciliation (19 suites, 153 tests).
+4. **Gate M3 (Persistence, Crash Recovery, Dual-Ledger Verification & Native PostgreSQL Concurrency):**
+   - **Baseline:** `Market-HFT-OS` @ `0e6512e` / `ADRs` @ current `main`.
+   - **Approved Scope:** File-backed recovery journal; separate-process crash worker recovery; native PostgreSQL 16.8 concurrency & commit reconciliation; ActualsGuard dual-ledger cryptographic verification; 19 suites, 157 passed assertions.
+   - **Status:** **APPROVED / CLOSED** (Formally signed off by Project Owner on 2026-10-15).
 
 ### Safety Invariants
 
