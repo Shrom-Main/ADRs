@@ -145,19 +145,27 @@ The failure boundary table mandated by the audit desk was implemented and valida
 * **Zero Command-Line Exposure:** No token or PAT substring appears anywhere in process command-line arguments (`argv`).
 * **Redaction Defense-in-Depth:** Python subprocess wrapper continues to redact any accidental occurrences in stdout/stderr.
 
-### 4.4. Native PostgreSQL Acceptance Status
-* `PostgresNativePoolAdapter` and Suite 17 remain explicitly marked **OPEN (Conditionally Gated on `DATABASE_URL`)**.
-* 3 tests in Suite 17 skip cleanly when `DATABASE_URL` is unset, outputting audit diagnostics.
-* Protocol correctness (MVCC row locks, FIFO wait queues, transaction rollback isolation) remains proven in Suite 16 via the in-memory transactional emulator.
+### 4.4. Native PostgreSQL Acceptance Status & Execution Evidence
+* **Verified Database Engine:** Native `PostgreSQL 16.8, compiled by Visual C++ build 1942, 64-bit` running on `localhost:5432`.
+* **Execution Command:** `$env:DATABASE_URL = "postgresql://postgres@localhost:5432/market_hft_test"; npm.cmd test`
+* **Pass / Skip / Fail Counts:**
+  * **Test Files:** 17 passed / 17 total (100%)
+  * **Tests:** 126 passed, 0 skipped, 0 failed
+* **Suite 17 Native Tests Executed:**
+  1. `M3-REAL-POSTGRES-ROWLOCK-002`: Real PostgreSQL `SELECT ... FOR UPDATE` serializes concurrent TCP client connections. Verified that Client 2 transaction is blocked while Client 1 holds row lock; unblocks and reads committed sequence upon Client 1 commit. (PASS)
+  2. `M3-REAL-POSTGRES-ROLLBACK-003`: Real PostgreSQL transaction rollback discards staged writes without dirty records. Verified aborted sequence update drops staged writes, preserving uninitialized default `0`. (PASS)
+  3. `M3-REAL-POSTGRES-AMBIGUOUS-COMMIT-004`: Real PostgreSQL ambiguous commit reconciliation recovers committed stream head. Verified that when client disconnects during commit ACK, `reconcileAmbiguousPromotionCommit` recovers durable stream head with verified event digest and canonical assessment SHA-256. (PASS)
 
 ---
 
 ## 5. Artifact Audit Manifest
 
 1. **Implementation Repository:** [`Market-HFT-OS`](https://github.com/Shrom-Main/Market-HFT-OS.git)  
-   * Commit: [`7415c61`](https://github.com/Shrom-Main/Market-HFT-OS/commit/7415c617be2cd680217ebb07b4209466c1084918)  
-   * Test Evidence: [`test-results.json`](https://github.com/Shrom-Main/Market-HFT-OS/blob/main/test-results.json) (17 suites, 123 passed, 3 skipped)
+   * Local Commit Baseline: [`b1f1a16`](https://github.com/Shrom-Main/Market-HFT-OS/commit/b1f1a16) (unpushed)  
+   * Test Evidence: [`test-results.json`](file:///d:/Market%20HFT%20OS/test-results.json) (17 suites, 126 passed, 0 skipped, 0 failed)
 2. **Architecture Decision Records (ADRs) Repository:** [`ADRs`](https://github.com/Shrom-Main/ADRs.git)  
-   * Report: [`POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md`](https://github.com/Shrom-Main/ADRs/blob/main/POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md)  
-   * Machine-Readable Test Results: [`POC-001_Gate_M3_Test_Execution_Results.json`](https://github.com/Shrom-Main/ADRs/blob/main/POC-001_Gate_M3_Test_Execution_Results.json)  
+   * Conformance Report: [`POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md`](file:///d:/ADRs/POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md)  
+   * WAL Boundary Addendum: [`POC-001_Gate_M3_WAL_Boundary_Normalization_Audit_Addendum.md`](file:///d:/ADRs/POC-001_Gate_M3_WAL_Boundary_Normalization_Audit_Addendum.md)  
+   * Machine-Readable Test Results: [`POC-001_Gate_M3_Test_Execution_Results.json`](file:///d:/ADRs/POC-001_Gate_M3_Test_Execution_Results.json)  
    * Pinned Frozen Specification: [`POC-001_Gate_M1_Design_Readiness_Specification.md`](https://github.com/Shrom-Main/ADRs/blob/77eff71c3807c8852b49355f50e814bd75eb90ad/POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.13 Final, pinned at `77eff71`)
+
