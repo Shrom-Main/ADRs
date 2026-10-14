@@ -1,12 +1,12 @@
 # POC-001 — Gate M1 Design-Readiness Specification v1.13 Final (Normative Contract Proposal)
 **Canonical Domain Types, Evidence Allowlist, Enforceable Verification Claims, Currency Registry & Deterministic Serialization Contracts**
 
-**Document Status:** AMENDED FINAL NORMATIVE CONTRACT (Incorporating Owner Audit Closures AUDIT-01 through AUDIT-52) — awaiting Project Owner Design Freeze  
-**Date:** 2026-10-11  
-**Version:** v1.13 Final (Normative Contract incorporating AUDIT-01 through AUDIT-52 closures)  
+**Document Status:** FROZEN DESIGN SPECIFICATION (Approved at commit 77eff71; Erratum v1.14 Incorporated)  
+**Date:** 2026-10-11 (Erratum v1.14: 2026-10-14)  
+**Version:** v1.14 Normative Contract (incorporating AUDIT-01 through AUDIT-52 and Review Notes Erratum v1.14)  
 **Target Repository:** `D:\Market HFT OS`  
-**Git Baseline Commit:** `582637b` (Gate M0 Governance Baseline & Charter v0.2.4 on `main`)  
-**Specification File:** `file:///C:/Users/spaye/.gemini/antigravity/brain/f8d383dc-74a5-44e7-8222-da945383593a/POC-001_Gate_M1_Design_Readiness_Specification.md`  
+**Git Baseline Commit:** `77eff71c3807c8852b49355f50e814bd75eb90ad` (Authoritative Specification Freeze on `main`)  
+**Specification File:** `POC-001_Gate_M1_Design_Readiness_Specification.md`  
 **Author:** AI Technical Lead & Architecture Team  
 **Reviewer:** Project Owner / Principal Capital Allocator  
 
@@ -46,7 +46,7 @@ This specification defines the normative design contract for **POC-001 Gate M1**
 | **Specification Lineage** | `v1.0` -> `v1.12` -> `v1.13 Final` | Progressive refinement through 49 targeted owner audit closures |
 | **Quarantine Commit** | `0c67e26` | Read-only reference anchor for `_salvage/AIStudio` |
 | **External Repositories** | 4 submodules | Read-only reference anchor in `_salvage/external/` |
-| **Implementation Status** | **BLOCKED** | Gate M1 remains strictly a design contract pending owner freeze |
+| **Implementation Status** | **AUTHORIZED & FROZEN** | Gate M1 frozen at `77eff71`; implementation authorized through Gates M1, M2, and M3 |
 
 ---
 

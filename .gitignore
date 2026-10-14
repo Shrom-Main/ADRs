@@ -1,4 +1,10 @@
 # Secrets and credentials (never commit)
+GithubPersonalAccessTokenFORAG.env
+TinyFish.env
+Eulerpool.txt
+Eulerpool.env
+Alpaca_Key.txt
+Alpaca_Key.env
 *.env
 *.env.*
 *.key
