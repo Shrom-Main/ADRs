@@ -169,11 +169,13 @@ npm run test:json
 | **Gate M3 Persistence & Native Postgres** | `a1bd3599e21dfb79e45df3e6c189d18c781fc5cb` | 17 | 129 | 0 / 0 | Gate M3 crash recovery & Postgres 16.8 |
 | **Review Notes Round 1 & 2 Remediation** | `5a86abf7aef84660c82f128e1f0b8b8319e4b355` | 19 | 153 | 0 / 0 | Suite 18 Adversarial & Suite 19 ActualsGuard |
 | **Review Notes Round 3 Reconciled Baseline** | `0e6512e` | 19 | 157 | 0 / 0 | Cash flow subunits, transient recovery, previous_event_hash |
-| **Gate M3 Final Closure Baseline** | `0ee073eccda1470ece5a05804aabcf311a540a61` (`0ee073e`) | **19** | **158** | **0 / 0** | Project Owner Decision OD-02: `FUZZ-CLOCK-001` verified, legacy retail fixtures waived |
+| **Gate M3 Final Closure Baseline** | `0ee073eccda1470ece5a05804aabcf311a540a61` (`0ee073e`) | **19** | **158** | **0 / 0** | Project Owner Decision OD-02: `FUZZ-CLOCK-001` verified, initial waiver of 3 fixtures; tag `POC-001-Gate-M3-Verified` |
+| **Post-M3 Security Maintenance** | `80c4bfd95420584ef66dfe5429e5e2fd0b02e10d` (`80c4bfd`) | **19** | **158** | **0 / 0** | Project Owner Decision OD-03: `ws@8.22.0`, `vitest@4.1.12` pinned, 0 vulnerabilities in `npm audit` |
+| **Pre-M4 Conformance Baseline** | `cf0faf19024d40236fec372bbdfb105beebd9441` (`cf0faf1`) | **19** | **161** | **0 / 0** | Project Owner Decision OD-04: Full implementation of all four §8.2 tests (`PROP-INV-001`, `META-FEE-001`, `HIST-REPLAY-001`, `FUZZ-CLOCK-001`) |
 
 ### 5.2 Disposition of the 111 Normative Test IDs in Specification §8.1 & §8.2
 
-Specification §8 defines 111 normative test IDs across §8.1 (95 tests) and §8.2 (16 tests). Their verified disposition across the current 158-test suite is categorized below:
+Specification §8 defines 111 normative test IDs across §8.1 (95 tests) and §8.2 (16 tests). Their verified disposition across the current 161-test suite is categorized below:
 
 1. **Dual-Ledger ActualsGuard Isolation (`SUITE-06`, AUDIT-20):**
    - All 6 normative test cases defined in Spec §8.1 (`ACTUALS-GUARD-001`, `SIM-GUARD-002`, `ACTUALS-AUTH-003`, `ACTUALS-AUTH-EXACT-004`, `ACTUALS-TX-ATOMIC-005`, `TEST-CONCURRENCY-NONCE-01`) are implemented and pass in `tests/acceptance/suite19_actuals_guard_dual_ledger.test.ts`.
@@ -183,8 +185,11 @@ Specification §8 defines 111 normative test IDs across §8.1 (95 tests) and §8
    - Verified in `suite07`: `REC-OUTLAY-001` (primary 35-day outlay recovery fixture), `FIN-GROSS-CLEARING-TIER-037` (Two-Tier Gross-Clearing model), `FIN-XIRR-001` (polynomial NPV/XIRR solver), `FIN-RECOVERY-TRANSIENT-001` (transient recovery detection), `FIN-CASHFLOW-SUBUNITS-002` (CanonicalMoney and cross-currency protection), and `FIN-CASHFLOW-PREINCEPTION-003`.
 4. **Durable Persistence & Hash Chaining (AUDIT-21, 23, 37, 42, 49, 51):**
    - Verified across `suite12_durable_persistence.test.ts` (11 tests including `PERSIST-STREAM-HASH-CHAIN-008`, `POSTGRES-INIT-ROWLOCK-001`, and all 6 ambiguous commit reconciliation paths) and `suite17_real_postgres_integration.test.ts` (6 tests on live PostgreSQL 16.8).
-5. **Specification §8.2 Pre-Migration Strategy Replay & Timing Suites:**
-   - Under Project Owner Decision OD-02 and ADR-0001:
-     * Legacy upstream e-commerce fixtures `PROP-INV-001` (7-bucket warehouse inventory transitions), `META-FEE-001` (Amazon seller closing fee monotonicity steps), and `HIST-REPLAY-001` (AIStudio March 2026 SS304 clamp landed cost fixture at ₹38.21) are legacy upstream retail/e-commerce artifacts inherited from the pre-charter AIStudio template that have zero application to the Market-HFT-OS financial trading runtime. They are formally waived and de-scoped from the Market-HFT-OS runtime baseline.
-     * `FUZZ-CLOCK-001` (+600s clock skew -> `E-ERR-007: CLOCK_SKEW_EXCEEDED`) is an authentic platform timing invariant and is retained, implemented, and verified in `suite13_market_feed_execution.test.ts`, expanding the verified test suite to **158 passed assertions across 19 suites** (0 skipped, 0 failed).
+5. **Specification §8.2 Pre-Migration Strategy Replay & Timing Suites (100% Implemented & Verified under Decision OD-04):**
+   - Under Project Owner Decision OD-04 (superseding the waiver portion of Decision OD-02):
+     * `PROP-INV-001`: Fuzz 1,000 inventory state transitions across 7 canonical buckets (`ON_HAND_AVAILABLE`, `COMMITTED_IN_FLIGHT`, `RESERVED_FULFILLMENT`, `IN_TRANSIT_INBOUND`, `IN_TRANSIT_INTERNAL`, `CUSTOMER_RETURNED_PENDING_INSPECTION`, `DAMAGED_QUARANTINED`); bitwise conservation ($\sum \text{Opening} + \text{In} - \text{Out} \equiv \sum \text{Closing}$) verified with zero negative bucket balances in `suite07_financial_engine.test.ts`.
+     * `META-FEE-001`: Amazon seller closing fee monotonically stepped across 6 steps (₹5.00 to ₹30.00); net contribution verified strictly non-increasing without precision drift in `suite07_financial_engine.test.ts`.
+     * `HIST-REPLAY-001`: Deterministic replay of March 2026 DIN 3017 W4 SS304 worm-drive hose clamp fixture (pack of 10, landed cost ₹38.21 exact); capital allocation recommendation evaluates deterministically to `'ALLOCATE_CAPITAL'` in `suite07_financial_engine.test.ts`.
+     * `FUZZ-CLOCK-001`: Real-time capture with +600s clock skew throws `E-ERR-007: CLOCK_SKEW_EXCEEDED` in `suite13_market_feed_execution.test.ts`.
+   - **Conclusion**: 100% of all 111 normative test IDs across Frozen Spec §8.1 and §8.2 are implemented and pass in the live test suite (161 passed tests across 19 suites, 0 skipped, 0 failed). Zero waivers remain in effect.
 

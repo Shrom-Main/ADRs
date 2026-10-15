@@ -67,6 +67,20 @@ Formally authorized by Project Owner on 2026-10-15:
    - The verified Gate M3 closure state was permanently anchored via annotated tag `POC-001-Gate-M3-Verified` on both repositories (`0ee073e` in `Market-HFT-OS` and `3daed52` in `ADRs`).
    - The post-M3 security maintenance commit advances `Market-HFT-OS` to `80c4bfd` while strictly maintaining the 158-test baseline (19 suites passed, 0 skipped, 0 failed) and zero-caret pinning policy (`ADR-0004`).
 
+### Project Owner Decision OD-04 (Pre-M4 Conformance Closure, Evidence Separation & Full §8.2 Implementation)
+
+Formally authorized by Project Owner on 2026-10-15:
+1. **Supersession of OD-02 Waiver & Full Implementation of Section 8.2 Invariants:**
+   - The waiver portion of Decision OD-02 regarding `PROP-INV-001`, `META-FEE-001`, and `HIST-REPLAY-001` is formally superseded. These three tests represent essential invariants for the initial commercial arbitrage vertical slice (DIN 3017 SS304 hose clamp pack of 10, landed cost ₹38.21, 7-bucket inventory conservation, and Amazon fee monotonicity).
+   - All three tests have been implemented and verified in `Market-HFT-OS` (`tests/acceptance/suite07_financial_engine.test.ts`), expanding the verified baseline to **161 passed tests across 19 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8.
+   - Zero normative requirements in Frozen Spec §8.2 remain waived or unverified.
+2. **Strict Evidence Separation Across Distinct Baselines:**
+   - **Gate M3 Closure Baseline**: Permanently anchored at `0ee073eccda1470ece5a05804aabcf311a540a61` (`0ee073e`) in `Market-HFT-OS` and `3daed5299fecee3549c02f7dafbeedb8eddeec60` (`3daed52`) in `ADRs` via tag `POC-001-Gate-M3-Verified`. The canonical Gate M3 test evidence file `POC-001_Gate_M3_Test_Execution_Results.json` has exact SHA-256 `2A67460967C339D290C925396F321B59753A9A6AD73034162962D439BC2E1434` (158 tests) and is accompanied by `POC-001_Gate_M3_Typecheck_Execution_Results.txt`.
+   - **Post-M3 Security Maintenance Baseline**: Pinned at commit `80c4bfd95420584ef66dfe5429e5e2fd0b02e10d` (`80c4bfd`) under Decision OD-03 (`0 vulnerabilities` in `npm audit`, 158 tests).
+   - **Pre-M4 Conformance Baseline**: Pinned at commit `cf0faf19024d40236fec372bbdfb105beebd9441` (`cf0faf1`) in `Market-HFT-OS` under Decision OD-04, with dedicated evidence files `POC-001_Pre_M4_Conformance_Test_Execution_Results.json` (SHA-256: `2BD75AE3EB2A8E9F2A2629315499896B314F2BB307790BA9FAC436A7BB9B7FEC`, 161 tests) and `POC-001_Pre_M4_Typecheck_Execution_Results.txt`.
+3. **Gate M4 Scoping & Specification Freeze:**
+   - Gate M4 is formally bounded as a research and capital-allocation simulation gate, excluding live physical fulfillment, production payment APIs, and ERP integrations.
+
 ### Safety Invariants
 
 - **Zero Real Capital / Simulation Isolation:** No live exchange, broker, bank, or payment gateway API connections are permitted. All order routing is confined to `SimulatedExecutionGateway`.
