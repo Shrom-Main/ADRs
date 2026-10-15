@@ -43,9 +43,10 @@ Chosen option: **Ratified Dual Approach (Owner Ratified October 15, 2026)**.
    - **Baseline:** `Market-HFT-OS` @ `cbafb60`.
    - **Approved Scope:** Paper execution pipeline; monotonic virtual clock; simulated gateway; loopback WebSocket feed; dual-ledger safety isolation (15 suites, 106 tests).
 4. **Gate M3 (Persistence, Crash Recovery, Dual-Ledger Verification & Native PostgreSQL Concurrency):**
-   - **Baseline:** `Market-HFT-OS` @ `0ee073eccda1470ece5a05804aabcf311a540a61` (`0ee073e`) / `ADRs` @ current `main`.
-   - **Approved Scope:** File-backed recovery journal; separate-process crash worker recovery; native PostgreSQL 16.8 concurrency & commit reconciliation; ActualsGuard dual-ledger cryptographic verification; 19 suites, 158 passed assertions.
-   - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-02 by Project Owner on 2026-10-15).
+   - **Baseline (Verified Closure Anchor):** `Market-HFT-OS` @ `0ee073eccda1470ece5a05804aabcf311a540a61` (`0ee073e`, Tag: `POC-001-Gate-M3-Verified`) / `ADRs` @ `3daed5299fecee3549c02f7dafbeedb8eddeec60` (`3daed52`, Tag: `POC-001-Gate-M3-Verified`).
+   - **Post-M3 Security Maintenance Baseline:** `Market-HFT-OS` @ `80c4bfd95420584ef66dfe5429e5e2fd0b02e10d` (`80c4bfd`) / `ADRs` @ current `main`.
+   - **Approved Scope:** File-backed recovery journal; separate-process crash worker recovery; native PostgreSQL 16.8 concurrency & commit reconciliation; ActualsGuard dual-ledger cryptographic verification; 19 suites, 158 passed assertions; zero vulnerabilities under npm audit.
+   - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-02 and maintained under Decision OD-03 by Project Owner on 2026-10-15).
 
 ### Project Owner Decision OD-02 (Hybrid Scope Resolution for Frozen Spec §8.2)
 
@@ -56,6 +57,15 @@ Formally authorized by Project Owner on 2026-10-15:
    - `FUZZ-CLOCK-001` (+600s clock skew -> `E-ERR-007: CLOCK_SKEW_EXCEEDED`) is an authentic platform timing invariant and is retained, implemented, and verified in `suite13_market_feed_execution.test.ts`, expanding the verified test suite to **158 passed tests across 19 suites** (0 skipped, 0 failed).
 3. **Milestone Disposition:**
    - Gate M3 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
+### Project Owner Decision OD-03 (Post-M3 Dependency Security Advisory Remediation)
+
+Formally authorized by Project Owner on 2026-10-15:
+1. **Dependency Pin Upgrades & Supply Chain Hardening:**
+   - Upgraded `ws` to exact `"8.22.0"` and `vitest` to exact `"4.1.12"`, accompanied by exact-pinned overrides for `"vite": "6.4.4"` and `"esbuild": "0.25.0"` to eliminate all advisories (`GHSA-58qx-3vcg-4xpx`, `GHSA-96hv-2xvq-fx4p`, `GHSA-5gmw-xhrv-c9v3`, `GHSA-85c8-ppgw-ccpr`, `GHSA-67mh-4wv8-2f99`, `GHSA-5xrq-8626-4rwp`), achieving **`0 vulnerabilities`** in `npm audit`.
+2. **Baseline Preservation:**
+   - The verified Gate M3 closure state was permanently anchored via annotated tag `POC-001-Gate-M3-Verified` on both repositories (`0ee073e` in `Market-HFT-OS` and `3daed52` in `ADRs`).
+   - The post-M3 security maintenance commit advances `Market-HFT-OS` to `80c4bfd` while strictly maintaining the 158-test baseline (19 suites passed, 0 skipped, 0 failed) and zero-caret pinning policy (`ADR-0004`).
 
 ### Safety Invariants
 

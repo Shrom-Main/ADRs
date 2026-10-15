@@ -67,3 +67,46 @@ Chosen option: **Option 3**. We authorize `ws@8.19.0` and `pg@8.23.1`, and enfor
 - **Specification Reference:** Gate M1 Spec §1.3, §6.1 (`AUDIT-45`).
 - **Configuration File:** `Market-HFT-OS/package.json`.
 - **Integrity Test:** `JCS-PACKAGE-INTEGRITY-024` in `tests/acceptance/suite01_serialization.test.ts`.
+
+---
+
+## 6. Post-M3 Security Maintenance Addendum (Project Owner Decision OD-03)
+
+* **Authorization Date:** 2026-10-15
+* **Governing Authority:** Human Project Owner (`Decision OD-03`)
+* **Scope:** Remediation of upstream `npm audit` advisories identified during Gate M3 closure reconciliation while preserving exact version-pinning governance.
+
+### 6.1 Advisory Context & Trigger
+During the Gate M3 independent audit at baseline `0ee073eccda1470ece5a05804aabcf311a540a61`, `npm audit` reported upstream security advisories across runtime and test toolchain dependencies:
+1. **Runtime WebSocket Dependency (`ws@8.19.0` — HIGH):**
+   * `GHSA-58qx-3vcg-4xpx` (Uninitialized memory disclosure)
+   * `GHSA-96hv-2xvq-fx4p` (Memory exhaustion DoS via tiny fragments and data chunks)
+2. **Development Test Harness & Build Tooling (`vitest@1.6.0` transitive dependencies — CRITICAL / MODERATE):**
+   * `tinypool` (`GHSA-5gmw-xhrv-c9v3`, `GHSA-85c8-ppgw-ccpr` — Prototype pollution gadget in worker options leading to RCE)
+   * `esbuild` (`GHSA-67mh-4wv8-2f99` — Development server response disclosure)
+   * `vitest` (`GHSA-5xrq-8626-4rwp` — UI server arbitrary file read and execution on `< 3.2.6`)
+
+Although operationally contained during Gate M3 (`ws` restricted to `127.0.0.1` loopback in `DRY_RUN` simulation; `vitest` isolated to `devDependencies`), the Project Owner authorized **Decision OD-03** to upgrade `ws` and `vitest` (along with exact-pinned tooling overrides) in a post-M3 maintenance commit to achieve `found 0 vulnerabilities` in `npm audit`.
+
+### 6.2 Authorized Pin Updates & Governance Invariants
+1. **Runtime Pin Update (`ws`):**
+   * `ws` is upgraded from `"8.19.0"` to exact `"8.22.0"`, recorded with its exact SHA-512 integrity digest in `package-lock.json`.
+   * **`json-canonicalize` Invariant Preserved:** `json-canonicalize` remains strictly pinned at `"3.0.1"` per Frozen Specification §1.3 / §6.1 (`AUDIT-45`) and `JCS-PACKAGE-INTEGRITY-024`.
+2. **Test Tooling Pin Update (`vitest` & Pinned Overrides):**
+   * `vitest` is upgraded from `"1.6.0"` to exact `"4.1.12"`, accompanied by exact-pinned tooling overrides for `"vite": "6.4.4"` and `"esbuild": "0.25.0"`.
+3. **Strict Pinning Enforcement (`--save-exact`):**
+   * Neither `package.json` nor the root package entry in `package-lock.json` contains caret (`^`), tilde (`~`), or wildcard range operators across `dependencies`, `devDependencies`, or `overrides`.
+4. **Execution Invariant Preserved:**
+   * All 19 test files and 158 tests pass with 0 skipped and 0 failed on native PostgreSQL 16.8 (`DATABASE_URL=postgresql://postgres@localhost:5432/market_hft_test`), and TypeScript compilation (`tsc --noEmit`) passes with 0 diagnostics.
+
+### 6.3 Post-Maintenance Verification Table
+
+| Package | Classification | Pre-OD-03 Pin (Gate M3) | Post-OD-03 Exact Pin | `package-lock.json` SHA-512 Integrity Digest | `npm audit` Status |
+| :--- | :--- | :---: | :---: | :--- | :---: |
+| **`json-canonicalize`** | Runtime (`dependencies`) | `3.0.1` | `3.0.1` *(unchanged)* | `sha512-xEzkTucfHhDooWOSMOvrlll9oTk6/mXZIerF2DFWA2chHZsnc2zrmAKjVOyDbSYHr0e3Djx9F89nZ3U2Bn+lSw==` | `0 vulnerabilities` |
+| **`ws`** | Runtime (`dependencies`) | `8.19.0` | `8.22.0` | `sha512-Ydggc987+RO0AnWtZ/7Wq9FtNvcrL1b/RO0ud9mWjUPgDrsAAwQSF51sm2hm1XofbU/4jkpGEsLFsZZxU+1DOg==` | `0 vulnerabilities` |
+| **`pg`** | Runtime (`dependencies`) | `8.23.1` | `8.23.1` *(unchanged)* | `sha512-aL96AHANtWjPLDOLqnhx+ngp9+UK7ETEU8VJrDCGvsSSi/mGLcWYsS6Herg7lmaBJe4uwrfqsa7gTEFaSizDoQ==` | `0 vulnerabilities` |
+| **`vitest`** | Test Harness (`devDependencies`) | `1.6.0` | `4.1.12` | `sha512-5eWdz2yb3ajxWF3C8C4TjkXl7FGm3n2E/VlazALrQHzK7nYMSGFnCZto0bbPNl77AwkOZVLk0YnBAejUu0NiWA==` | `0 vulnerabilities` |
+| **`vite`** | Tooling Override (`overrides`) | `5.4.21` | `6.4.4` | `sha512-xGjU/SyjeNyb0E4KxXBvYz/1C+3JXuujvf2hXNOtnlcE+58o5ajd9N2/n2VhkiJvpCP2qQasnUpx5PXNeI+p1Q==` | `0 vulnerabilities` |
+| **`esbuild`** | Tooling Override (`overrides`) | `0.21.5` | `0.25.0` | `sha512-BXq5mqc8ltbaN34cDqWuYKyNhX8D/Z0J1xdtdQ8UcIIIyJyz+ZMKUt58tF3SrZ85jcfN/PZYhjR5uDQAYNVbuw==` | `0 vulnerabilities` |
+
