@@ -44,9 +44,13 @@ Chosen option: **Ratified Dual Approach (Owner Ratified October 15, 2026)**.
    - **Approved Scope:** Paper execution pipeline; monotonic virtual clock; simulated gateway; loopback WebSocket feed; dual-ledger safety isolation (15 suites, 106 tests).
 4. **Gate M3 (Persistence, Crash Recovery, Dual-Ledger Verification & Native PostgreSQL Concurrency):**
    - **Baseline (Verified Closure Anchor):** `Market-HFT-OS` @ `0ee073eccda1470ece5a05804aabcf311a540a61` (`0ee073e`, Tag: `POC-001-Gate-M3-Verified`) / `ADRs` @ `3daed5299fecee3549c02f7dafbeedb8eddeec60` (`3daed52`, Tag: `POC-001-Gate-M3-Verified`).
-   - **Post-M3 Security Maintenance Baseline:** `Market-HFT-OS` @ `80c4bfd95420584ef66dfe5429e5e2fd0b02e10d` (`80c4bfd`) / `ADRs` @ current `main`.
+   - **Post-M3 Security Maintenance Baseline:** `Market-HFT-OS` @ `80c4bfd95420584ef66dfe5429e5e2fd0b02e10d` (`80c4bfd`) / `ADRs` @ `353edb4`.
    - **Approved Scope:** File-backed recovery journal; separate-process crash worker recovery; native PostgreSQL 16.8 concurrency & commit reconciliation; ActualsGuard dual-ledger cryptographic verification; 19 suites, 158 passed assertions; zero vulnerabilities under npm audit.
    - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-02 and maintained under Decision OD-03 by Project Owner on 2026-10-15).
+5. **Gate M4 (End-to-End Research & Capital-Allocation Vertical Slice):**
+   - **Baseline:** `Market-HFT-OS` @ `9bc249a1a795af83f838febe5d26bb6a29030158` (`9bc249a`) / `ADRs` @ current `main`.
+   - **Approved Scope:** Bounded research and capital-allocation simulation engine for DIN 3017 W4 SS304 hose clamps (pack of 10); Suite 20 (8 tests); 20 suites, 169 passed tests (0 skipped, 0 failed); five core invariants (provenance envelope & TTL, working-capital tax drag, asymmetric return drag, risk-adjusted hurdle vs T-Bills, deterministic edge-decay detection); zero real-money capital execution.
+   - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-05 by Project Owner on 2026-10-15).
 
 ### Project Owner Decision OD-02 (Hybrid Scope Resolution for Frozen Spec §8.2)
 
@@ -80,6 +84,20 @@ Formally authorized by Project Owner on 2026-10-15:
    - **Pre-M4 Conformance Baseline**: Pinned at commit `cf0faf19024d40236fec372bbdfb105beebd9441` (`cf0faf1`) in `Market-HFT-OS` under Decision OD-04, with dedicated evidence files `POC-001_Pre_M4_Conformance_Test_Execution_Results.json` (SHA-256: `2BD75AE3EB2A8E9F2A2629315499896B314F2BB307790BA9FAC436A7BB9B7FEC`, 161 tests) and `POC-001_Pre_M4_Typecheck_Execution_Results.txt`.
 3. **Gate M4 Scoping & Specification Freeze:**
    - Gate M4 is formally bounded as a research and capital-allocation simulation gate, excluding live physical fulfillment, production payment APIs, and ERP integrations.
+
+### Project Owner Decision OD-05 (Gate M4 Specification Freeze & Bounded Vertical Slice Authorization)
+
+Formally authorized by Project Owner on 2026-10-15:
+1. **Specification Freeze & Authorization:**
+   - Formally froze `POC-001_Gate_M4_Acceptance_Specification.md` and `POC-001_Gate_M4_SS304_Vertical_Slice_Test_Scenario.md` as `FROZEN / AUTHORIZED (OD-05)`.
+   - Enforces five core invariants: (1) cryptographic provenance envelopes & TTL enforcement, (2) full working-capital cash-conversion cycle & tax drag (GST, TCS, TDS), (3) asymmetric return & quarantine attrition modeling across 7 buckets, (4) risk-adjusted hurdle rate vs 91-day T-Bill opportunity cost, and (5) deterministic decision outcomes & edge-decay transitions.
+2. **Implementation Verification:**
+   - Implemented `M4ResearchAllocationEngine` (`src/research/m4VerticalSlice.ts`) and acceptance test suite `suite20_m4_ss304_vertical_slice.test.ts` (8 passed assertions).
+   - Verified 100% passing across **20 suites / 169 tests (0 skipped, 0 failed)** on live PostgreSQL 16.8 (`localhost:5432`).
+3. **Dedicated Evidence Partitioning:**
+   - Generated dedicated Gate M4 evidence files: `POC-001_Gate_M4_Test_Execution_Results.json` (SHA-256: `04A7BAA3497DD138BCD3CF901D9EBB35515EFA4A05A7B8BC5BC1AC4C6DF2A0C7`), `POC-001_Gate_M4_Typecheck_Execution_Results.txt`, and `POC-001_Gate_M4_Vertical_Slice_Conformance_Report.md`.
+4. **Milestone Disposition:**
+   - Gate M4 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
 ### Safety Invariants
 

@@ -17,25 +17,33 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 2. Governance & Gate Authorization
 
-* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md) — Authoritative sign-off record for Gates M0, M1, M2, and M3.
+* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md) — Authoritative sign-off record for Gates M0, M1, M2, M3, and M4.
 
 ---
 
 ## 3. Gate Conformance Reports & Audit Evidence
 
+* **Gate M4 Vertical Slice Conformance Report:** [`POC-001_Gate_M4_Vertical_Slice_Conformance_Report.md`](./POC-001_Gate_M4_Vertical_Slice_Conformance_Report.md) (`POC-001-M4-CONF-001`) — 20 test files / 169 tests passed.
+* **Gate M4 Test Execution Results (JSON):** [`POC-001_Gate_M4_Test_Execution_Results.json`](./POC-001_Gate_M4_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (169 passed tests).
+* **Gate M4 Typecheck Results (UTF-8):** [`POC-001_Gate_M4_Typecheck_Execution_Results.txt`](./POC-001_Gate_M4_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output for commit `9bc249a`.
+* **Pre-M4 Conformance Reconciliation Report:** [`POC-001_Pre_M4_Conformance_Reconciliation_Report.md`](./POC-001_Pre_M4_Conformance_Reconciliation_Report.md) — Predecessor gate reconciliation & full §8.2 verification.
+* **Pre-M4 Conformance Test Results (JSON):** [`POC-001_Pre_M4_Conformance_Test_Execution_Results.json`](./POC-001_Pre_M4_Conformance_Test_Execution_Results.json) (161 passed tests).
+* **Pre-M4 Typecheck Results (UTF-8):** [`POC-001_Pre_M4_Typecheck_Execution_Results.txt`](./POC-001_Pre_M4_Typecheck_Execution_Results.txt) (commit `cf0faf1`).
 * **Gate M3 Conformance Report (v1.4.0 Final):** [`POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md`](./POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md) (`POC-001-M3-CONF-001`) — 19 test files / 158 tests passed.
 * **Gate M3 WAL Boundary Normalization Addendum:** [`POC-001_Gate_M3_WAL_Boundary_Normalization_Audit_Addendum.md`](./POC-001_Gate_M3_WAL_Boundary_Normalization_Audit_Addendum.md) (`POC-001-M3-ADDENDUM-001`)
-* **Gate M3 Test Execution Results (JSON):** [`POC-001_Gate_M3_Test_Execution_Results.json`](./POC-001_Gate_M3_Test_Execution_Results.json) — Vitest v1.6.0 machine-readable output (158 passed tests).
-* **Gate M3 Typecheck Results (UTF-8):** [`POC-001_Gate_M3_Typecheck_Execution_Results.txt`](./POC-001_Gate_M3_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output with commit SHA and UTC timestamp.
+* **Gate M3 Test Execution Results (JSON):** [`POC-001_Gate_M3_Test_Execution_Results.json`](./POC-001_Gate_M3_Test_Execution_Results.json) — Tag `POC-001-Gate-M3-Verified` output (158 passed tests).
+* **Gate M3 Typecheck Results (UTF-8):** [`POC-001_Gate_M3_Typecheck_Execution_Results.txt`](./POC-001_Gate_M3_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output for commit `0ee073e`.
 * **Gate M2 Conformance Report:** [`POC-001_Gate_M2_Execution_and_Integration_Conformance_Report.md`](./POC-001_Gate_M2_Execution_and_Integration_Conformance_Report.md) (15 suites / 106 tests).
 * **Gate M2 Test Execution Results (JSON):** [`POC-001_Gate_M2_Test_Execution_Results.json`](./POC-001_Gate_M2_Test_Execution_Results.json)
-* **Gate M1 Comprehensive Conformance Matrix:** [`POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md`](./POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md) (12 suites / 53 tests; expanded baseline 19 suites / 158 tests).
+* **Gate M1 Comprehensive Conformance Matrix:** [`POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md`](./POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md) (12 suites / 53 tests; expanded baseline 20 suites / 169 tests).
 * **Gate M1 Implementation Report:** [`POC-001_Gate_M1_Implementation_Execution_Report.md`](./POC-001_Gate_M1_Implementation_Execution_Report.md) (11 suites / 43 tests).
 
 ---
 
 ## 4. Frozen Normative Specifications
 
+* **Gate M4 Acceptance Specification:** [`POC-001_Gate_M4_Acceptance_Specification.md`](./POC-001_Gate_M4_Acceptance_Specification.md) (`FROZEN / AUTHORIZED (OD-05)`).
+* **Gate M4 SS304 Vertical Slice Test Scenario:** [`POC-001_Gate_M4_SS304_Vertical_Slice_Test_Scenario.md`](./POC-001_Gate_M4_SS304_Vertical_Slice_Test_Scenario.md) (`FROZEN / AUTHORIZED (OD-05)`).
 * **Gate M1 Specification:** [`POC-001_Gate_M1_Design_Readiness_Specification.md`](./POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.13 Final / Erratum v1.14 Normative Contract, blob `ac8899da3a6dcccb2c612247302e6f57fc566472`).
 * **Rendered PDF Review Copy:** [`ADRXX3.pdf`](./ADRXX3.pdf) (Subordinate rendered reference snapshot).
 

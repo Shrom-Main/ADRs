@@ -4,7 +4,9 @@
 | :--- | :--- |
 | **Document Identifier** | `POC-001_Gate_M4_SS304_Vertical_Slice_Test_Scenario` |
 | **Milestone Gate** | **Gate M4** — End-to-End Research & Capital-Allocation Acceptance Gate |
-| **Document Status** | `PROPOSED / FOR OWNER REVIEW` |
+| **Document Status** | `FROZEN / AUTHORIZED (OD-05)` |
+| **Normative Predecessor** | `POC-001_Gate_M1_Design_Readiness_Specification.md` (v1.13 Final / Erratum v1.14) |
+| **Authorizing Authority** | Project Owner Decision `OD-05` (15 October 2026) |
 | **Target Commodity** | DIN 3017 W4 Stainless Steel SS304 Worm-Drive Hose Clamp (Pack of 10, 16–25mm) |
 | **HSN Code** | `73269099` (Articles of Iron or Steel, Other) |
 | **Test Matrix** | **Scenario A** (Viable Opportunity), **Scenario B** (Edge Decay), **Scenario C** (Defective Evidence) |
@@ -28,6 +30,10 @@ The DIN 3017 W4 SS304 pack-of-10 worm-drive hose clamp represents the canonical 
 │ Pack Physical Dimensions      │ 120 mm (L) × 80 mm (W) × 35 mm (H)              │
 │ Volumetric Weight (KAT-03)    │ 68 grams (Actual weight 235g governs freight)   │
 │ GST Rate / ITC Netting        │ 18.00% standard rate / 100% ITC offset eligible │
+│ Section 52 CGST TCS Holdback  │ 1.00% withheld on marketplace gross sales       │
+│ Section 194-O Income Tax TDS  │ 1.00% withheld on marketplace disbursements     │
+│ Cash-Conversion Cycle (CCC)   │ 35 days (7d procurement + 14d dwell + 14d settle)│
+│ Risk-Adjusted Hurdle Rate     │ 15.00% annualized (6.50% T-Bill + 8.50% risk)  │
 └───────────────────────────────┴─────────────────────────────────────────────────┘
 ```
 
@@ -37,20 +43,22 @@ The DIN 3017 W4 SS304 pack-of-10 worm-drive hose clamp represents the canonical 
 
 ### 2.1 Input Evidence & Cryptographic Provenance
 1. **Supplier Quote Claim (`CLAIM-SUPP-001`)**:
-   - Supplier: `supp:in:mumbai:metalcraft-ltd` (Registered trust anchor).
-   - Timestamp: `2026-10-15T08:00:00Z` (fresh, age 2 hours).
+   - `source_id`: `supp:in:mumbai:metalcraft-ltd` (Registered trust anchor).
+   - `observed_at_utc`: `2026-10-15T08:00:00Z` (fresh, age 2 hours).
+   - `ttl_seconds`: `604800` (7 days).
+   - `is_verified`: `true` (valid Ed25519 signature over canonical JCS payload).
    - Wholesale price: ₹25.0000 per pack (`250000n` subunits).
    - MOQ: 500 packs; Payment terms: Net 15 days; Incoterms: EXW Mumbai.
-   - Provenance: Valid Ed25519 signature over canonical JCS payload.
 2. **Inbound Logistics & Customs/Inspection Tariff (`CLAIM-LOG-001`)**:
-   - Carrier: `log:in:bluedart-surface` (Registered freight anchor).
+   - `source_id`: `log:in:bluedart-surface` (`is_verified: true`, `ttl_seconds: 604800`).
    - Freight cost: ₹4.5000 per pack (`45000n`).
    - Insurance & handling: ₹1.0000 per pack (`10000n`).
    - Inspection & customs/GST netting fee: ₹4.5100 per pack (`45100n`).
 3. **Packaging & Kitting Claim (`CLAIM-PKG-001`)**:
-   - Packaging contractor: ₹3.2000 per pack (`32000n`).
+   - `source_id`: `pkg:in:packpro-solutions` (`is_verified: true`, `ttl_seconds: 604800`).
+   - Packaging contractor cost: ₹3.2000 per pack (`32000n`).
 4. **Marketplace Listing & Fee Schedule Claim (`CLAIM-MKT-001`)**:
-   - Marketplace: Amazon.in FBA (`amzn:in:asin:B09XYZ1234`).
+   - `source_id`: `mkt:amzn:in:asin:B09XYZ1234` (`is_verified: true`, `ttl_seconds: 86400`).
    - Gross retail selling price: ₹105.0000 per pack (`1050000n`).
    - Referral fee: 15.00% = ₹15.7500 (`157500n`).
    - Closing fee: ₹10.0000 (`100000n`).
@@ -60,18 +68,26 @@ The DIN 3017 W4 SS304 pack-of-10 worm-drive hose clamp represents the canonical 
 ### 2.2 Financial & Tax Arithmetic Execution
 - **Exact Landed Cost**:
   $$\text{Landed Cost} = 25.0000 + 4.5000 + 3.2000 + 1.0000 + 4.5100 = \text{₹}38.2100 \quad (382100n \text{ subunits})$$
-- **Net Merchant Proceeds**:
-  $$\text{Gross Revenue} - \text{Total Marketplace Fees} = 105.0000 - 39.7500 = \text{₹}65.2500 \quad (652500n)$$
-- **GST & Tax Settlement**:
+- **Marketplace Disbursement After Fees & Statutory Holdbacks**:
+  - Gross Revenue: ₹105.0000 (`1050000n`).
+  - Total Marketplace Fees: ₹39.7500 (`397500n`).
+  - Section 52 TCS (1.00%): ₹1.0500 (`10500n`).
+  - Section 194-O TDS (1.00%): ₹1.0500 (`10500n`).
+  - Net Cash Disbursement: $105.0000 - 39.7500 - 1.0500 - 1.0500 = \text{₹}63.1500$ (`631500n`).
+- **GST Netting & Tax Settlement**:
   - Output GST liability on sale: ₹16.0169 (18% inclusive in ₹105.00).
   - Input Tax Credit (ITC) on procurement & freight: ₹5.8286.
-  - Net GST payable: ₹10.1883.
+  - Net GST cash liability: ₹10.1883.
+  - Refundable TCS/TDS credit offset: ₹2.1000.
+  - Net statutory settlement: $10.1883 - 2.1000 = \text{₹}8.0883$.
 - **Unit Net Margin (After Tax & All Fees)**:
-  $$\text{Net Contribution} = 65.2500 - 38.2100 - 10.1883 = \text{₹}16.8517 \quad (168517n)$$
+  $$\text{Net Contribution} = 63.1500 - 38.2100 - 8.0883 = \text{₹}16.8517 \quad (168517n)$$
   $$\text{Cash-on-Cash Return} = \frac{16.8517}{38.2100} = 44.10\% \quad (> 20.00\% \text{ hurdle})$$
-- **Outlay Recovery Duration**:
-  - Procurement outlay: Day 0; Fulfillment & clearing: Day 18; Lifecycle recovery: 18 days ($\le 30\text{ days}$).
-  - Annualized RoPF: $\approx 89.4\%$ ($> 25.00\%$ hurdle).
+- **Working Capital & Hurdle Evaluation**:
+  - Cash-Conversion Cycle: 35 days (7d procurement + 14d warehouse dwell + 14d settlement).
+  - Annualized Return on Locked Working Capital:
+    $$\text{Annualized RoWC} = 44.10\% \times \frac{365}{35} = 459.9\% \quad (> 15.00\% \text{ hurdle})$$
+  - Downside price buffer: $22.50\%$ margin of safety before reaching negative unit contribution.
 
 ### 2.3 Expected Deterministic Engine Output
 ```json
@@ -83,15 +99,16 @@ The DIN 3017 W4 SS304 pack-of-10 worm-drive hose clamp represents the canonical 
     "recommended_batch_quantity": 500,
     "committed_capital_inr": "19105.0000",
     "expected_net_margin_bps": 4410,
-    "projected_outlay_recovery_days": 18,
+    "cash_conversion_cycle_days": 35,
+    "annualized_rowc_bps": 45990,
     "downside_price_buffer_bps": 2250
   },
   "constraint_evaluations": {
     "evidence_provenance_verified": true,
-    "landed_cost_within_bounds": true,
+    "landed_cost_exact_match": true,
     "margin_above_hurdle": true,
-    "ropf_above_hurdle": true,
-    "recovery_duration_acceptable": true
+    "rowc_above_hurdle": true,
+    "cash_conversion_cycle_acceptable": true
   }
 }
 ```
@@ -107,8 +124,11 @@ The DIN 3017 W4 SS304 pack-of-10 worm-drive hose clamp represents the canonical 
 2. **Supplier Price Creep**:
    - Raw material purchase price creeps from ₹25.0000 to ₹34.0000 (`340000n`).
    - Landed cost increases from ₹38.2100 to ₹47.2100 (`472100n`).
-3. **Elevated Return Rate Drag**:
-   - Customer return rate spikes to 16.00% (from nominal 2.00%), incurring unrecoverable reverse logistics fees and damaged packaging repackaging write-offs.
+3. **Elevated Return Rate Drag & Quarantined Inventory**:
+   - Customer return rate spikes to 16.00% (from nominal 2.00%).
+   - Items in `CUSTOMER_RETURNED_PENDING_INSPECTION` transition to `DAMAGED_QUARANTINED`.
+   - Forward fulfillment (₹18.00) + reverse logistics fee (₹14.00) are fully absorbed on returns with zero salvage recovery.
+   - Amortized return and inventory attrition drag: ₹12.5000 per unit.
 4. **Marketplace Price Erosion**:
    - Competitive selling price forced down to ₹98.0000 (`980000n`).
 
@@ -116,10 +136,10 @@ The DIN 3017 W4 SS304 pack-of-10 worm-drive hose clamp represents the canonical 
 - **Gross Selling Price**: ₹98.0000 (`980000n`).
 - **Landed Cost**: ₹47.2100 (`472100n`).
 - **Marketplace Fees**: Referral ₹14.7000 + Closing ₹25.0000 + FBA ₹18.0000 = ₹57.7000 (`577000n`).
-- **Return & Logistics Drag**: ₹6.5000 per unit amortized.
+- **Return & Logistics Drag**: ₹12.5000 per unit amortized.
 - **Net Contribution**:
-  $$\text{Net Margin} = 98.0000 - 47.2100 - 57.7000 - 6.5000 = -\text{₹}13.4100 \quad (\text{NEGATIVE})$$
-- **Hurdle Breached**: Margin ($< 0\%$) and RoPF ($< 0\%$) completely breached.
+  $$\text{Net Margin} = 98.0000 - 47.2100 - 57.7000 - 12.5000 = -\text{₹}19.4100 \quad (\text{NEGATIVE})$$
+- **Hurdles Breached**: Net margin is negative, RoWC is negative, return drag exceeds threshold.
 
 ### 3.3 Expected Deterministic Engine Output
 ```json
@@ -128,10 +148,10 @@ The DIN 3017 W4 SS304 pack-of-10 worm-drive hose clamp represents the canonical 
   "execution_mode": "PAPER_SIMULATION",
   "product_id": "prod:din3017:ss304:pack-10",
   "rejection_reasons": [
-    "E-ERR-051: NET_MARGIN_BELOW_HURDLE (actual: -13.68%, hurdle: 20.00%)",
-    "E-ERR-052: ROPF_NEGATIVE (actual: -34.12%, hurdle: 25.00%)",
-    "E-ERR-053: RETURN_DRAG_EXCEEDED (actual: 16.00%, limit: 5.00%)",
-    "E-ERR-054: DOWNSIDE_BUFFER_EXHAUSTED"
+    "E-M4-MARGIN-BELOW-HURDLE: Net margin -19.81% below hurdle 20.00%",
+    "E-M4-HURDLE-BREACHED: Annualized RoWC -206.63% below hurdle 15.00%",
+    "E-M4-RETURN-DRAG-EXCEEDED: Customer return drag ₹12.5000 exceeds threshold limit ₹5.0000",
+    "E-M4-DOWNSIDE-BUFFER-EXHAUSTED: Breakeven price exceeds current marketplace selling price"
   ],
   "quarantine_recommended": false,
   "edge_decay_detected": true
@@ -143,17 +163,17 @@ The DIN 3017 W4 SS304 pack-of-10 worm-drive hose clamp represents the canonical 
 ## 4. Scenario C — Insufficient / Unauthenticated Evidence (`FAIL_CLOSED_REJECT`)
 
 ### 4.1 Defective Evidence Injection Parameters
-1. **Invalid Attester Signature**:
-   - Supplier quote claim modified after signing (e.g. unit price altered from ₹30.00 to ₹25.00) or signed with an unknown private key not registered in `TrustAnchorRegistry`.
+1. **Invalid Attester Signature / Unverified Input**:
+   - Supplier quote claim modified after signing or signed with an unrecognized private key (`is_verified: false`).
 2. **Stale Evidence Timestamp**:
-   - Freight quote capture timestamp is `2026-08-01T00:00:00Z` ($> 75\text{ days}$ old, exceeding the 7-day freshness policy limit).
+   - Freight quote capture timestamp is `2026-08-01T00:00:00Z` ($> 75\text{ days}$ old, exceeding `ttl_seconds: 604800`).
 3. **Missing Mandatory Evidence**:
    - Packaging specification claim omitted entirely; no tariff provided for polybagging.
 
 ### 4.2 Ingestion & Attestation Behavior
-- **Cryptographic Gate**: Ed25519 signature verification fails on modified claim payload.
-- **Freshness Gate**: Timestamp validator detects staleness beyond allowed window.
-- **Completeness Gate**: Financial calculation pipeline detects missing packaging cost input.
+- **Cryptographic Gate**: Detects unverified or forged provenance envelope (`is_verified === false`).
+- **Freshness Gate**: Detects staleness beyond allowable TTL ($t_{\text{current}} - t_{\text{observed}} > \text{ttl\_seconds}$).
+- **Completeness Gate**: Detects missing packaging cost input.
 - **Fail-Closed Guarantee**: The engine **MUST NOT** substitute default assumptions, hallucinate missing values, or proceed with incomplete data.
 
 ### 4.3 Expected Deterministic Engine Output
@@ -163,9 +183,9 @@ The DIN 3017 W4 SS304 pack-of-10 worm-drive hose clamp represents the canonical 
   "execution_mode": "FAIL_CLOSED_REJECT",
   "product_id": "prod:din3017:ss304:pack-10",
   "rejection_reasons": [
-    "E-ERR-001: CLAIM_SIGNATURE_INVALID (attester: supp:in:mumbai:metalcraft-ltd)",
-    "E-ERR-007: CLOCK_SKEW_OR_STALENESS_EXCEEDED (freight quote age: 75 days, max: 7 days)",
-    "E-ERR-047: MANDATORY_EVIDENCE_INCOMPLETE (missing packaging_cost_claim)"
+    "E-M4-UNVERIFIED-INPUT: Claim supp:in:mumbai:metalcraft-ltd failed cryptographic signature verification",
+    "E-M4-STALE-EVIDENCE: Freight quote age 75 days exceeds maximum TTL 7 days",
+    "E-M4-MANDATORY-EVIDENCE-INCOMPLETE: Missing mandatory packaging_cost_claim"
   ],
   "quarantine_recommended": true,
   "edge_decay_detected": false
@@ -178,10 +198,12 @@ The DIN 3017 W4 SS304 pack-of-10 worm-drive hose clamp represents the canonical 
 
 | Evaluation Dimension | Scenario A (Viable) | Scenario B (Edge Decay) | Scenario C (Defective Evidence) |
 | :--- | :--- | :--- | :--- |
-| **Evidence Validity** | Complete & Verified | Complete & Verified | **Defective / Unauthenticated** |
+| **Evidence Validity** | Complete & Verified | Complete & Verified | **Defective / Unverified / Stale** |
 | **Landed Cost** | ₹38.2100 | ₹47.2100 | Uncomputable |
 | **Selling Price** | ₹105.0000 | ₹98.0000 | ₹105.0000 (listing present) |
-| **Net Contribution** | +₹16.8517 (44.10%) | -₹13.4100 (-13.68%) | Undefined |
-| **Outlay Recovery** | 18 days | Undefined (loss) | Undefined |
+| **Net Contribution** | +₹16.8517 (44.10%) | -₹19.4100 (-19.81%) | Undefined |
+| **Cash-Conversion Cycle** | 35 days | Undefined (loss) | Undefined |
+| **Annualized RoWC** | 459.90% | Negative | Undefined |
 | **Decision Output** | **`ALLOCATE_CAPITAL`** | **`DO_NOT_ALLOCATE_CAPITAL`** | **`DO_NOT_ALLOCATE_CAPITAL`** |
 | **Status Disposition** | Paper Execution Ready | Economic Decay Rejection | **Fail-Closed Quarantine** |
+

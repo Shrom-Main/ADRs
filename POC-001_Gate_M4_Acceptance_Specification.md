@@ -4,9 +4,9 @@
 | :--- | :--- |
 | **Document Identifier** | `POC-001_Gate_M4_Acceptance_Specification` |
 | **Milestone Gate** | **Gate M4** — End-to-End Research & Capital-Allocation Acceptance Gate |
-| **Document Status** | `PROPOSED / FOR OWNER REVIEW` |
+| **Document Status** | `FROZEN / AUTHORIZED (OD-05)` |
 | **Normative Predecessor** | `POC-001_Gate_M1_Design_Readiness_Specification.md` (v1.13 Final / Erratum v1.14) |
-| **Authorizing Authority** | Project Owner & Independent Audit Desk |
+| **Authorizing Authority** | Project Owner Decision `OD-05` (15 October 2026) |
 | **Operating Boundary** | Strict Dry-Run Simulation; Paper Trading Only; Zero Real Capital Execution |
 | **Focus Vertical Slice** | DIN 3017 W4 Stainless Steel SS304 Worm-Drive Hose Clamp (Pack of 10, 16–25mm) |
 
@@ -25,16 +25,16 @@ The core objective of Gate M4 is to prove that the operating system can take raw
   Supplier & Market Data Feeds (Signed Quotes, Marketplace Catalogs, Fee Schedules)
                                            │
                                            ▼
-  Evidence Ingestion & Provenance Attestation (Ed25519 Signed Claims, RFC 8785 Canonical)
+  Evidence Ingestion & Provenance Attestation (Envelope: source_id, timestamp, ttl, is_verified)
                                            │
                                            ▼
-  Financial & Tax Arithmetic Engine (Rational Subunits, Landed Cost, GST Netting, Amazon Fees)
+  Financial & Tax Arithmetic Engine (Rational Subunits, Landed Cost, GST/TCS/TDS Cash Timing)
                                            │
                                            ▼
-  Inventory Conservation & Working-Capital Duration (7-Bucket Fuzzing, Outlay Recovery Days)
+  Inventory Conservation & Asymmetric Return Drag (7-Bucket Fuzzing, Forward+Reverse Logistics)
                                            │
                                            ▼
-  Capital Allocation Decision Gate (Hurdle Rate, Downside Margin of Safety, Liquidity Check)
+  Capital Allocation Decision Gate (Cash-Conversion Cycle, Risk-Free + Risk Hurdle, Downside Buffer)
                                            │
                   ┌────────────────────────┴────────────────────────┐
                   ▼                                                 ▼
@@ -44,9 +44,9 @@ The core objective of Gate M4 is to prove that the operating system can take raw
 
 ---
 
-## 2. Six Core Assessment Priorities
+## 2. Six Core Assessment Priorities & Required Invariants
 
-Gate M4 implementation and acceptance testing must rigorously satisfy the six strategic priorities established in the Project Owner's Bird's-Eye Project Assessment:
+Gate M4 implementation and acceptance testing must rigorously satisfy the six strategic priorities established in the Project Owner's Bird's-Eye Project Assessment and Decision `OD-05`:
 
 ### Priority 1: Predecessor Conformance Closure
 - All architectural invariants established in Gates M1 through M3 must be maintained without regression.
@@ -61,31 +61,47 @@ Gate M4 implementation and acceptance testing must rigorously satisfy the six st
   - **Landed Cost Breakdown**: Exactly ₹38.2100 per pack (purchase ₹25.0000, freight ₹4.5000, packaging ₹3.2000, insurance ₹1.0000, inspection & net customs/GST ₹4.5100).
   - **Marketplace Target**: Amazon India FBA listing at ₹105.0000 to ₹110.0000 gross consumer selling price.
 
-### Priority 3: Input Evidence & Provenance Tracking
-- Every piece of input data (supplier quotes, freight tariffs, packaging quotes, marketplace listings, fee schedules) must be accompanied by cryptographically verifiable provenance:
-  - **Attester Signature**: Valid Ed25519 signature over RFC 8785 canonical JSON claim payload.
-  - **Capture Timestamp**: ISO 8601 UTC timestamp bounded within strict freshness windows ($\le 7\text{ days}$ for supplier quotes, $\le 24\text{ hours}$ for marketplace listings).
-  - **Attester Identity**: Bound to an unrevoked trust anchor in `TrustAnchorRegistry`.
-  - **Fail-Closed Rejection**: Ingestion of unauthenticated, backfilled, or expired claims must immediately reject fail-closed (`E-ERR-001: CLAIM_TYPE_UNAUTHORIZED` or `E-ERR-007: CLOCK_SKEW_EXCEEDED`).
+### Priority 3: Input Evidence & Provenance Tracking (Envelope & TTL Enforcement)
+- Every material input (supplier quote, freight tariff, packaging cost, marketplace listing, fee schedule, tax rate, demand velocity estimate) must carry an explicit cryptographic provenance envelope:
+  - `source_id`: Canonical identifier of data origin (e.g., `supp:in:mumbai:metalcraft-ltd`, `mkt:amzn:in:fee-schedule:2026`).
+  - `observed_at_utc`: Exact ISO 8601 UTC timestamp of observation.
+  - `ttl_seconds`: Time-to-live validity window ($\le 604800\text{s}$ [7 days] for supplier quotes, $\le 86400\text{s}$ [24 hours] for marketplace prices).
+  - `is_verified`: Boolean attestation status confirming cryptographic signature verification against `TrustAnchorRegistry`.
+- **Fail-Closed Staleness & Provenance Gate**:
+  - If any input lacks verification, has an expired TTL, or is missing entirely, the engine **MUST** reject fail-closed and emit `DO_NOT_ALLOCATE_CAPITAL` with explicit machine-readable error codes (`E-M4-UNVERIFIED-INPUT` or `E-M4-STALE-EVIDENCE`).
+  - Silent fallbacks, default values, or hallucinated assumptions are strictly prohibited.
 
-### Priority 4: End-to-End Financial & Tax Correctness
+### Priority 4: End-to-End Financial & Tax Correctness (Cash-Conversion Cycle & Tax Drag)
 - All calculations must use integer subunits (scale 4, 1 subunit = ₹0.0001) or exact rational fractions. Floating-point arithmetic (`number` multiplication/division) is strictly prohibited in financial paths.
-- **Comprehensive Cost Stack**:
-  1. *Purchase Outlay*: Gross supplier price less verified trade discounts.
+- **Comprehensive Cost Stack & Cash-Flow Timing**:
+  1. *Purchase Outlay*: Gross supplier price less verified trade discounts (Day 0 cash outflow).
   2. *Inbound Logistics*: Volumetric vs actual weight freight tariff calculation per KAT-03.
   3. *Packaging & Kitting*: Barcoding, polybagging, and labeling costs.
   4. *Marketplace Fees*: Exact category referral fees, closing fees per fee schedule, weight handling fees, and FBA storage fees.
-  5. *Tax Engine*: Forward GST calculation on marketplace sales, offset by verified Input Tax Credit (ITC) on procurement and logistics; income tax reserve provisions.
-  6. *Working-Capital Lock-Up*: Outlay recovery duration ($k_{\text{rec}} - k_{\text{outlay}}$) computed per `REC-OUTLAY-001` to determine annualized capital turnover velocity.
-  7. *Inventory Drag*: Expected write-offs for customer returns and transit damage factored into net unit economics.
+  5. *Working-Capital Tax Drag & Holdback Modeling*:
+     - Upfront 18% GST paid on procurement and logistics ties up cash until offset against output tax liability.
+     - Section 52 CGST Act: Marketplace Tax Collected at Source (TCS) of 1.00% withheld on gross sales.
+     - Section 194-O Income Tax Act: Tax Deducted at Source (TDS) of 1.00% withheld on marketplace disbursements.
+     - These tax holdbacks directly extend working-capital lock-up and must not be treated as immediate cash inflows.
+  6. *Cash-Conversion Cycle (CCC)*:
+     $$\text{CCC Days} = \text{Procurement Lead Time Days} + \text{Warehouse Dwell Days} + \text{Marketplace Settlement Delay Days}$$
+     Capital lock-up duration is modeled over full CCC (e.g. $7 + 14 + 14 = 35\text{ days}$).
+  7. *Asymmetric Return & Damaged-Inventory Drag*:
+     - On marketplace returns, forward fulfillment fees and reverse logistics fees are unrecoverable.
+     - Customer returns entering `CUSTOMER_RETURNED_PENDING_INSPECTION` transition to `DAMAGED_QUARANTINED` at an empirical attrition rate (e.g. 2% to 16%), destroying cost basis while consuming logistics fees.
+     - `PROP-INV-001` 7-bucket inventory conservation holds strictly at every transition.
 
-### Priority 5: Decision Quality & Negative Hurdle Gating
+### Priority 5: Decision Quality & Opportunity Cost Hurdle Gating
 - The capital allocation engine must evaluate opportunities against strict hurdle thresholds:
-  - **Minimum Return on Peak Funding (RoPF)**: $\ge 25.00\%$ annualized.
+  - **Risk-Adjusted Opportunity Cost Hurdle**:
+    $$\text{Hurdle Rate} = \text{Sovereign 91-Day T-Bill Yield (6.50\%)} + \text{Illiquidity / Execution Risk Premium (8.50\%)} = 15.00\% \text{ annualized}$$
+  - **Annualized Return on Locked Working Capital (RoWC)**:
+    $$\text{Annualized RoWC} = \frac{\text{Net After-Tax Contribution}}{\text{Peak Working Capital Outlay}} \times \frac{365}{\text{CCC Days}}$$
+    Must strictly exceed the Hurdle Rate ($\text{Annualized RoWC} \ge 15.00\%$).
   - **Minimum Cash-on-Cash Margin**: $\ge 20.00\%$ net after all fees, taxes, and return provisions.
-  - **Maximum Outlay Recovery Window**: $\le 45\text{ days}$.
+  - **Maximum CCC Duration**: $\le 45\text{ days}$.
   - **Downside Breakeven Buffer**: Must withstand a $\ge 15.00\%$ drop in marketplace selling price without negative contribution.
-- **Fail-Closed Negative Decision Rule**: If any hurdle is breached, evidence provenance is defective, or liquidity is inadequate, the engine **MUST** deterministically emit `DO_NOT_ALLOCATE_CAPITAL` with a machine-readable list of failing constraints. Silent coercion or optimistic approval is strictly prohibited.
+- **Fail-Closed Negative Decision Rule**: If any hurdle is breached, evidence provenance is defective, or liquidity is inadequate, the engine **MUST** deterministically emit `DO_NOT_ALLOCATE_CAPITAL` with a machine-readable list of failing constraints (`E-M4-HURDLE-BREACHED`, `E-M4-MARGIN-BELOW-HURDLE`, `E-M4-RETURN-DRAG-EXCEEDED`, etc.).
 
 ### Priority 6: Repeatability & Edge-Decay Detection
 - The system must detect deterioration in unit economics over time:
@@ -93,7 +109,7 @@ Gate M4 implementation and acceptance testing must rigorously satisfy the six st
   - Supplier price increases or lead-time expansion.
   - Competitive price erosion on target marketplace listings.
   - Elevated customer return rates degrading net recovery.
-- Re-running the simulation pipeline against degraded parameters must deterministically transition the decision from `ALLOCATE_CAPITAL` to `DO_NOT_ALLOCATE_CAPITAL`.
+- Re-running the simulation pipeline against degraded parameters must deterministically transition the decision from `ALLOCATE_CAPITAL` to `DO_NOT_ALLOCATE_CAPITAL` and emit a structured audit trail detailing the exact constraint breach.
 
 ---
 
@@ -153,4 +169,4 @@ To maintain architectural focus, safety, and strict alignment with the Project C
 
 ## 5. Specification Governance Status
 
-This document is submitted as **`PROPOSED / FOR OWNER REVIEW`**. Implementation of Gate M4 feature code shall commence only upon formal ratification of this specification and the accompanying test scenario document by the Project Owner.
+This document is formally **`FROZEN / AUTHORIZED (OD-05)`** by Project Owner Decision `OD-05` (15 October 2026). Implementation of Gate M4 feature code and the accompanying test suite (`suite20_m4_ss304_vertical_slice.test.ts`) is authorized under strict adherence to all out-of-scope boundaries and five core financial invariants.
