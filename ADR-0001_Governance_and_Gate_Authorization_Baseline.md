@@ -48,9 +48,13 @@ Chosen option: **Ratified Dual Approach (Owner Ratified October 15, 2026)**.
    - **Approved Scope:** File-backed recovery journal; separate-process crash worker recovery; native PostgreSQL 16.8 concurrency & commit reconciliation; ActualsGuard dual-ledger cryptographic verification; 19 suites, 158 passed assertions; zero vulnerabilities under npm audit.
    - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-02 and maintained under Decision OD-03 by Project Owner on 2026-10-15).
 5. **Gate M4 (End-to-End Research & Capital-Allocation Vertical Slice):**
-   - **Baseline:** `Market-HFT-OS` @ `9bc249a1a795af83f838febe5d26bb6a29030158` (`9bc249a`) / `ADRs` @ current `main`.
+   - **Baseline:** `Market-HFT-OS` @ `9bc249a1a795af83f838febe5d26bb6a29030158` (`9bc249a`) / `ADRs` @ `c5aa59d`.
    - **Approved Scope:** Bounded research and capital-allocation simulation engine for DIN 3017 W4 SS304 hose clamps (pack of 10); Suite 20 (8 tests); 20 suites, 169 passed tests (0 skipped, 0 failed); five core invariants (provenance envelope & TTL, working-capital tax drag, asymmetric return drag, risk-adjusted hurdle vs T-Bills, deterministic edge-decay detection); zero real-money capital execution.
    - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-05 by Project Owner on 2026-10-15).
+6. **Gate M4.1 (Statutory Math Remediation & Governed Formula Registry / RAG Bootstrap):**
+   - **Baseline:** `Market-HFT-OS` @ `a1053b086e5025b76db1839b67cfede504c5bce1` (`a1053b0`) / `ADRs` @ current `main`.
+   - **Approved Scope:** Remediation of 4 statutory tax and unit-economics flaws (MATH-01 to MATH-04); creation of Governed Formula Registry and Local BM25 RAG Retriever (`src/research/formulaRegistry.ts`); Suite 20 expanded to 11 tests; full test baseline expanded to 172 passed tests across 20 suites (0 skipped, 0 failed).
+   - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-06 by Project Owner on 2026-10-16).
 
 ### Project Owner Decision OD-02 (Hybrid Scope Resolution for Frozen Spec §8.2)
 
@@ -98,6 +102,26 @@ Formally authorized by Project Owner on 2026-10-15:
    - Generated dedicated Gate M4 evidence files: `POC-001_Gate_M4_Test_Execution_Results.json` (SHA-256: `04A7BAA3497DD138BCD3CF901D9EBB35515EFA4A05A7B8BC5BC1AC4C6DF2A0C7`), `POC-001_Gate_M4_Typecheck_Execution_Results.txt`, and `POC-001_Gate_M4_Vertical_Slice_Conformance_Report.md`.
 4. **Milestone Disposition:**
    - Gate M4 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
+### Project Owner Decision OD-06 (Gate M4.1 Statutory Math Remediation & Governed Formula Registry / RAG Bootstrap)
+
+Formally authorized by Project Owner on 2026-10-16:
+1. **Statutory Tax & Unit Economics Remediation (MATH-01 to MATH-04):**
+   - Corrected four real-world Indian statutory tax and unit-economics approximations in `src/research/m4VerticalSlice.ts`:
+     - **MATH-01 (18% Marketplace Fee GST & ITC)**: Marketplace fees incur 18% GST ($₹39.75 \times 18\% = ₹7.1550$) withheld from disbursements and added to eligible Input Tax Credit (ITC) under CGST Act Sec 16.
+     - **MATH-02 (Ex-GST Tax Base for Sec 52 TCS & Sec 194-O TDS)**: TCS (1%) and TDS (1%) are levied strictly on the ex-GST net taxable base (₹88.9830), yielding ₹0.8898 each, rather than the GST-inclusive gross price.
+     - **MATH-03 (Non-Fungible Tax Ledger Separation)**: Section 52 GST TCS in the GST Electronic Cash Ledger offsets GSTR-3B Output GST liability (reducing cash liability from ₹3.0333 to ₹2.1435), while Section 194-O Income Tax TDS is non-fungible with GST and is tracked separately as an income-tax holdback.
+     - **MATH-04 (Supplier Trade Credit Terms in CCC)**: Supplier payment terms are explicitly incorporated into the cash-conversion cycle: $\text{CCC} = \max(1, \text{Lead} + \text{Dwell} + \text{DisbursementDelay} - \text{PaymentTerms})$. Set to 0 for advance EXW MOQ procurement (35 days), and verified that 15-day supplier credit compresses CCC to 20 days and expands RoWC to 698.97%.
+2. **Governed Formula Registry & Local BM25 RAG Architecture:**
+   - Implemented `src/research/formulaRegistry.ts` exporting `FormulaRegistry` and pre-loading 5 canonical formulas (`FIN-LANDED-COST-001`, `FIN-MKT-FEES-GST-002`, `FIN-STATUTORY-TCS-TDS-003`, `FIN-RETURN-ATTRITION-004`, `FIN-CCC-ROWC-005`) sealed with RFC 8785 JCS digests.
+   - Built deterministic Okapi BM25 keyword/semantic search over statutory citations and invariants (`retrieveFormulas("Section 194-O TDS GST offset")` returns `FIN-STATUTORY-TCS-TDS-003`).
+   - Enforced strict dual-tier isolation: candidate formulas reside in `CANDIDATE_UI_MODEL` and fail closed (`E-ERR-GOV-001`) if executed in production without explicit owner promotion (`promoteCandidateFormula`).
+3. **Evidence Separation & Test Baseline:**
+   - Suite 20 expanded to 11 tests (adding `M4-STATUTORY-MATH-009`, `M4-FORMULA-REGISTRY-RAG-010`, and `M4-FORMULA-GOVERNANCE-ISOLATION-011`).
+   - Full test suite passes 100% across **20 suites / 172 tests (0 skipped, 0 failed)** on live PostgreSQL 16.8.
+   - Dedicated Gate M4.1 evidence files generated: `POC-001_Gate_M4_1_Test_Execution_Results.json` (SHA-256: `0BA7C517DE32287309599DE54017E8E0FF4918514A4DBC0B5F37D48BF34863D1`) and `POC-001_Gate_M4_1_Typecheck_Execution_Results.txt` (SHA-256: `AEBAE79954369EA1B651A8917EAF32B981FAF5AE6387EA4A3F21B15B551DF58E`).
+4. **Milestone Disposition:**
+   - Gate M4.1 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
 ### Safety Invariants
 

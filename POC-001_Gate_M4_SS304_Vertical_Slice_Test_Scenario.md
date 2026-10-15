@@ -207,3 +207,29 @@ The DIN 3017 W4 SS304 pack-of-10 worm-drive hose clamp represents the canonical 
 | **Decision Output** | **`ALLOCATE_CAPITAL`** | **`DO_NOT_ALLOCATE_CAPITAL`** | **`DO_NOT_ALLOCATE_CAPITAL`** |
 | **Status Disposition** | Paper Execution Ready | Economic Decay Rejection | **Fail-Closed Quarantine** |
 
+---
+
+## 6. Gate M4.1 Addendum: Remediation of Statutory Tax & Unit Economics (OD-06)
+
+Under Decision OD-06, the unit economics are statutorily hardened to include 18% GST on marketplace fees (with 100% ITC), Section 52 TCS & Section 194-O TDS computed on the ex-GST revenue base (₹88.9830), non-fungible separation of Income Tax TDS from GSTR-3B GST liability, and explicit supplier payment terms in the CCC formula.
+
+### Reconciled Statutory Unit Economics Comparison
+
+| Parameter | Scenario A Baseline (Advance EXW) | Scenario A (15-Day Trade Credit) | Scenario B (Deterioration & Decay) |
+| :--- | :--- | :--- | :--- |
+| **Gross Selling Price** | ₹105.0000 (`1050000n`) | ₹105.0000 (`1050000n`) | ₹98.0000 (`980000n`) |
+| **Landed Cost** | ₹38.2100 (`382100n`) | ₹38.2100 (`382100n`) | ₹47.2100 (`472100n`) |
+| **Total Marketplace Fees** | ₹39.7500 (`397500n`) | ₹39.7500 (`397500n`) | ₹57.7000 (`577000n`) |
+| **Marketplace Fee GST (18%)** | ₹7.1550 (`71550n`) | ₹7.1550 (`71550n`) | ₹10.3860 (`103860n`) |
+| **Sec 52 TCS (1% ex-GST)** | ₹0.8898 (`8898n`) | ₹0.8898 (`8898n`) | ₹0.8305 (`8305n`) |
+| **Sec 194-O TDS (1% ex-GST)** | ₹0.8898 (`8898n`) | ₹0.8898 (`8898n`) | ₹0.8305 (`8305n`) |
+| **Net Marketplace Disb.** | ₹56.3154 (`563154n`) | ₹56.3154 (`563154n`) | ₹28.2530 (`282530n`) |
+| **Net GST Cash Settlement** | ₹2.1435 (`21435n`) | ₹2.1435 (`21435n`) | ₹0.0000 (`0n`, excess ITC) |
+| **Return & Quarantine Drag** | ₹1.3242 (`13242n`) | ₹1.3242 (`13242n`) | ₹12.6736 (`126736n`) |
+| **Unit Net Contribution** | **+₹14.6377 (`146377n`)** | **+₹14.6377 (`146377n`)** | **-₹31.6306 (`-316306n`)** |
+| **Cash Margin** | **+38.30% (3,830 bps)** | **+38.30% (3,830 bps)** | **-66.99% (-6,699 bps)** |
+| **Payment Terms (DPO)** | 0 days (Advance EXW) | 15 days (Trade credit) | 0 days |
+| **Cash-Conversion Cycle** | **35 days** ($7 + 14 + 14 - 0$) | **20 days** ($7 + 14 + 14 - 15$) | **35 days** |
+| **Annualized RoWC** | **+399.41% (39,941 bps)** | **+698.97% (69,897 bps)** | **-698.61% (-69,861 bps)** |
+| **Decision** | **`ALLOCATE_CAPITAL`** | **`ALLOCATE_CAPITAL`** | **`DO_NOT_ALLOCATE_CAPITAL`** |
+

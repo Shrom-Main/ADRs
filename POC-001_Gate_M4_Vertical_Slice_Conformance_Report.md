@@ -75,7 +75,8 @@ All test evidence artifacts remain partitioned across four distinct lifecycle mi
 | **1. Gate M3 Verified Closure** | `0ee073eccda1470ece5a05804aabcf311a540a61` | 158 Passed | `POC-001_Gate_M3_Test_Execution_Results.json`<br>`POC-001_Gate_M3_Typecheck_Execution_Results.txt` | `2A67460967C339D290C925396F321B59753A9A6AD73034162962D439BC2E1434` |
 | **2. Post-M3 Security Maintenance** | `80c4bfd95420584ef66dfe5429e5e2fd0b02e10d` | 158 Passed | Preserved M3 baseline; documented in `ADR-0004` & ledger | `0 vulnerabilities` in `npm audit` |
 | **3. Pre-M4 Conformance Baseline** | `cf0faf19024d40236fec372bbdfb105beebd9441` | 161 Passed | `POC-001_Pre_M4_Conformance_Test_Execution_Results.json`<br>`POC-001_Pre_M4_Typecheck_Execution_Results.txt` | `2BD75AE3EB2A8E9F2A2629315499896B314F2BB307790BA9FAC436A7BB9B7FEC` |
-| **4. Gate M4 Verified Closure** | `9bc249a1a795af83f838febe5d26bb6a29030158` | **169 Passed** | `POC-001_Gate_M4_Test_Execution_Results.json`<br>`POC-001_Gate_M4_Typecheck_Execution_Results.txt` | `04A7BAA3497DD138BCD3CF901D9EBB35515EFA4A05A7B8BC5BC1AC4C6DF2A0C7` |
+| **4. Gate M4 Verified Closure** | `9bc249a1a795af83f838febe5d26bb6a29030158` | 169 Passed | `POC-001_Gate_M4_Test_Execution_Results.json`<br>`POC-001_Gate_M4_Typecheck_Execution_Results.txt` | `04A7BAA3497DD138BCD3CF901D9EBB35515EFA4A05A7B8BC5BC1AC4C6DF2A0C7` |
+| **5. Gate M4.1 Verified Closure** | `a1053b086e5025b76db1839b67cfede504c5bce1` | **172 Passed** | `POC-001_Gate_M4_1_Test_Execution_Results.json`<br>`POC-001_Gate_M4_1_Typecheck_Execution_Results.txt` | `0BA7C517DE32287309599DE54017E8E0FF4918514A4DBC0B5F37D48BF34863D1` |
 
 ---
 
@@ -91,6 +92,25 @@ All test evidence artifacts remain partitioned across four distinct lifecycle mi
 
 ---
 
-## 6. Conclusion & Recommendation
+## 6. Gate M4.1 Conformance Addendum: Statutory Math Remediation & Governed Formula Registry (Decision OD-06)
 
-Gate M4 technical implementation and acceptance criteria are satisfied in full. All 20 test suites (169 tests) pass against live PostgreSQL 16.8 with zero failures and zero skipped tests. The platform is ready for Gate M4 closure sign-off by the Project Owner.
+Under Project Owner Decision `OD-06` (16 October 2026), four real-world statutory tax and unit economics flaws were remediated and the Governed Formula Registry was deployed:
+
+1. **Statutory Tax Remediation**:
+   - `MATH-01`: 18% GST on marketplace fees ($₹39.75 \times 18\% = ₹7.1550$) deducted from disbursements and added to eligible Input Tax Credit (ITC).
+   - `MATH-02`: Section 52 CGST TCS (1%) and Section 194-O Income Tax TDS (1%) computed on the ex-GST net taxable base (₹88.9830), yielding ₹0.8898 each.
+   - `MATH-03`: Strict non-fungibility between GST and Income Tax. Only TCS offsets monthly GSTR-3B liability (₹2.1435 net cash settlement), while TDS remains an explicit income-tax withholding holdback.
+   - `MATH-04`: Supplier payment terms incorporated into Cash Conversion Cycle: $\text{CCC} = \max(1, \text{Lead} + \text{Dwell} + \text{DisbDelay} - \text{PaymentTerms})$. Set to 0 for advance EXW MOQ procurement (35 days), and proven to shorten to 20 days with 698.97% RoWC on 15-day trade credit.
+2. **Governed Formula Registry & BM25 Local RAG**:
+   - `src/research/formulaRegistry.ts` deployed, indexing 5 canonical formulas (`FIN-LANDED-COST-001` through `FIN-CCC-ROWC-005`) under RFC 8785 JCS digests.
+   - Deterministic Okapi BM25 keyword search over statutory citations and invariants verified (`retrieveFormulas("Section 194-O TDS GST offset")` returns `FIN-STATUTORY-TCS-TDS-003`).
+   - Dual-tier sandbox isolation: `CANDIDATE_UI_MODEL` formulas fail closed (`E-ERR-GOV-001`) if executed in production without explicit owner promotion.
+3. **Test Suite Expansion**:
+   - Suite 20 expanded from 8 to 11 tests with the addition of `M4-STATUTORY-MATH-009`, `M4-FORMULA-REGISTRY-RAG-010`, and `M4-FORMULA-GOVERNANCE-ISOLATION-011`.
+   - Total test baseline expanded to **172 passed tests across 20 suites (0 skipped, 0 failed)** on live PostgreSQL 16.8.
+
+---
+
+## 7. Conclusion & Recommendation
+
+Gate M4.1 technical implementation, statutory tax hardening, and Governed Formula Registry deployment are satisfied in full. All 20 test suites (172 tests) pass against live PostgreSQL 16.8 with zero failures and zero skipped tests. The platform is ready for Gate M4.1 closure sign-off by the Project Owner.

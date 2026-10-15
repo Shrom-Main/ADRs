@@ -170,3 +170,22 @@ To maintain architectural focus, safety, and strict alignment with the Project C
 ## 5. Specification Governance Status
 
 This document is formally **`FROZEN / AUTHORIZED (OD-05)`** by Project Owner Decision `OD-05` (15 October 2026). Implementation of Gate M4 feature code and the accompanying test suite (`suite20_m4_ss304_vertical_slice.test.ts`) is authorized under strict adherence to all out-of-scope boundaries and five core financial invariants.
+
+---
+
+## 6. Gate M4.1 Addendum: Statutory Math Remediation & Governed Formula Registry (OD-06)
+
+Under Project Owner Decision `OD-06` (16 October 2026), this specification is augmented with the following normative statutory math rules and the Governed Formula Registry architecture:
+
+1. **MATH-01 (18% Marketplace Fee GST & ITC):**
+   - Amazon marketplace fees (Referral, Closing, FBA weight handling) attract 18% GST ($₹39.75 \times 18\% = ₹7.1550$), deducted from seller payouts and credited to the GST Electronic Credit Ledger as eligible Input Tax Credit (ITC) under CGST Act Sec 16.
+2. **MATH-02 (Ex-GST Base for Sec 52 TCS & Sec 194-O TDS):**
+   - E-commerce TCS (1%) under Section 52 CGST and TDS (1%) under Section 194-O of Income Tax Act are computed strictly on the ex-GST net taxable revenue ($₹105.0000 \times \frac{10000}{11800} = ₹88.9830$), resulting in ₹0.8898 each.
+3. **MATH-03 (Non-Fungible Separation of GST and Income Tax):**
+   - Section 52 CGST TCS in the GST Electronic Cash Ledger offsets Output GST liability (reducing cash liability from ₹3.0333 to ₹2.1435). Section 194-O Income Tax TDS is non-fungible with GST and remains an explicit income-tax withholding holdback until annual return filing.
+4. **MATH-04 (Supplier Trade Credit Terms in Cash-Conversion Cycle):**
+   - $\text{CCC} = \max(1, \text{Lead} + \text{Dwell} + \text{SettlementDelay} - \text{PaymentTerms})$. Scenario A baseline specifies `payment_terms_days: 0` (advance EXW payment on MOQ) to earn 35-day CCC, while positive trade credit (`payment_terms_days = 15`) shortens CCC to 20 days and expands RoWC to 698.97%.
+5. **Governed Formula Registry (`src/research/formulaRegistry.ts`):**
+   - Houses 5 canonical normative formulas (`FIN-LANDED-COST-001` to `FIN-CCC-ROWC-005`) with deterministic Okapi BM25 keyword/semantic search over statutory citations and invariants.
+   - Dual-tier governance: UI/LLM-proposed formulas reside in sandboxed `CANDIDATE_UI_MODEL` tier and cannot execute in production without owner promotion.
+   - Expanded test baseline: **172 passed tests across 20 suites (0 skipped, 0 failed)**.
