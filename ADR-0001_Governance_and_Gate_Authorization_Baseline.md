@@ -43,9 +43,19 @@ Chosen option: **Ratified Dual Approach (Owner Ratified October 15, 2026)**.
    - **Baseline:** `Market-HFT-OS` @ `cbafb60`.
    - **Approved Scope:** Paper execution pipeline; monotonic virtual clock; simulated gateway; loopback WebSocket feed; dual-ledger safety isolation (15 suites, 106 tests).
 4. **Gate M3 (Persistence, Crash Recovery, Dual-Ledger Verification & Native PostgreSQL Concurrency):**
-   - **Baseline:** `Market-HFT-OS` @ `0e6512e` / `ADRs` @ current `main`.
-   - **Approved Scope:** File-backed recovery journal; separate-process crash worker recovery; native PostgreSQL 16.8 concurrency & commit reconciliation; ActualsGuard dual-ledger cryptographic verification; 19 suites, 157 passed assertions.
-   - **Status:** **APPROVED / CLOSED** (Formally signed off by Project Owner on 2026-10-15).
+   - **Baseline:** `Market-HFT-OS` @ `0ee073eccda1470ece5a05804aabcf311a540a61` (`0ee073e`) / `ADRs` @ current `main`.
+   - **Approved Scope:** File-backed recovery journal; separate-process crash worker recovery; native PostgreSQL 16.8 concurrency & commit reconciliation; ActualsGuard dual-ledger cryptographic verification; 19 suites, 158 passed assertions.
+   - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-02 by Project Owner on 2026-10-15).
+
+### Project Owner Decision OD-02 (Hybrid Scope Resolution for Frozen Spec §8.2)
+
+Formally authorized by Project Owner on 2026-10-15:
+1. **Waiver of Legacy Upstream Retail/E-Commerce Fixtures:**
+   - `PROP-INV-001` (7-bucket warehouse inventory transitions), `META-FEE-001` (Amazon seller closing fee monotonicity steps), and `HIST-REPLAY-001` (AIStudio March 2026 SS304 clamp landed cost fixture at ₹38.21) are legacy upstream retail/e-commerce artifacts from the AIStudio template that have zero application to the Market-HFT-OS financial trading runtime. They are formally waived and de-scoped from the Market-HFT-OS runtime baseline.
+2. **Retention and Verification of Platform Timing Invariants:**
+   - `FUZZ-CLOCK-001` (+600s clock skew -> `E-ERR-007: CLOCK_SKEW_EXCEEDED`) is an authentic platform timing invariant and is retained, implemented, and verified in `suite13_market_feed_execution.test.ts`, expanding the verified test suite to **158 passed tests across 19 suites** (0 skipped, 0 failed).
+3. **Milestone Disposition:**
+   - Gate M3 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
 ### Safety Invariants
 

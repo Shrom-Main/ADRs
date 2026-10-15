@@ -5,8 +5,8 @@
 **Date:** `2026-10-14`  
 **Status:** `GATE M3 CONFORMANCE VERIFIED — PHYSICAL DURABILITY HARDENED, RECOVERY PARITY PROVEN, DUAL-LEDGER CRYPTOGRAPHIC VERIFICATION & NATIVE POSTGRESQL 16.8 CONCURRENCY ACCEPTED`  
 **Implementation Repository:** `https://github.com/Shrom-Main/Market-HFT-OS.git`  
-**Implementation Commit Baseline:** Published on `main` @ [`0e6512e`](https://github.com/Shrom-Main/Market-HFT-OS/commit/0e6512edb31b6124a014e0d4b44331b6fdba0b97)  
-**Prior Gate Baselines:** Gate M0 Initial [`582637b`](https://github.com/Shrom-Main/Market-HFT-OS/commit/582637b) · Gate M1 Final [`70121a0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/70121a05f160b8674133ecd3d6c48cd3b6fcb2ae) · Gate M2 Final Closure [`cbafb60`](https://github.com/Shrom-Main/Market-HFT-OS/commit/cbafb60fdb5926a649f90ec41e4493562703c564) · Gate M3 Intermediate [`a1bd359`](https://github.com/Shrom-Main/Market-HFT-OS/commit/a1bd359) · Remediation [`efa6d81`](https://github.com/Shrom-Main/Market-HFT-OS/commit/efa6d81) · ActualsGuard & CRLF [`5a86abf`](https://github.com/Shrom-Main/Market-HFT-OS/commit/5a86abf)  
+**Implementation Commit Baseline:** Published on `main` @ [`0ee073e`](https://github.com/Shrom-Main/Market-HFT-OS/commit/0ee073eccda1470ece5a05804aabcf311a540a61)  
+**Prior Gate Baselines:** Gate M0 Initial [`582637b`](https://github.com/Shrom-Main/Market-HFT-OS/commit/582637b) · Gate M1 Final [`70121a0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/70121a05f160b8674133ecd3d6c48cd3b6fcb2ae) · Gate M2 Final Closure [`cbafb60`](https://github.com/Shrom-Main/Market-HFT-OS/commit/cbafb60fdb5926a649f90ec41e4493562703c564) · Gate M3 Intermediate [`a1bd359`](https://github.com/Shrom-Main/Market-HFT-OS/commit/a1bd359) · Remediation [`efa6d81`](https://github.com/Shrom-Main/Market-HFT-OS/commit/efa6d81) · ActualsGuard & CRLF [`5a86abf`](https://github.com/Shrom-Main/Market-HFT-OS/commit/5a86abf) · Owner Ratification [`58b5e06`](https://github.com/Shrom-Main/Market-HFT-OS/commit/58b5e06) · Final M3 Closure [`0ee073e`](https://github.com/Shrom-Main/Market-HFT-OS/commit/0ee073e)  
 **Frozen Specification:** [`POC-001_Gate_M1_Design_Readiness_Specification.md`](https://github.com/Shrom-Main/ADRs/blob/77eff71c3807c8852b49355f50e814bd75eb90ad/POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.13 Final, commit `77eff71c3807c8852b49355f50e814bd75eb90ad`)
 
 ---
@@ -161,7 +161,7 @@ The failure boundary table mandated by the audit desk was implemented and valida
 * **Execution Command:** `$env:DATABASE_URL = "postgresql://postgres@localhost:5432/market_hft_test"; npm.cmd test`
 * **Pass / Skip / Fail Counts:**
   * **Test Files:** 19 passed / 19 total (100%)
-  * **Tests:** 157 passed, 0 skipped, 0 failed
+  * **Tests:** 158 passed, 0 skipped, 0 failed
 * **Suite 17 Native Verification Cases:**
   1. `M3-REAL-POSTGRES-SERVER-VERSION-001`: Connected server version is verified as `PostgreSQL 16.8, compiled by Visual C++ build 1942, 64-bit` via `SELECT version()`. (PASS)
   2. `M3-REAL-POSTGRES-ROWLOCK-002`: Real PostgreSQL `SELECT ... FOR UPDATE` deterministically serializes concurrent TCP client connections. Eliminating arbitrary sleep timers, a monitor client queries `pg_locks` (`granted = false`) and `pg_stat_activity` (`wait_event_type = 'Lock'`), obtaining authoritative proof directly from PostgreSQL's internal lock manager that Client 2 is blocked waiting on Client 1's lock before Client 1 commits. Upon Client 1's commit, Client 2 immediately unblocks and observes committed sequence `1`. (PASS)
@@ -175,8 +175,8 @@ The failure boundary table mandated by the audit desk was implemented and valida
 ## 5. Artifact Audit Manifest
 
 1. **Implementation Repository:** [`Market-HFT-OS`](https://github.com/Shrom-Main/Market-HFT-OS.git)  
-   * Commit Baseline: Published on remote `main` @ [`0e6512e`](https://github.com/Shrom-Main/Market-HFT-OS/commit/0e6512edb31b6124a014e0d4b44331b6fdba0b97)  
-   * Test Evidence: [`test-results.json`](./POC-001_Gate_M3_Test_Execution_Results.json) (19 suites, 157 passed, 0 skipped, 0 failed)  
+   * Commit Baseline: Published on remote `main` @ [`0ee073e`](https://github.com/Shrom-Main/Market-HFT-OS/commit/0ee073eccda1470ece5a05804aabcf311a540a61)  
+   * Test Evidence: [`test-results.json`](./POC-001_Gate_M3_Test_Execution_Results.json) (19 suites, 158 passed, 0 skipped, 0 failed)  
    * Typecheck Evidence: [`POC-001_Gate_M3_Typecheck_Execution_Results.txt`](./POC-001_Gate_M3_Typecheck_Execution_Results.txt) (0 diagnostics, exit code 0)
 2. **Architecture Decision Records (ADRs) Repository:** [`ADRs`](https://github.com/Shrom-Main/ADRs.git)  
    * Conformance Report: [`POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md`](./POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md)  

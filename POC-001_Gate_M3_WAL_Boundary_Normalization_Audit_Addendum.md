@@ -4,7 +4,7 @@
 **Version:** `1.2.0`  
 **Date:** `2026-10-14`  
 **Status:** `PUBLISHED ON MAIN — AWAITING OWNER REVIEW & APPROVAL`  
-**Target Baseline:** `Market-HFT-OS` commit [`0e6512e`](https://github.com/Shrom-Main/Market-HFT-OS/commit/0e6512edb31b6124a014e0d4b44331b6fdba0b97) (published on `main`), incorporating CRLF WAL normalization at [`5a86abf`](https://github.com/Shrom-Main/Market-HFT-OS/commit/5a86abf) and expanding on [`8a89cf0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/8a89cf051bc253fb82c1a685a74a0ddf1e0a7d36) (published on `main`)  
+**Target Baseline:** `Market-HFT-OS` commit [`0ee073e`](https://github.com/Shrom-Main/Market-HFT-OS/commit/0ee073eccda1470ece5a05804aabcf311a540a61) (published on `main`), incorporating CRLF WAL normalization at [`5a86abf`](https://github.com/Shrom-Main/Market-HFT-OS/commit/5a86abf) and expanding on [`8a89cf0`](https://github.com/Shrom-Main/Market-HFT-OS/commit/8a89cf051bc253fb82c1a685a74a0ddf1e0a7d36) (published on `main`)  
 **Parent Baseline:** [`7415c61`](https://github.com/Shrom-Main/Market-HFT-OS/commit/7415c617be2cd680217ebb07b4209466c1084918) (published)  
 **Frozen Specification:** [`POC-001_Gate_M1_Design_Readiness_Specification.md`](https://github.com/Shrom-Main/ADRs/blob/77eff71c3807c8852b49355f50e814bd75eb90ad/POC-001_Gate_M1_Design_Readiness_Specification.md) (v1.13 Final, pinned at `77eff71`)
 
@@ -54,7 +54,7 @@ Expanded regression tests in `tests/acceptance/suite16_crash_recovery_persistenc
 ### Execution Output
 ```
 Test Files  19 passed (19)
-     Tests  157 passed (157 total, 0 skipped, 0 failed)
+     Tests  158 passed (158 total, 0 skipped, 0 failed)
   Duration  7.92s
 Type Check  0 diagnostics (tsc --noEmit)
 ```

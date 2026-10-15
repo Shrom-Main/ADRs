@@ -23,13 +23,13 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 3. Gate Conformance Reports & Audit Evidence
 
-* **Gate M3 Conformance Report (v1.4.0 Final):** [`POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md`](./POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md) (`POC-001-M3-CONF-001`) — 19 test files / 157 tests passed.
+* **Gate M3 Conformance Report (v1.4.0 Final):** [`POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md`](./POC-001_Gate_M3_Persistence_and_Crash_Recovery_Conformance_Report.md) (`POC-001-M3-CONF-001`) — 19 test files / 158 tests passed.
 * **Gate M3 WAL Boundary Normalization Addendum:** [`POC-001_Gate_M3_WAL_Boundary_Normalization_Audit_Addendum.md`](./POC-001_Gate_M3_WAL_Boundary_Normalization_Audit_Addendum.md) (`POC-001-M3-ADDENDUM-001`)
-* **Gate M3 Test Execution Results (JSON):** [`POC-001_Gate_M3_Test_Execution_Results.json`](./POC-001_Gate_M3_Test_Execution_Results.json) — Vitest v1.6.0 machine-readable output (157 passed tests).
+* **Gate M3 Test Execution Results (JSON):** [`POC-001_Gate_M3_Test_Execution_Results.json`](./POC-001_Gate_M3_Test_Execution_Results.json) — Vitest v1.6.0 machine-readable output (158 passed tests).
 * **Gate M3 Typecheck Results (UTF-8):** [`POC-001_Gate_M3_Typecheck_Execution_Results.txt`](./POC-001_Gate_M3_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output with commit SHA and UTC timestamp.
 * **Gate M2 Conformance Report:** [`POC-001_Gate_M2_Execution_and_Integration_Conformance_Report.md`](./POC-001_Gate_M2_Execution_and_Integration_Conformance_Report.md) (15 suites / 106 tests).
 * **Gate M2 Test Execution Results (JSON):** [`POC-001_Gate_M2_Test_Execution_Results.json`](./POC-001_Gate_M2_Test_Execution_Results.json)
-* **Gate M1 Comprehensive Conformance Matrix:** [`POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md`](./POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md) (12 suites / 53 tests; expanded baseline 19 suites / 157 tests).
+* **Gate M1 Comprehensive Conformance Matrix:** [`POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md`](./POC-001_Gate_M1_Comprehensive_Conformance_Matrix_Report.md) (12 suites / 53 tests; expanded baseline 19 suites / 158 tests).
 * **Gate M1 Implementation Report:** [`POC-001_Gate_M1_Implementation_Execution_Report.md`](./POC-001_Gate_M1_Implementation_Execution_Report.md) (11 suites / 43 tests).
 
 ---
