@@ -23,6 +23,8 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 3. Gate Conformance Reports & Audit Evidence
 
+* **Gate M4.3 Test Execution Results (JSON):** [`POC-001_Gate_M4_3_Test_Execution_Results.json`](./POC-001_Gate_M4_3_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (178 passed tests).
+* **Gate M4.3 Typecheck Results (UTF-8):** [`POC-001_Gate_M4_3_Typecheck_Execution_Results.txt`](./POC-001_Gate_M4_3_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output (0 errors).
 * **Gate M4.2 Test Execution Results (JSON):** [`POC-001_Gate_M4_2_Test_Execution_Results.json`](./POC-001_Gate_M4_2_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (175 passed tests).
 * **Gate M4.2 Typecheck Results (UTF-8):** [`POC-001_Gate_M4_2_Typecheck_Execution_Results.txt`](./POC-001_Gate_M4_2_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output for commit `1f3f876`.
 * **Gate M4.1 Test Execution Results (JSON):** [`POC-001_Gate_M4_1_Test_Execution_Results.json`](./POC-001_Gate_M4_1_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (172 passed tests).
