@@ -55,6 +55,18 @@ Chosen option: **Ratified Dual Approach (Owner Ratified October 15, 2026)**.
    - **Baseline:** `Market-HFT-OS` @ `a1053b086e5025b76db1839b67cfede504c5bce1` (`a1053b0`) / `ADRs` @ current `main`.
    - **Approved Scope:** Remediation of 4 statutory tax and unit-economics flaws (MATH-01 to MATH-04); creation of Governed Formula Registry and Local BM25 RAG Retriever (`src/research/formulaRegistry.ts`); Suite 20 expanded to 11 tests; full test baseline expanded to 172 passed tests across 20 suites (0 skipped, 0 failed).
    - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-06 by Project Owner on 2026-10-16).
+7. **Gate M4.2 (Groq-Backed LLM Formula Discovery & Refinement Module):**
+   - **Baseline:** `Market-HFT-OS` @ `3eb11ca` / `ADRs` @ current `main`.
+   - **Approved Scope:** Groq-backed LLM formula discovery and refinement module (`src/research/llmFormulaAdvisor.ts`); sandboxed `CANDIDATE_UI_MODEL` tier; offline fallback; Suite 20 expanded to 14 tests; 20 suites / 175 tests passed.
+   - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-07 by Project Owner on 2026-10-16).
+8. **Gate M4.3 (RAG-First Sufficiency Gate, Asymptotic LLM Decay & Pure BigInt Rational Evaluator):**
+   - **Baseline:** `Market-HFT-OS` @ `1ccf802` / `ADRs` @ `d765720` (Tag: `POC-001-Gate-M4.3-Verified`).
+   - **Approved Scope:** RAG-first sufficiency gate; asymptotic LLM decay flywheel; persistent corpus storage; pure BigInt rational AST evaluator; Suite 20 expanded to 17 tests; 20 suites / 178 tests passed.
+   - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-08 by Project Owner on 2026-10-16).
+9. **Gate M5 (Multi-Opportunity Portfolio Capital Rationing & Sandbox Formula Stress-Testing):**
+   - **Baseline:** `Market-HFT-OS` @ current `main` / `ADRs` @ current `main`.
+   - **Approved Scope:** Stage 3 Multi-Opportunity Portfolio Capital Rationing Engine (`src/research/m5PortfolioAllocator.ts`); 4-candidate industrial pool under ₹50,000.0000 budget; discrete integer MOQ lot sizing; 50% single-SKU concentration caps; 91-day sovereign T-Bill cash sweep; dual-pass FormulaRegistry bridge with shadow what-if sandbox comparison; bit-for-bit RFC 8785 JCS determinism; Suite 21 (4 passed assertions); full test baseline expanded to 182 passed tests across 21 suites (0 skipped, 0 failed) on live PostgreSQL 16.8 (`localhost:5432`).
+   - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-09 by Project Owner on 2026-10-16).
 
 ### Project Owner Decision OD-02 (Hybrid Scope Resolution for Frozen Spec §8.2)
 
@@ -176,6 +188,32 @@ Formally authorized by Project Owner on 2026-10-16:
      - `POC-001_Gate_M4_3_Typecheck_Execution_Results.txt` (SHA-256: `4596FF7DF1A8F378190D49DBCDBD055A4CB69A39B5C5B32F3E263B81D07AFF96`, 0 errors).
 5. **Milestone Disposition:**
    - Gate M4.3 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
+### Project Owner Decision OD-09 (Gate M5 Multi-Opportunity Portfolio Capital Rationing & Sandbox Formula Stress-Testing)
+
+Formally authorized by Project Owner on 2026-10-16:
+1. **Stage 3 Specification Freeze:**
+   - Drafted and froze `POC-001_Gate_M5_Portfolio_Capital_Rationing_Specification.md` (status: `FROZEN / AUTHORIZED (OD-09)`).
+   - Mandated multi-candidate opportunity evaluation, risk-adjusted excess RoWC ranking, hard corporate treasury budget enforcement, single-SKU concentration caps, discrete integer MOQ lot-sizing, sovereign 91-day T-Bill reserve cash sweeps, and deterministic RFC 8785 JCS canonicalization.
+2. **Multi-Opportunity Capital Allocator (`src/research/m5PortfolioAllocator.ts`):**
+   - Implemented `M5PortfolioCapitalAllocator` class integrating `M4ResearchAllocationEngine` and `FormulaRegistry`.
+   - Evaluates an $N$-candidate pool, sorts viable candidates by excess RoWC net of hurdle rate (`annualized_rowc_bps - hurdle_rate_bps`), applies concentration caps (default 50.00% / 5000 bps), greedily allocates discrete integer MOQ batches ($k \ge 1$), and sweeps unallocated residual cash into the sovereign T-Bill yield reserve (default 650 bps).
+   - Enforces strict budget conservation invariant: $\text{committed\_capital} + \text{unallocated\_tbill\_sweep} \equiv \text{total\_treasury\_budget}$ to the single integer subunit.
+   - Dual-pass execution: authoritative allocation uses strictly `PROMOTED_NORMATIVE` formulas; shadow what-if pass evaluates active `CANDIDATE_UI_MODEL` formulas (e.g. warehouse shrinkage and customs anti-dumping duty) to produce a `ShadowDeltaReport` detailing subunit/bps contribution drag, RoWC delta, rank flips, and decision flips (`APPROVED` $\rightarrow$ `REJECTED`, `REJECTED` $\rightarrow$ `APPROVED`) while keeping the authoritative allocation completely isolated and untouched.
+   - Serializes decisions via `canonicalizeJCS` (`json-canonicalize@3.0.1`) and generates verifiable `portfolio_decision_sha256` digest.
+3. **Acceptance Tests & Evidence Separation (`Suite 21`):**
+   - Implemented `tests/acceptance/suite21_m5_portfolio_capital_rationing.test.ts` (4 passed assertions) testing a realistic 4-candidate industrial pool (Candidate 1 SS304, Candidate 2 SS316 Marine, Candidate 3 Carbon Clamp, Candidate 4 Brass Barb) under a ₹50,000.0000 budget:
+     - `M5-PORTFOLIO-RATIONING-001`: Proves budget conservation (₹39,105 committed + ₹10,895 T-Bill sweep = ₹50,000 total), discrete MOQ integer sizing, and concentration cap enforcement.
+     - `M5-OPPORTUNITY-REJECTION-RIGOR-002`: Proves Candidate 3 (viable in isolation) is rejected with `E-M5-BUDGET-EXHAUSTED` because its ₹15,000 MOQ batch exceeds remaining ₹10,895 budget, and Candidate 4 is quarantined fail-closed with `E-M5-UNVERIFIED-PROVENANCE`.
+     - `M5-SHADOW-SANDBOX-FORMULA-DELTA-003`: Proves `CANDIDATE_UI_MODEL` formula stress testing causes Candidate 2 to flip from `APPROVED` to `REJECTED` and Candidate 3 to flip from `REJECTED` to `APPROVED` in the shadow pass, while authoritative allocations remain 100% isolated.
+     - `M5-PORTFOLIO-JCS-DETERMINISM-004`: Proves bit-for-bit identical RFC 8785 JCS canonical serialization and SHA-256 reproducibility.
+4. **Full Baseline Conformance:**
+   - Full test baseline expanded to **182 passed tests across 21 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Dedicated Gate M5 evidence files generated:
+     - `POC-001_Gate_M5_Test_Execution_Results.json` (SHA-256: `175F70804BFE246B1A6729A724B78A32A336A25DE862A28AB21DA30A2C672A0F`, 182 tests).
+     - `POC-001_Gate_M5_Typecheck_Execution_Results.txt` (SHA-256: `DB763057D7D7516B1F7D5F2F6452D4220CA5540986FCECCB6B24B76EEE802A42`, 0 errors).
+5. **Milestone Disposition:**
+   - Gate M5 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
 ### Safety Invariants
 
