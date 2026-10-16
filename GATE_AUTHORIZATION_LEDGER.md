@@ -21,8 +21,8 @@
 | **Pre-M4 Conformance Baseline** | 2026-10-15 | Project Owner (`Decision OD-04`) | `Market-HFT-OS: cf0faf1`<br>`ADRs: 13071fb` | Implementation and verification of all four Frozen Spec §8.2 normative tests (`PROP-INV-001`, `META-FEE-001`, `HIST-REPLAY-001`, and `FUZZ-CLOCK-001`). Baseline expanded to 161 passed tests across 19 suites (0 skipped, 0 failed). Full evidence separation maintained. | **VERIFIED / SPEC FROZEN** |
 | **Gate M4** | 2026-10-15 | Project Owner (`Decision OD-05`) | `Market-HFT-OS: 9bc249a`<br>`ADRs: c5aa59d` | Bounded end-to-end research & capital-allocation vertical slice (DIN 3017 SS304 pack-of-10 clamp); Suite 20 (8/8 passed); 20 suites / 169 tests passed; full provenance envelopes, tax drag, 7-bucket inventory conservation, hurdle gating. | **APPROVED / CLOSED** |
 | **Gate M4.2** | 2026-10-16 | Project Owner (`Decision OD-07`) | `Market-HFT-OS: 3eb11ca`<br>`ADRs: current` | Groq-backed LLM formula discovery and refinement module (`src/research/llmFormulaAdvisor.ts`); sandboxed `CANDIDATE_UI_MODEL` tier; offline fallback; Suite 20 (14/14 passed); 20 suites / 175 tests passed. | **APPROVED / CLOSED** |
-| **Gate M4.3** | 2026-10-16 | Project Owner (`Decision OD-08`) | `Market-HFT-OS: 1ccf802`<br>`ADRs: d765720` | RAG-first sufficiency gate; asymptotic LLM decay flywheel; persistent corpus storage; pure BigInt rational evaluator (`evaluateSymbolicExpression`); Suite 20 (17/17 passed); 20 suites / 178 tests passed. | **APPROVED / CLOSED** |
-| **Gate M5** | 2026-10-16 | Project Owner (`Decision OD-09`) | `Market-HFT-OS: current`<br>`ADRs: current` | 6-Channel Signal Bus & 4D Evidence Architecture (`src/research/m5SignalAndEvidenceEngine.ts`), 9-Stage Deep Research DAG, 6-status return vocabulary, and Silo vs. Simultaneous Group Strategy Simulator (`src/research/m5SiloAndGroupSimulator.ts`); SS304 DIN 3017 matrix (4 sizes x 2 packs), ₹50,000 treasury budget, correlated LME steel shock, T-Bill sweep, Conviction vs Allocation separation firewall, and trading-chart JCS attestation; Suite 21 (7/7 passed); 21 suites / 185 tests passed against live PostgreSQL 16.8. | **APPROVED / CLOSED** |
+| **Gate M5** | 2026-10-16 | Project Owner (`Decision OD-09`) | `Market-HFT-OS: cba9554` (Tag: `POC-001-Gate-M5-Verified`)<br>`ADRs: 5688ed7` (Tag: `POC-001-Gate-M5-Verified`) | 6-Channel Signal Bus & 4D Evidence Architecture (`src/research/m5SignalAndEvidenceEngine.ts`), 9-Stage Deep Research DAG, 6-status return vocabulary, and Silo vs. Simultaneous Group Strategy Simulator (`src/research/m5SiloAndGroupSimulator.ts`); SS304 DIN 3017 matrix (4 sizes x 2 packs), ₹50,000 treasury budget, correlated LME steel shock, T-Bill sweep, Conviction vs Allocation separation firewall, and trading-chart JCS attestation; Suite 21 (7/7 passed); 21 suites / 185 tests passed against live PostgreSQL 16.8. | **APPROVED / CLOSED** |
+| **Gate M6** | 2026-10-16 | Project Owner (`Decision OD-10`) | `Market-HFT-OS: 6bafb16`<br>`ADRs: current` | Governed multi-agent research ecosystem (`src/agents/m6AgentFramework.ts`), TinyFish scoped browser sub-agent, specialist swarm (Media/Chatter, Macro/Lateral, Govt/Tax, RedTeam), 24x7 scheduler and manager orchestrator, and bitemporal decision replay & restatement engine; Suite 22 (7/7 passed); 22 suites / 192 tests passed against live PostgreSQL 16.8. | **APPROVED / CLOSED** |
 
 ---
 
@@ -165,3 +165,29 @@
         - `POC-001_Gate_M5_Test_Execution_Results.json` (SHA-256: `2C1FF1854228C4447D9F7BF500A6511727CD60ECF6EC4ACAB976FF151BE1A78B`, 185 tests).
         - `POC-001_Gate_M5_Typecheck_Execution_Results.txt` (SHA-256: `2E4823FBA10769EA72EB0937EF1AF01D144509845F2E4B2BE022E9FC52EDAF2D`, 0 errors).
     - Gate M5 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
+13. **Project Owner Decision OD-10 (Gate M6 Governed Multi-Agent Research Ecosystem, TinyFish Browser Sub-Agents & Bitemporal Replay Engine)**:
+    - **Stage 3 Specification Freeze**:
+      - Drafted and froze `POC-001_Gate_M6_Multi_Agent_and_Bitemporal_Replay_Specification.md` (status: `FROZEN / AUTHORIZED (OD-10)`).
+      - Mandated worker contract manifests and permission boundaries (`READ_ONLY_DISCOVERY`, `SANDBOX_MODELING`, `RED_TEAM_AUDIT`), deterministic resource accounting, TinyFish scoped DOM scraping with missing-data classification (`DATA_REQUIRED` vs `DATA_INSUFFICIENT`), zero-cost substitution prohibition, specialist sub-agent swarm (Media/Chatter, Macro/Lateral, Govt/Tax, RedTeam), 24x7 manager orchestrator with degraded-mode resilience, and bitemporal historical decision replay and restatement.
+    - **Multi-Agent Research Framework & Bitemporal Engine (`src/agents/m6AgentFramework.ts`)**:
+      - Implemented `AgentSecurityFirewall` strictly prohibiting agent workers from mutating `PaperLedger` or `ActualsLedger` (`E-M6-PERMISSION-DENIED`) and enforcing deterministic token/request quotas (`E-M6-QUOTA-EXCEEDED`).
+      - Implemented `TinyFishScopedBrowserAgent` computing SHA-256 `dom_snapshot_hash`, extracting structured marketplace/supplier fields, classifying missing attributes as `DATA_REQUIRED` (never substituting `₹0`), and capping commercial status at `ADVERTISED_LISTING`.
+      - Implemented specialist swarm: `MediaAndChatterSubAgent`, `MacroAndLateralMarketSubAgent`, `GovtSchemeAndTaxSubAgent`, and adversarial `RedTeamReviewerSubAgent` (quarantining offers below raw scrap metal floor cost or with metallurgy defects).
+      - Implemented `ResearchSchedulerAndManager` coordinating the 9-stage research workflow (`DECOMPOSE` $\to$ `ROUTE` $\to$ `ASSEMBLE_CONTEXT` $\to$ `PROMPT` $\to$ `EXECUTE_SCOPED_WORKER` $\to$ `REVIEW_RED_TEAM` $\to$ `ASSEMBLE_EVIDENCE` $\to$ `POLISH` $\to$ `PRESENT`) with degraded-mode resilience under external timeouts.
+      - Implemented `BitemporalRestatementEngine` capturing $t_0$ decisions (`decision_time_utc` and `knowledge_time_utc`), reconstructing historical baselines bit-for-bit, evaluating $t_1$ restatements against incoming evidence, and issuing `THESIS_INVALIDATED_HALT`, `EDGE_DECAY_WARNING`, or `THESIS_INTACT` without altering historical records.
+    - **Acceptance Tests & Evidence Separation (`Suite 22`)**:
+      - Implemented `tests/acceptance/suite22_m6_agent_swarm_and_bitemporal.test.ts` (7 passed assertions):
+        1. `M6-TINYFISH-SCOPED-BROWSER-001`: DOM extraction, SHA-256 snapshot, ADVERTISED_LISTING cap, DATA_REQUIRED handling.
+        2. `M6-SUBAGENT-SWARM-DECOMPOSE-002`: Multi-channel signal decomposition and 9-stage DAG execution.
+        3. `M6-RED-TEAM-ADVERSARIAL-BLOCK-003`: Red team blocking of below-scrap-cost fraud and metallurgy defect quotes.
+        4. `M6-AGENT-PERMISSION-AND-QUOTA-FIREWALL-004`: Fail-closed ledger access denial and token/request quota enforcement.
+        5. `M6-DEGRADED-MODE-RESILIENCE-005`: Control plane degraded mode resilience during external worker timeout.
+        6. `M6-BITEMPORAL-REPLAY-AND-RESTATEMENT-006`: Bit-for-bit historical t0 reconstruction and t1 restatement halting.
+        7. `M6-END-TO-END-POLISH-AND-PRESENT-JCS-007`: RFC 8785 JCS determinism of research and restatement payloads.
+    - **Full Baseline Conformance**:
+      - Full test baseline expanded to **192 passed tests across 22 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+      - Dedicated Gate M6 evidence files generated:
+        - `POC-001_Gate_M6_Test_Execution_Results.json` (SHA-256: `A74A2AB274C4E7670A7158CE03584B6692051BC8D7C8314D7E754C67D3BC14DE`, 192 tests).
+        - `POC-001_Gate_M6_Typecheck_Execution_Results.txt` (SHA-256: `2E4823FBA10769EA72EB0937EF1AF01D144509845F2E4B2BE022E9FC52EDAF2D`, 0 errors).
+    - Gate M6 status is authoritatively confirmed as **APPROVED / CLOSED**.

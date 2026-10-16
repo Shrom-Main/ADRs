@@ -17,12 +17,14 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 2. Governance & Gate Authorization
 
-* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md) — Authoritative sign-off record for Gates M0, M1, M2, M3, M4, M4.1, M4.2, M4.3, and M5.
+* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md) — Authoritative sign-off record for Gates M0, M1, M2, M3, M4, M4.1, M4.2, M4.3, M5, and M6.
 
 ---
 
 ## 3. Gate Conformance Reports & Audit Evidence
 
+* **Gate M6 Test Execution Results (JSON):** [`POC-001_Gate_M6_Test_Execution_Results.json`](./POC-001_Gate_M6_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (192 passed tests across 22 suites).
+* **Gate M6 Typecheck Results (UTF-8):** [`POC-001_Gate_M6_Typecheck_Execution_Results.txt`](./POC-001_Gate_M6_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output (0 errors).
 * **Gate M5 Test Execution Results (JSON):** [`POC-001_Gate_M5_Test_Execution_Results.json`](./POC-001_Gate_M5_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (185 passed tests across 21 suites).
 * **Gate M5 Typecheck Results (UTF-8):** [`POC-001_Gate_M5_Typecheck_Execution_Results.txt`](./POC-001_Gate_M5_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output (0 errors).
 * **Gate M4.3 Test Execution Results (JSON):** [`POC-001_Gate_M4_3_Test_Execution_Results.json`](./POC-001_Gate_M4_3_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (178 passed tests).
@@ -50,6 +52,7 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 4. Frozen Normative Specifications
 
+* **Gate M6 Multi-Agent and Bitemporal Replay Specification:** [`POC-001_Gate_M6_Multi_Agent_and_Bitemporal_Replay_Specification.md`](./POC-001_Gate_M6_Multi_Agent_and_Bitemporal_Replay_Specification.md) (`FROZEN / AUTHORIZED (OD-10)`).
 * **Gate M5 Signal Bus & Group Simulation Specification:** [`POC-001_Gate_M5_Signal_Bus_and_Group_Simulation_Specification.md`](./POC-001_Gate_M5_Signal_Bus_and_Group_Simulation_Specification.md) (`FROZEN / AUTHORIZED (OD-09)`).
 * **Gate M5 Portfolio Capital Rationing Specification:** [`POC-001_Gate_M5_Portfolio_Capital_Rationing_Specification.md`](./POC-001_Gate_M5_Portfolio_Capital_Rationing_Specification.md) (`FROZEN / AUTHORIZED (OD-09)`).
 * **Gate M4 Acceptance Specification:** [`POC-001_Gate_M4_Acceptance_Specification.md`](./POC-001_Gate_M4_Acceptance_Specification.md) (`FROZEN / AUTHORIZED (OD-05)`).
