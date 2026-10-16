@@ -23,7 +23,7 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 3. Gate Conformance Reports & Audit Evidence
 
-* **Gate M5 Test Execution Results (JSON):** [`POC-001_Gate_M5_Test_Execution_Results.json`](./POC-001_Gate_M5_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (182 passed tests across 21 suites).
+* **Gate M5 Test Execution Results (JSON):** [`POC-001_Gate_M5_Test_Execution_Results.json`](./POC-001_Gate_M5_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (185 passed tests across 21 suites).
 * **Gate M5 Typecheck Results (UTF-8):** [`POC-001_Gate_M5_Typecheck_Execution_Results.txt`](./POC-001_Gate_M5_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output (0 errors).
 * **Gate M4.3 Test Execution Results (JSON):** [`POC-001_Gate_M4_3_Test_Execution_Results.json`](./POC-001_Gate_M4_3_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (178 passed tests).
 * **Gate M4.3 Typecheck Results (UTF-8):** [`POC-001_Gate_M4_3_Typecheck_Execution_Results.txt`](./POC-001_Gate_M4_3_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output (0 errors).
@@ -50,6 +50,7 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 4. Frozen Normative Specifications
 
+* **Gate M5 Signal Bus & Group Simulation Specification:** [`POC-001_Gate_M5_Signal_Bus_and_Group_Simulation_Specification.md`](./POC-001_Gate_M5_Signal_Bus_and_Group_Simulation_Specification.md) (`FROZEN / AUTHORIZED (OD-09)`).
 * **Gate M5 Portfolio Capital Rationing Specification:** [`POC-001_Gate_M5_Portfolio_Capital_Rationing_Specification.md`](./POC-001_Gate_M5_Portfolio_Capital_Rationing_Specification.md) (`FROZEN / AUTHORIZED (OD-09)`).
 * **Gate M4 Acceptance Specification:** [`POC-001_Gate_M4_Acceptance_Specification.md`](./POC-001_Gate_M4_Acceptance_Specification.md) (`FROZEN / AUTHORIZED (OD-05)`).
 * **Gate M4 SS304 Vertical Slice Test Scenario:** [`POC-001_Gate_M4_SS304_Vertical_Slice_Test_Scenario.md`](./POC-001_Gate_M4_SS304_Vertical_Slice_Test_Scenario.md) (`FROZEN / AUTHORIZED (OD-05)`).

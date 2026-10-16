@@ -22,7 +22,7 @@
 | **Gate M4** | 2026-10-15 | Project Owner (`Decision OD-05`) | `Market-HFT-OS: 9bc249a`<br>`ADRs: c5aa59d` | Bounded end-to-end research & capital-allocation vertical slice (DIN 3017 SS304 pack-of-10 clamp); Suite 20 (8/8 passed); 20 suites / 169 tests passed; full provenance envelopes, tax drag, 7-bucket inventory conservation, hurdle gating. | **APPROVED / CLOSED** |
 | **Gate M4.2** | 2026-10-16 | Project Owner (`Decision OD-07`) | `Market-HFT-OS: 3eb11ca`<br>`ADRs: current` | Groq-backed LLM formula discovery and refinement module (`src/research/llmFormulaAdvisor.ts`); sandboxed `CANDIDATE_UI_MODEL` tier; offline fallback; Suite 20 (14/14 passed); 20 suites / 175 tests passed. | **APPROVED / CLOSED** |
 | **Gate M4.3** | 2026-10-16 | Project Owner (`Decision OD-08`) | `Market-HFT-OS: 1ccf802`<br>`ADRs: d765720` | RAG-first sufficiency gate; asymptotic LLM decay flywheel; persistent corpus storage; pure BigInt rational evaluator (`evaluateSymbolicExpression`); Suite 20 (17/17 passed); 20 suites / 178 tests passed. | **APPROVED / CLOSED** |
-| **Gate M5** | 2026-10-16 | Project Owner (`Decision OD-09`) | `Market-HFT-OS: current`<br>`ADRs: current` | Multi-opportunity portfolio capital rationing (`src/research/m5PortfolioAllocator.ts`); 4-candidate industrial pool; ₹50,000 treasury budget; discrete MOQ sizing; single-SKU concentration caps; 91-day sovereign T-Bill cash sweep; dual-pass FormulaRegistry bridge with shadow what-if sandbox comparison; RFC 8785 JCS determinism; Suite 21 (4/4 passed); 21 suites / 182 tests passed against live PostgreSQL 16.8. | **APPROVED / CLOSED** |
+| **Gate M5** | 2026-10-16 | Project Owner (`Decision OD-09`) | `Market-HFT-OS: current`<br>`ADRs: current` | 6-Channel Signal Bus & 4D Evidence Architecture (`src/research/m5SignalAndEvidenceEngine.ts`), 9-Stage Deep Research DAG, 6-status return vocabulary, and Silo vs. Simultaneous Group Strategy Simulator (`src/research/m5SiloAndGroupSimulator.ts`); SS304 DIN 3017 matrix (4 sizes x 2 packs), ₹50,000 treasury budget, correlated LME steel shock, T-Bill sweep, Conviction vs Allocation separation firewall, and trading-chart JCS attestation; Suite 21 (7/7 passed); 21 suites / 185 tests passed against live PostgreSQL 16.8. | **APPROVED / CLOSED** |
 
 ---
 
@@ -136,25 +136,32 @@
        - `POC-001_Gate_M4_3_Typecheck_Execution_Results.txt` (SHA-256: `4596FF7DF1A8F378190D49DBCDBD055A4CB69A39B5C5B32F3E263B81D07AFF96`, 0 errors).
    - Gate M4.3 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
-12. **Project Owner Decision OD-09 (Gate M5 Multi-Opportunity Portfolio Capital Rationing, Formula RAG Bridge & Shadow Sandbox)**:
+12. **Project Owner Decision OD-09 (Gate M5 6-Channel Signal Bus, 4D Evidence Architecture & Silo vs. Group Strategy Simulator)**:
     - **Stage 3 Specification Freeze**:
-      - Drafted and froze `POC-001_Gate_M5_Portfolio_Capital_Rationing_Specification.md` (status: `FROZEN / AUTHORIZED (OD-09)`).
-      - Mandated multi-candidate opportunity evaluation, risk-adjusted excess RoWC ranking, hard corporate treasury budget enforcement, single-SKU concentration caps, discrete integer MOQ lot-sizing, sovereign 91-day T-Bill reserve cash sweeps, and deterministic RFC 8785 JCS canonicalization.
-    - **Multi-Opportunity Capital Allocator (`src/research/m5PortfolioAllocator.ts`)**:
-      - Implemented `M5PortfolioCapitalAllocator` class integrating `M4ResearchAllocationEngine` and `FormulaRegistry`.
-      - Evaluates an $N$-candidate pool, sorts viable candidates by excess RoWC net of hurdle rate (`annualized_rowc_bps - hurdle_rate_bps`), applies concentration caps (default 50.00% / 5000 bps), greedily allocates discrete integer MOQ batches ($k \ge 1$), and sweeps unallocated residual cash into the sovereign T-Bill yield reserve (default 650 bps).
-      - Enforces strict budget conservation invariant: $\text{committed\_capital} + \text{unallocated\_tbill\_sweep} \equiv \text{total\_treasury\_budget}$ to the single integer subunit.
-      - Dual-pass execution: authoritative allocation uses strictly `PROMOTED_NORMATIVE` formulas; shadow what-if pass evaluates active `CANDIDATE_UI_MODEL` formulas (e.g. warehouse shrinkage and customs anti-dumping duty) to produce a `ShadowDeltaReport` detailing subunit/bps contribution drag, RoWC delta, rank flips, and decision flips (`APPROVED` $\rightarrow$ `REJECTED`, `REJECTED` $\rightarrow$ `APPROVED`) while keeping the authoritative allocation completely isolated and untouched.
-      - Serializes decisions via `canonicalizeJCS` (`json-canonicalize@3.0.1`) and generates verifiable `portfolio_decision_sha256` digest.
+      - Drafted and froze `POC-001_Gate_M5_Signal_Bus_and_Group_Simulation_Specification.md` (status: `FROZEN / AUTHORIZED (OD-09)`).
+      - Mandated the 4 orthogonal evidence dimensions (`evidence_kind`, `verification_status`, `commercial_status`, `provenance_lineage`), 6-channel continuous signal bus, 9-stage "Deep Research Pro" DAG pipeline contract, 6-status return vocabulary, and Silo vs. Simultaneous Group simulation architecture.
+    - **6-Channel Signal Bus & 4D Evidence Engine (`src/research/m5SignalAndEvidenceEngine.ts`)**:
+      - Implemented 4D evidence dimensions and fail-closed promotion state machine (`EvidencePromotionEngine`), strictly prohibiting `ADVERTISED_LISTING` or `SYNTHETIC_SCENARIO` from auto-promoting to `VERIFIED_EXECUTABLE_OFFER` without cryptographic signature attestation or multi-source corroboration (`E-ERR-EV-001`).
+      - Implemented `SignalNormalizer` mapping testable signals across 6 channels (`NEWS_TRADE_PRESS`, `YOUTUBE_VIDEO_TRANSCRIPT`, `SOCIAL_FORUM_CHATTER`, `MACROECONOMIC_INDICATOR`, `LATERAL_FINANCIAL_MARKET`, `GOVERNMENT_SCHEME_POLICY`) into structured economic shocks with RFC 8785 JCS hashes.
+      - Implemented 6-status return resolver (`resolveReturnStatus`) distinguishing `CANNOT_CALCULATE_MISSING_INPUTS`, `INSUFFICIENT_UNVERIFIED_EVIDENCE`, `NO_ROOT_FOUND_IN_SEARCH_DOMAIN`, `OPEN_POSITION`, and `NOT_YET_RECOVERED` from `VALID_CALCULATED_RETURN`.
+      - Implemented `DeepResearchPipelineOrchestrator` executing the 9-stage DAG contract (`DECOMPOSE` $\to$ `ROUTE` $\to$ `ASSEMBLE_CONTEXT` $\to$ `PROMPT` $\to$ `EXECUTE_SCOPED_WORKER` $\to$ `REVIEW_RED_TEAM` $\to$ `ASSEMBLE_EVIDENCE` $\to$ `POLISH` $\to$ `PRESENT`).
+    - **Silo vs. Simultaneous Group Strategy Simulator (`src/research/m5SiloAndGroupSimulator.ts`)**:
+      - Implemented `M5SiloAndGroupSimulator`:
+        * *Silo Mode*: Evaluates SS304 DIN 3017 clamps across the 4-diameter x 2-pack matrix (8 variants), emitting price & breakeven bands, 35-day cash-flow J-curve waterfalls, and Arbitrage Greeks ($\Delta$: price sensitivity, $\Theta$: time decay, $\mathcal{V}$: return drag).
+        * *Simultaneous Group Mode*: Evaluates cohorts under ₹50,000 treasury budget, correlated lateral shocks (e.g. $+10\%$ LME stainless steel raw material surge), single-SKU concentration caps ($\le 50\%$), discrete MOQ integer lot-sizing, sovereign 91-Day T-Bill sweeps, and benchmark comparisons (`RBI_91D_TBILL` at 650 bps and `NIFTY_LIQUID_BENCHMARK` at 680 bps).
+        * *Conviction vs. Allocation Firewall*: Enforces that unverified listings (`ADVERTISED_LISTING`, `UNVERIFIED`) receive strictly ₹0 capital regardless of theoretical margins, generating bubble chart telemetry coordinates $(X, Y, Z)$.
     - **Acceptance Tests & Evidence Separation (`Suite 21`)**:
-      - Implemented `tests/acceptance/suite21_m5_portfolio_capital_rationing.test.ts` (4 passed assertions) testing a realistic 4-candidate industrial pool (Candidate 1 SS304, Candidate 2 SS316 Marine, Candidate 3 Carbon Clamp, Candidate 4 Brass Barb) under a ₹50,000.0000 budget:
-        1. `M5-PORTFOLIO-RATIONING-001`: Proves budget conservation (₹39,105 committed + ₹10,895 T-Bill sweep = ₹50,000 total), discrete MOQ integer sizing, and concentration cap enforcement.
-        2. `M5-OPPORTUNITY-REJECTION-RIGOR-002`: Proves Candidate 3 (viable in isolation) is rejected with `E-M5-BUDGET-EXHAUSTED` because its ₹15,000 MOQ batch exceeds remaining ₹10,895 budget, and Candidate 4 is quarantined fail-closed with `E-M5-UNVERIFIED-PROVENANCE`.
-        3. `M5-SHADOW-SANDBOX-FORMULA-DELTA-003`: Proves `CANDIDATE_UI_MODEL` formula stress testing causes Candidate 2 to flip from `APPROVED` to `REJECTED` and Candidate 3 to flip from `REJECTED` to `APPROVED` in the shadow pass, while authoritative allocations remain 100% isolated.
-        4. `M5-PORTFOLIO-JCS-DETERMINISM-004`: Proves bit-for-bit identical RFC 8785 JCS canonical serialization and SHA-256 reproducibility.
+      - Implemented `tests/acceptance/suite21_m5_silo_group_and_signals.test.ts` (7 passed assertions):
+        1. `M5-4D-EVIDENCE-ORTHOGONALITY-001`: 4D evidence dimensions and fail-closed promotion firewall.
+        2. `M5-SIX-CHANNEL-SIGNAL-INGEST-002`: 6-channel signal normalization & 9-stage DAG pipeline.
+        3. `M5-SIX-STATUS-VOCABULARY-003`: 6-status return vocabulary preventing 0% collapse.
+        4. `M5-SILO-PACK-SIZE-MATRIX-004`: SS304 DIN 3017 matrix (4 sizes x 2 packs), price bands, J-curves, Greeks.
+        5. `M5-SIMULTANEOUS-GROUP-CORRELATION-005`: Portfolio allocation, LME steel shock, T-Bill sweep, conservation.
+        6. `M5-CONVICTION-VS-ALLOCATION-SEPARATION-006`: Firewall rejecting unverified listings (₹0 capital).
+        7. `M5-TRADING-CHART-JCS-DETERMINISM-007`: Bit-for-bit RFC 8785 JCS telemetry attestation.
     - **Full Baseline Conformance**:
-      - Full test baseline expanded to **182 passed tests across 21 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+      - Full test baseline expanded to **185 passed tests across 21 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
       - Dedicated Gate M5 evidence files generated:
-        - `POC-001_Gate_M5_Test_Execution_Results.json` (SHA-256: `175F70804BFE246B1A6729A724B78A32A336A25DE862A28AB21DA30A2C672A0F`, 182 tests).
-        - `POC-001_Gate_M5_Typecheck_Execution_Results.txt` (SHA-256: `DB763057D7D7516B1F7D5F2F6452D4220CA5540986FCECCB6B24B76EEE802A42`, 0 errors).
+        - `POC-001_Gate_M5_Test_Execution_Results.json` (SHA-256: `2C1FF1854228C4447D9F7BF500A6511727CD60ECF6EC4ACAB976FF151BE1A78B`, 185 tests).
+        - `POC-001_Gate_M5_Typecheck_Execution_Results.txt` (SHA-256: `2E4823FBA10769EA72EB0937EF1AF01D144509845F2E4B2BE022E9FC52EDAF2D`, 0 errors).
     - Gate M5 status is authoritatively confirmed as **APPROVED / CLOSED**.
