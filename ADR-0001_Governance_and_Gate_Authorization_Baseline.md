@@ -343,6 +343,29 @@ Formally authorized by Project Owner on 2026-10-18:
 4. **Milestone Disposition:**
    - Gate M6.3 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
+### Project Owner Decision OD-14 (Stage 3 Surgical Polish, Stage 4 Micro-Agent #3 MacroAndLateralMarketWorker, Formula-RAG Dynamic Growth Driver Engine & Dynamic Regime Classifier Closure)
+
+Formally authorized by Project Owner on 2026-10-18:
+1. **Stage 3 Surgical Polish:**
+   - Passed `sanitizedSha256` as 3rd parameter to `verifyVerbatimCitationSpan(sanitizedText, citation, sanitizedSha256)` in `registerMediaChatterTool`, enforcing that citation spans carrying forged or mismatched `source_artifact_sha256` fail closed with `E-MCW-INVALID-CITATION-SPAN`.
+   - Updated `evaluateChatterSupplementTrigger` to inspect all extracted fields for `status === 'EXTRACTED' && unit === 'SUBUNITS_INR'` if default keys are absent, ensuring tiered B2B captures trigger the 15% scrap floor anomaly check.
+   - Removed unused `randomBytes` import from `src/agents/workers/mediaChatterWorker.ts`.
+2. **Stage 4: Micro-Agent #3 MacroAndLateralMarketWorker Implementation (`src/agents/workers/macroLateralWorker.ts`):**
+   - Implemented `MacroAndLateralMarketWorker` (`worker:macro-lateral:v1`) and registered read-only MCP tool `mcp://macro-feeds/query_series` on `McpServerAdapter` with policy `MACRO_LATERAL_TOOL_POLICY` (GET only, 128 KB payload cap, max 4 requests per task, hosts: `www.rbi.org.in`, `www.fbil.org.in`, `www.lme.com`, `www.nseindia.com`, `mospi.gov.in`).
+   - Zero-Default Policy: Refuses to fabricate default T-Bill yields or commodity prices; returns `DATA_REQUIRED` (`E-MLW-SERIES-DATA-REQUIRED`) for missing/non-positive series, and `STALE_OBSERVATION_REJECTED` (`E-MLW-STALE-SERIES`) for observations exceeding `max_staleness_seconds`.
+   - FX Firewall & Scrap Floor: Enforces fresh `FBIL_USD_INR_REFERENCE_RATE` for converting USD/tonne to scale-4 INR/kg (`convertUsdPerTonneToInrPerKg`), and computes physical scrap floor + minimum viable EXW manufacturing floor via `derivePhysicalScrapFloor` in pure `BigInt`.
+   - Formula-RAG Dynamic Growth Driver Evaluator (`evaluateDynamicGrowthDriver`): Evaluates economic factors via `FormulaRegistry` pure-BigInt rational AST arithmetic without hardcoding static function calls, computing `net_change_bps`, `persistence_consistency_bps`, and `estimated_half_life_days`.
+   - Sustained Signal vs Fast Opportunity Regime Classifier: Classifies drivers into `SUSTAINED_STRUCTURAL_SIGNAL`, `FAST_TACTICAL_OPPORTUNITY`, or `SPURIOUS_OR_UNPROVEN_NOISE`. Enforces the **Tactical Horizon Gate** (`E-MLW-EDGE-DECAYS-BEFORE-CASH-RECOVERY`) when cash conversion cycle (CCC) exceeds signal half-life.
+   - Empirical Factor Efficacy Ledger (`FactorEfficacyLedger`): Records historical forecast vs. realized outcomes across cycles, computing `hit_rate_bps` and `mean_absolute_error_bps` to classify drivers into `UNPROVEN_HYPOTHESIS`, `EMPIRICALLY_VALIDATED_DRIVER`, and `EMPIRICALLY_REFUTED_NOISE`.
+3. **Acceptance Tests & Evidence Separation (`Suite 26`):**
+   - Implemented `tests/acceptance/suite26_m6_4_macro_lateral_and_regime_worker.test.ts` (8 passed assertions).
+   - Full test baseline expanded to **225 passed tests across 26 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Dedicated Gate M6.4 evidence files:
+     - `POC-001_Gate_M6_4_Test_Execution_Results.json` (SHA-256: `CB5B643D855F0E9B2C61531F0E0898D71E6F41E607091AE51C31BB83A9FD9717`, 225 tests).
+     - `POC-001_Gate_M6_4_Typecheck_Execution_Results.txt` (SHA-256: `C844D31403B9BC823C1F62DE8AAA77AE2B4F63F4C8325B506055CADB02960E24`, 0 errors).
+4. **Milestone Disposition:**
+   - Gate M6.4 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
 ### Safety Invariants
 
 - **Zero Real Capital / Simulation Isolation:** No live exchange, broker, bank, or payment gateway API connections are permitted. All order routing is confined to `SimulatedExecutionGateway`.
