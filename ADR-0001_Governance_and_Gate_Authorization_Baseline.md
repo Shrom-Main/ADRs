@@ -320,6 +320,29 @@ Formally authorized by Project Owner on 2026-10-17:
 4. **Milestone Disposition:**
    - Gate M6.2 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
+### Project Owner Decision OD-13 (Stage 2 Surgical Polish, Tiered Batch Optimizer Integration & Stage 3 Micro-Agent #2 MediaAndChatterWorker Closure)
+
+Formally authorized by Project Owner on 2026-10-18:
+1. **Stage 2 Surgical Polish & Tiered Batch Optimizer Integration:**
+   - Custom attribute allowlist in `src/agents/workers/sourceCaptureWorker.ts` expanded with `'data-pack'`, `'data-freight'`, `'data-material'`, `'data-size'`, and `'data-hsn'`, enabling direct selector matches without relying solely on class fallbacks.
+   - Deep immutability enforced in `SourceCaptureWorker.captureAndExtract` via recursive `deepFreeze(parsed)`.
+   - Tiered MOQ batch optimizer `evaluateOptimalBatchSize` implemented in `src/research/m5SiloAndGroupSimulator.ts` enforcing treasury budget (`E-M5-BUDGET-EXHAUSTED`) and concentration caps (`E-M5-CONCENTRATION-CAP-EXCEEDED`) with statutory subunit arithmetic (18% fee GST, ex-GST TCS/TDS, GSTR-3B net settlement, return drag, and CCC).
+2. **Stage 3: Micro-Agent #2 MediaAndChatterWorker Implementation (`src/agents/workers/mediaChatterWorker.ts`):**
+   - Implemented `MediaAndChatterWorker` (`worker:media-chatter:v1`) routing read-only requests exclusively through `McpCapabilityBroker.invokeTool` under task-scoped `CapabilityGrant`.
+   - Registered `mcp://media-corpus/fetch_transcript` on `McpServerAdapter` with strict tool policy (GET only, 256 KB cap, hosts: `'transcripts.approved-corpus.local'`, `'www.youtube.com'`, `'sellercentral.amazon.in'`, `'www.amazon.in'`).
+   - Mandatory Verbatim Citation Span Verification (`verifyVerbatimCitationSpan`): Enforces exact character offset substring match (`sanitizedTranscript.slice(start, end) === verbatim_quote`), 10–280 character quote length bounds, SHA-256 integrity, fail-closed rejection on uncited claims (`E-MCW-UNCITED-CLAIM-REJECTED`), and offset mismatches (`E-MCW-INVALID-CITATION-SPAN`).
+   - Structured Signal Taxonomy & Empirical Defect Math: Supports `METALLURGY_GRADE_DEFECT`, `DIMENSIONAL_OR_TORQUE_FAILURE`, `PACKAGING_COUNT_SHORTFALL`, and `SELLER_FEE_OR_RETURN_SPIKE`, computing deterministic `observed_defect_rate_bps = Math.floor((observed_defect_mention_count * 10000) / total_sampled)`.
+   - Hardcoded 4D Evidence Ceiling: Hard-binds `verification_status: 'UNVERIFIED'` and `commercial_status: 'NOT_APPLICABLE'`. Zero commercial pricing authority (elevation throws `E-MCW-COMMERCIAL-STATUS-FORBIDDEN`).
+   - Complementary & Supplementary Trigger Helper (`evaluateChatterSupplementTrigger`): Dispatches `COMPLEMENTARY_GAP_FILL` when empirical return data is missing, `SUPPLEMENTARY_ANOMALY_CHECK` when supplier quote is within 15% of physical scrap floor, and `NONE` when verified quote has fresh return observations.
+3. **Acceptance Tests & Evidence Separation (`Suite 25`):**
+   - Implemented `tests/acceptance/suite25_m6_3_media_chatter_worker.test.ts` (8 passed assertions).
+   - Full test baseline expanded to **217 passed tests across 25 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Dedicated Gate M6.3 evidence files:
+     - `POC-001_Gate_M6_3_Test_Execution_Results.json` (SHA-256: `4A28BB44EC556F129C5DEEA0AFADB88D1AB4DB93D31B72B6A9E8D990CE0691CF`, 217 tests).
+     - `POC-001_Gate_M6_3_Typecheck_Execution_Results.txt` (SHA-256: `860A1C910A4A7960518DEBF6D82A52CA8102AC617BBFA2D655E93881DC5BC5CB`, 0 errors).
+4. **Milestone Disposition:**
+   - Gate M6.3 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
 ### Safety Invariants
 
 - **Zero Real Capital / Simulation Isolation:** No live exchange, broker, bank, or payment gateway API connections are permitted. All order routing is confined to `SimulatedExecutionGateway`.
