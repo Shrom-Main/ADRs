@@ -23,6 +23,7 @@
 | **Gate M4.2** | 2026-10-16 | Project Owner (`Decision OD-07`) | `Market-HFT-OS: 3eb11ca`<br>`ADRs: current` | Groq-backed LLM formula discovery and refinement module (`src/research/llmFormulaAdvisor.ts`); sandboxed `CANDIDATE_UI_MODEL` tier; offline fallback; Suite 20 (14/14 passed); 20 suites / 175 tests passed. | **APPROVED / CLOSED** |
 | **Gate M5** | 2026-10-16 | Project Owner (`Decision OD-09`) | `Market-HFT-OS: cba9554` (Tag: `POC-001-Gate-M5-Verified`)<br>`ADRs: 5688ed7` (Tag: `POC-001-Gate-M5-Verified`) | 6-Channel Signal Bus & 4D Evidence Architecture (`src/research/m5SignalAndEvidenceEngine.ts`), 9-Stage Deep Research DAG, 6-status return vocabulary, and Silo vs. Simultaneous Group Strategy Simulator (`src/research/m5SiloAndGroupSimulator.ts`); SS304 DIN 3017 matrix (4 sizes x 2 packs), ₹50,000 treasury budget, correlated LME steel shock, T-Bill sweep, Conviction vs Allocation separation firewall, and trading-chart JCS attestation; Suite 21 (7/7 passed); 21 suites / 185 tests passed against live PostgreSQL 16.8. | **APPROVED / CLOSED** |
 | **Gate M6** | 2026-10-16 | Project Owner (`Decision OD-10`) | `Market-HFT-OS: 6bafb16` (Tag: `POC-001-Gate-M6-Verified`)<br>`ADRs: commit companion` (Tag: `POC-001-Gate-M6-Verified`) | Governed multi-agent research ecosystem (`src/agents/m6AgentFramework.ts`), TinyFish scoped browser sub-agent, specialist swarm (Media/Chatter, Macro/Lateral, Govt/Tax, RedTeam), 24x7 scheduler and manager orchestrator, and bitemporal decision replay & restatement engine; Suite 22 (7/7 passed); 22 suites / 192 tests passed against live PostgreSQL 16.8. | **APPROVED / CLOSED** |
+| **Gate M6.1** | 2026-10-17 | Project Owner (`Decision OD-11`) | `Market-HFT-OS: current`<br>`ADRs: current` | Stage 0 Workspace & Charter Reconciliation; Stage 1 Capability-Aware MCP Substrate (`src/mcp/mcpSubstrate.ts`), JSON-RPC 2.0 tool envelopes, forbidden capability firewall, task-scoped immutable CapabilityGrant, McpCapabilityBroker (SSRF/private IP filter, 4-quota enforcement, GET only, redirect blocking), McpRunLedger (RFC 8785 JCS hash chains), conflict-preserving join (`joinSupplementaryClaims`), Bitemporal immutability & duplicate overwrite prevention (`E-ERR-BITEMPORAL-OVERWRITE`), genuine sub-agent scheduler invocations; Suite 23 (8/8 passed); 23 suites / 200 tests passed against live PostgreSQL 16.8. | **APPROVED / CLOSED** |
 
 ---
 
@@ -191,3 +192,35 @@
         - `POC-001_Gate_M6_Test_Execution_Results.json` (SHA-256: `A74A2AB274C4E7670A7158CE03584B6692051BC8D7C8314D7E754C67D3BC14DE`, 192 tests).
         - `POC-001_Gate_M6_Typecheck_Execution_Results.txt` (SHA-256: `2E4823FBA10769EA72EB0937EF1AF01D144509845F2E4B2BE022E9FC52EDAF2D`, 0 errors).
     - Gate M6 status is authoritatively confirmed as **APPROVED / CLOSED**.
+ 
+14. **Project Owner Decision OD-11 (Stage 0: Reconciliation & Stage 1: Gate M6.1 Capability-Aware MCP Substrate & Read-Only Micro-Agent Broker)**:
+    - **Stage 0: Workspace Cleanup & Governance Reconciliation**:
+      - Restored clean baseline across `Market-HFT-OS` and `ADRs`, eliminating uncommitted drift.
+      - Extracted `D:\ADRs\ADRXX3.pdf` (46 pages, 201,353 characters), confirming it as the rendered archive of `POC-001 — Gate M1 Design-Readiness Specification v1.13 Final` with closure evidence for AUDIT-01 through AUDIT-52.
+      - Updated `PROJECT_CHARTER.md` to v0.2.5, establishing Gates M6.1–M6.8 MCP Broker & Micro-Agent Framework with strict read-only and human-authorized capital boundaries.
+    - **Stage 1: Capability-Aware MCP Substrate (`src/mcp/mcpSubstrate.ts`)**:
+      - Implemented typed JSON-RPC 2.0 / MCP tool schema envelopes (`McpToolDescriptor`, `McpToolCallRequest`, `McpToolCallResponse`).
+      - Implemented `McpServerAdapter` with runtime schema validation and hard firewall blocking forbidden capabilities: shell, SQL, ledger mutation, evidence promotion, order routing, and secrets (`E-MCP-FORBIDDEN-CAPABILITY`).
+      - Implemented `CapabilityGrant` with deep freeze (`Object.freeze`), scoping allowed tools, hosts, allowed methods (`GET` only), and redirect blocking (`E-MCP-REDIRECT-DENIED`).
+      - Implemented `McpCapabilityBroker` with deterministic SSRF and private/loopback/metadata IP blocking (`127.0.0.0/8`, `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `169.254.169.254`, `localhost`, `0.0.0.0`, `::1`), and 4-quota enforcement on every call (`requests_made`, `wall_clock_ms`, `payload_bytes`, `tokens_used`).
+      - Implemented `McpRunLedger` with append-only hash chains under RFC 8785 JCS canonicalization.
+      - Implemented `joinSupplementaryClaims` preserving multi-source agreement (`CROSS_SOURCE_CORROBORATED`) and disagreement (`CONFLICT`) without averaging, voting, or guessing.
+    - **Stage 1: M6 Engine Hardening & Sub-Agent Wiring (`src/agents/m6AgentFramework.ts`)**:
+      - Hardened `BitemporalRestatementEngine` to deep-clone and `deepFreeze` all records and inputs, reject duplicate decision overwrites fail-closed (`E-ERR-BITEMPORAL-OVERWRITE`), and support distinct decision time ($t_d$) and knowledge time ($t_k$).
+      - Connected `GovtSchemeAndTaxSubAgent` and `RedTeamReviewerSubAgent` genuinely into `ResearchSchedulerAndManager` execution ticks, and provided `executeResearchTickAsync` integrating `GroqFormulaAdvisor.resolveOrSynthesizeFormula`.
+    - **Acceptance Tests & Evidence Separation (`Suite 23`)**:
+      - Implemented `tests/acceptance/suite23_m6_1_mcp_substrate_and_broker.test.ts` (8 passed assertions):
+        1. `MCP-SUBSTRATE-SCHEMA-AND-FORBIDDEN-TOOLS-001`: JSON-RPC 2.0 envelopes & forbidden capability rejection.
+        2. `MCP-BROKER-CAPABILITY-AND-HOST-POLICY-002`: Frozen CapabilityGrant & host/method/redirect policy enforcement.
+        3. `MCP-BROKER-SSRF-PRIVATE-IP-BLOCK-003`: Hard SSRF & private IP / loopback / metadata egress blocking.
+        4. `MCP-BROKER-MULTI-QUOTA-ENFORCEMENT-004`: Deterministic enforcement of all 4 resource quotas.
+        5. `MCP-RUN-LEDGER-HASH-CHAIN-005`: RFC 8785 JCS hash-chained execution run ledger.
+        6. `MCP-SUPPLEMENTARY-CONFLICT-JOIN-006`: Conflict-preserving supplementary claims join.
+        7. `MCP-BITEMPORAL-IMMUTABILITY-PROOF-007`: Bitemporal deepFreeze immutability & duplicate overwrite prevention.
+        8. `MCP-SCHEDULER-FULL-WORKER-INVOCATION-008`: Genuine subagent execution & RFC 8785 JCS telemetry.
+    - **Full Baseline Conformance**:
+      - Full test baseline expanded to **200 passed tests across 23 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+      - Dedicated Gate M6.1 evidence files generated:
+        - `POC-001_Gate_M6_1_Test_Execution_Results.json` (SHA-256: `F914CF559382AD74A5910224AE1A035AC90AD30CABB708DE52640EBA00096DBB`, 200 tests).
+        - `POC-001_Gate_M6_1_Typecheck_Execution_Results.txt` (SHA-256: `2E4823FBA10769EA72EB0937EF1AF01D144509845F2E4B2BE022E9FC52EDAF2D`, 0 errors).
+    - Gate M6.1 status is authoritatively confirmed as **APPROVED / CLOSED**.
