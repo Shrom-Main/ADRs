@@ -1,0 +1,10 @@
+Gate M6.2 Stage 2 Typecheck Execution Results
+Date: 2026-10-17T16:39:33.643Z
+Command: npm.cmd run typecheck
+Exit Code: 0
+Errors: 0
+
+
+> market-hft-os@0.1.0 typecheck
+> tsc --noEmit
+

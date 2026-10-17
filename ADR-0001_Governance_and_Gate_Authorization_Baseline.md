@@ -64,9 +64,21 @@ Chosen option: **Ratified Dual Approach (Owner Ratified October 15, 2026)**.
    - **Approved Scope:** RAG-first sufficiency gate; asymptotic LLM decay flywheel; persistent corpus storage; pure BigInt rational AST evaluator; Suite 20 expanded to 17 tests; 20 suites / 178 tests passed.
    - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-08 by Project Owner on 2026-10-16).
 9. **Gate M5 (Multi-Opportunity Portfolio Capital Rationing & Sandbox Formula Stress-Testing):**
-   - **Baseline:** `Market-HFT-OS` @ current `main` / `ADRs` @ current `main`.
-   - **Approved Scope:** Stage 3 Multi-Opportunity Portfolio Capital Rationing Engine (`src/research/m5PortfolioAllocator.ts`); 4-candidate industrial pool under ₹50,000.0000 budget; discrete integer MOQ lot sizing; 50% single-SKU concentration caps; 91-day sovereign T-Bill cash sweep; dual-pass FormulaRegistry bridge with shadow what-if sandbox comparison; bit-for-bit RFC 8785 JCS determinism; Suite 21 (4 passed assertions); full test baseline expanded to 182 passed tests across 21 suites (0 skipped, 0 failed) on live PostgreSQL 16.8 (`localhost:5432`).
+   - **Baseline:** `Market-HFT-OS` @ `cba9554` / `ADRs` @ `5688ed7` (Tag: `POC-001-Gate-M5-Verified`).
+   - **Approved Scope:** Stage 3 Multi-Opportunity Portfolio Capital Rationing Engine (`src/research/m5PortfolioAllocator.ts`); 4-candidate industrial pool under ₹50,000.0000 budget; discrete integer MOQ lot sizing; 50% single-SKU concentration caps; 91-day sovereign T-Bill cash sweep; dual-pass FormulaRegistry bridge with shadow what-if sandbox comparison; bit-for-bit RFC 8785 JCS determinism; Suite 21 (7 passed assertions); full test baseline expanded to 185 passed tests across 21 suites (0 skipped, 0 failed) on live PostgreSQL 16.8 (`localhost:5432`).
    - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-09 by Project Owner on 2026-10-16).
+10. **Gate M6 (Governed Multi-Agent Research Swarm & Bitemporal Replay Engine):**
+    - **Baseline:** `Market-HFT-OS` @ `6bafb16` / `ADRs` @ commit companion (Tag: `POC-001-Gate-M6-Verified`).
+    - **Approved Scope:** Governed multi-agent research ecosystem (`src/agents/m6AgentFramework.ts`), TinyFish scoped browser sub-agent, specialist swarm (Media/Chatter, Macro/Lateral, Govt/Tax, RedTeam), 24x7 scheduler and manager orchestrator, and bitemporal decision replay & restatement engine; Suite 22 (7/7 passed); 22 suites / 192 tests passed against live PostgreSQL 16.8.
+    - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-10 by Project Owner on 2026-10-16).
+11. **Gate M6.1 (Capability-Aware MCP Substrate & Read-Only Micro-Agent Broker):**
+    - **Baseline:** `Market-HFT-OS` @ `95ce444` / `ADRs` @ `75c0190`.
+    - **Approved Scope:** Stage 0 Workspace & Charter Reconciliation; Stage 1 Capability-Aware MCP Substrate (`src/mcp/mcpSubstrate.ts`), JSON-RPC 2.0 tool envelopes, forbidden capability firewall, task-scoped immutable CapabilityGrant, McpCapabilityBroker (SSRF/private IP filter, 4-quota enforcement, GET only, redirect blocking), McpRunLedger (RFC 8785 JCS hash chains), conflict-preserving join (`joinSupplementaryClaims`), Bitemporal immutability & duplicate overwrite prevention (`E-ERR-BITEMPORAL-OVERWRITE`), genuine sub-agent scheduler invocations; Suite 23 (8/8 passed); 23 suites / 200 tests passed against live PostgreSQL 16.8.
+    - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-11 by Project Owner on 2026-10-17).
+12. **Gate M6.2 (Stage 1 Surgical Hardening & Stage 2 SourceCaptureWorker):**
+    - **Baseline:** `Market-HFT-OS` @ `a3da173` / `ADRs` @ current `main`.
+    - **Approved Scope:** Stage 1 surgical hardening in `src/mcp/mcpSubstrate.ts` (protocol scheme enforcement, IPv6 SSRF expansion, event loop timer cleanup, property type validation); Stage 2 Micro-Agent #1 `SourceCaptureWorker` (`src/agents/workers/sourceCaptureWorker.ts`) with 6-Layer DOM Sanitization Sieve (`sanitizeHtmlDomSieve`), 4-Layer Prompt-Injection & Canary Defense (`InjectionCanaryGuard`), zero-LLM deterministic numeric extraction (`parseInrToSubunits`), hardcoded status ceiling (`UNVERIFIED`, `ADVERTISED_LISTING`/`SUPPLIER_QUOTE`), deterministic fixture replay & live HTTPS GET; Suite 24 (8/8 passed); 24 suites / 208 tests passed against live PostgreSQL 16.8.
+    - **Status:** **APPROVED / CLOSED** (Formally authorized under Decision OD-12 by Project Owner on 2026-10-17).
 
 ### Project Owner Decision OD-02 (Hybrid Scope Resolution for Frozen Spec §8.2)
 
@@ -250,6 +262,63 @@ Formally authorized by Project Owner on 2026-10-16:
      - `POC-001_Gate_M6_Typecheck_Execution_Results.txt` (SHA-256: `2E4823FBA10769EA72EB0937EF1AF01D144509845F2E4B2BE022E9FC52EDAF2D`, 0 errors).
 5. **Milestone Disposition:**
    - Gate M6 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
+### Project Owner Decision OD-11 (Stage 0 Workspace Reconciliation & Stage 1 Capability-Aware MCP Substrate)
+
+Formally authorized by Project Owner on 2026-10-17:
+1. **Stage 0 Charter & Boundary Reconciliation:**
+   - Cleared uncommitted scratch files and reset workspace to clean baseline.
+   - Extracted and reconciled `ADRXX3.pdf` against frozen specifications, verifying alignment across all 6 engines.
+   - Updated `PROJECT_CHARTER.md` to v0.2.5, codifying Gates M6.1–M6.8 MCP Broker & Micro-Agent Framework.
+2. **Stage 1 Capability-Aware MCP Substrate (`src/mcp/mcpSubstrate.ts`):**
+   - Implemented JSON-RPC 2.0 / MCP tool schema envelopes with strict runtime validation.
+   - Implemented `McpServerAdapter` with forbidden capability firewall (shell, SQL, ledger mutation, promotion, order routing, secrets).
+   - Implemented task-scoped immutable `CapabilityGrant` (`Object.freeze`) scoping allowed tools, hosts, methods, and redirect blocking.
+   - Implemented `McpCapabilityBroker` enforcing strict SSRF and private IP / loopback / metadata egress blocking, GET-only operations, redirect denial, and 4-quota enforcement (`requests_made`, `wall_clock_ms`, `payload_bytes`, `tokens_used`).
+   - Implemented `McpRunLedger` with append-only hash chains under RFC 8785 JCS canonicalization.
+   - Implemented `joinSupplementaryClaims` preserving multi-source agreement (`CROSS_SOURCE_CORROBORATED`) and disagreement (`CONFLICT`) without averaging, voting, or guessing.
+   - Hardened `BitemporalRestatementEngine` to prevent duplicate decision overwrites fail-closed (`E-ERR-BITEMPORAL-OVERWRITE`) and deepFreeze all historical state.
+3. **Acceptance Tests & Evidence Separation (`Suite 23`):**
+   - Implemented `tests/acceptance/suite23_m6_1_mcp_substrate_and_broker.test.ts` (8 passed assertions).
+   - Full test baseline expanded to **200 passed tests across 23 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Dedicated Gate M6.1 evidence files:
+     - `POC-001_Gate_M6_1_Test_Execution_Results.json` (SHA-256: `F914CF559382AD74A5910224AE1A035AC90AD30CABB708DE52640EBA00096DBB`, 200 tests).
+     - `POC-001_Gate_M6_1_Typecheck_Execution_Results.txt` (SHA-256: `2E4823FBA10769EA72EB0937EF1AF01D144509845F2E4B2BE022E9FC52EDAF2D`, 0 errors).
+4. **Milestone Disposition:**
+   - Gate M6.1 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
+### Project Owner Decision OD-12 (Gate M6.2 Stage 1 Surgical Hardening & Stage 2 SourceCaptureWorker Closure)
+
+Formally authorized by Project Owner on 2026-10-17:
+1. **Stage 1 Surgical Hardening (`src/mcp/mcpSubstrate.ts`):**
+   - Enforced protocol scheme allowlisting (`https:` and `mcp:` only, rejecting all others with `E-MCP-SCHEME-DENIED`).
+   - Expanded SSRF IP filter to block IPv4-mapped IPv6 (`::ffff:`), IPv6 ULA (`f[cd]..:`), IPv6 link-local (`fe80:`), and unwhitelisted raw IP literals (`E-MCP-HOST-OR-SSRF-DENIED`).
+   - Eliminated event loop dangling timers via `try { ... } finally { if (timerHandle) clearTimeout(timerHandle); }`.
+   - Added runtime property type validation in `validateArguments` throwing `E-MCP-INVALID-ARGUMENTS` on schema mismatch.
+   - Guaranteed deterministic sorting and deep freezing of `sources` and `conflicting_values` in `joinSupplementaryClaims`.
+2. **Stage 2: Micro-Agent #1 SourceCaptureWorker (`src/agents/workers/sourceCaptureWorker.ts`):**
+   - Implemented `SourceCaptureWorker` (`worker:source-capture:v1`) routing read-only requests exclusively through `McpCapabilityBroker.invokeTool` under task-scoped `CapabilityGrant`.
+   - Registered `mcp://source-capture/http_get_snapshot` on `McpServerAdapter` supporting deterministic `RECORDED_FIXTURE_REPLAY` and live `APPROVED_LIVE_HTTPS_GET` with `redirect: 'error'`.
+   - Implemented 6-Layer DOM Sanitization Sieve (`sanitizeHtmlDomSieve`):
+     * *Layer 1*: 512KB cap (`E-MCP-PAYLOAD-TOO-LARGE`), null-byte rejection (`E-SCW-NULL-BYTE-DETECTED`), and raw SHA-256 calculation.
+     * *Layer 2*: Purges executable & active tag subtrees (`<script>`, `<style>`, `<iframe>`, `<form>`, `<input>`, etc.), event handlers (`on*`), and `javascript:`/`data:`/`vbscript:` URIs.
+     * *Layer 3*: Purges HTML comments (`<!-- ... -->`) and cloaked/hidden nodes (`hidden`, `aria-hidden="true"`, `display:none`, `visibility:hidden`, `opacity:0`, `font-size:0`, `width:0`, `height:0`, `left:-9999px`, `top:-9999px`, `color:transparent`) using depth-tracked iterative parsing.
+     * *Layer 4*: Retains structural selector attributes only (`id`, `class`, `data-asin`, `data-sku`, `data-price`, `data-moq`, `itemprop`, `href`), stripping free-text and LLM prompt smuggling attributes.
+     * *Layer 5*: Normalizes text to Unicode NFC, strips zero-width and BiDi control characters (`\u200B-\u200F`, `\uFEFF`), and rejects fullwidth/Cyrillic homographs in price contexts (`E-SCW-HOMOGRAPH-DETECTED`).
+     * *Layer 6*: Collapses redundant whitespace and computes canonical `sanitized_dom_sha256`.
+   - Implemented 4-Layer Prompt-Injection & Canary Defense (`InjectionCanaryGuard`):
+     * *Zero-LLM Numeric Extraction*: Deterministic BigInt subunit parser (`parseInrToSubunits`) strictly banning zero/0n substitution on missing or non-numeric costs (`status: 'DATA_REQUIRED'`, `E-SCW-MANDATORY-COST-MISSING`).
+     * *Lexical & Domain Canary Scanner*: Scans for instruction overrides, role/ChatML delimiters, domain enum spoofing literals (`VERIFIED_EXECUTABLE_OFFER`, `ALLOCATE_CAPITAL`, `CROSS_SOURCE_CORROBORATED`, `ACTUALS_LEDGER`, `PROMOTED_NORMATIVE`), and internal URI smuggling, quarantining captures with `E-SCW-PROMPT-INJECTION-DETECTED`.
+     * *Hardcoded Status Ceiling*: Enforces strict output ceilings (`verification_status: 'UNVERIFIED'`, `commercial_status: 'ADVERTISED_LISTING' | 'SUPPLIER_QUOTE'`), throwing `E-SCW-STATUS-ESCALATION-FORBIDDEN` on elevation attempts.
+     * *Cryptographic Spotlighting*: Encloses extracted text in nonce-delimited tags (`<untrusted_dom_field_${nonce}>...`).
+3. **Acceptance Tests & Evidence Separation (`Suite 24`):**
+   - Implemented `tests/acceptance/suite24_m6_2_source_capture_worker.test.ts` (8 passed assertions).
+   - Full test baseline expanded to **208 passed tests across 24 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Dedicated Gate M6.2 evidence files:
+     - `POC-001_Gate_M6_2_Test_Execution_Results.json` (SHA-256: `0B661002CB336F894C2D6B18329F9FDFB88E7088B0654DE55F3B730388393536`, 208 tests).
+     - `POC-001_Gate_M6_2_Typecheck_Execution_Results.txt` (SHA-256: `0C8CBFA6266109AE38761BEA2F38FC147DF50211ADB28505373F8E752540AE60`, 0 errors).
+4. **Milestone Disposition:**
+   - Gate M6.2 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
 ### Safety Invariants
 

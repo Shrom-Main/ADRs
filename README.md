@@ -17,12 +17,14 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 2. Governance & Gate Authorization
 
-* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md) — Authoritative sign-off record for Gates M0, M1, M2, M3, M4, M4.1, M4.2, M4.3, M5, M6, and M6.1.
+* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md) — Authoritative sign-off record for Gates M0, M1, M2, M3, M4, M4.1, M4.2, M4.3, M5, M6, M6.1, and M6.2.
 
 ---
 
 ## 3. Gate Conformance Reports & Audit Evidence
 
+* **Gate M6.2 Test Execution Results (JSON):** [`POC-001_Gate_M6_2_Test_Execution_Results.json`](./POC-001_Gate_M6_2_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (208 passed tests across 24 suites).
+* **Gate M6.2 Typecheck Results (UTF-8):** [`POC-001_Gate_M6_2_Typecheck_Execution_Results.txt`](./POC-001_Gate_M6_2_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output (0 errors).
 * **Gate M6.1 Test Execution Results (JSON):** [`POC-001_Gate_M6_1_Test_Execution_Results.json`](./POC-001_Gate_M6_1_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (200 passed tests across 23 suites).
 * **Gate M6.1 Typecheck Results (UTF-8):** [`POC-001_Gate_M6_1_Typecheck_Execution_Results.txt`](./POC-001_Gate_M6_1_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output (0 errors).
 * **Gate M6 Test Execution Results (JSON):** [`POC-001_Gate_M6_Test_Execution_Results.json`](./POC-001_Gate_M6_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (192 passed tests across 22 suites).
