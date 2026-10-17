@@ -363,8 +363,25 @@ Formally authorized by Project Owner on 2026-10-18:
    - Dedicated Gate M6.4 evidence files:
      - `POC-001_Gate_M6_4_Test_Execution_Results.json` (SHA-256: `CB5B643D855F0E9B2C61531F0E0898D71E6F41E607091AE51C31BB83A9FD9717`, 225 tests).
      - `POC-001_Gate_M6_4_Typecheck_Execution_Results.txt` (SHA-256: `C844D31403B9BC823C1F62DE8AAA77AE2B4F63F4C8325B506055CADB02960E24`, 0 errors).
-4. **Milestone Disposition:**
-   - Gate M6.4 status is authoritatively confirmed as **APPROVED / CLOSED**.
+### Project Owner Decision OD-15 (Stage 5 Micro-Agent #4 GovtAndStatutoryWorker, Statutory Citations, MSME Sec 43B(h) & Tax Formula Non-Mutation Firewall)
+
+Formally authorized by Project Owner on 2026-10-18:
+1. **Stage 5: Micro-Agent #4 GovtAndStatutoryWorker (`src/agents/workers/govtStatutoryWorker.ts`) & Contract (`src/mcp/contracts/govtStatutoryContract.ts`):**
+   - Implemented `GovtAndStatutoryWorker` (`worker:govt-statutory:v1`) and registered read-only MCP tool `mcp://policy-bulletins/fetch_circular` on `McpServerAdapter` with policy `GOVT_STATUTORY_TOOL_POLICY` (GET only, 256 KB payload cap, max 2 requests per task, hosts: `cbic-gst.gov.in`, `incometaxindia.gov.in`, `dgft.gov.in`, `msme.gov.in`).
+   - Authoritative Circular Registry (`StatutoryCircularRegistry`): Preloaded with CBIC HSN 73269099 GST rate (1800 bps = 18.00%), CBIC Section 52 TCS (100 bps = 1.00%), CBDT Section 194-O TDS (100 bps = 1.00%), DGFT Customs Tariff BCD on HSN 73269099 (750 bps = 7.50%), and DGFT Anti-Dumping Duty baseline on SS304.
+   - Immutable Statutory Citation Sieve (`verifyStatutoryCitation`): Enforces that every rule claim binds to an approved authority (`CBIC`, `CBDT`, `DGFT`, `MINISTRY_OF_MSME`), notification/section ID, ISO effective date (`YYYY-MM-DD`), and 64-char hex document SHA-256 (`E-GSW-INVALID-CITATION`).
+   - Zero-Default Policy: Missing circular or unknown HSN code fails closed with `DATA_REQUIRED` (`E-GSW-STATUTORY-CIRCULAR-REQUIRED`) with zero fabricated tax rate fallbacks.
+   - MSME Section 43B(h) Payment Term Cross-Check: Evaluates statutory credit ceiling under Finance Act 2023 / MSMED Act 2006 (`evaluateMsmePaymentTermLimit`): 45 days with written agreement, 15 days without, and 0 days for non-MSME. Emits structured `msme_cross_check` envelope enabling downstream Red-Team detection of illegal 60–90 day DPO credit assumptions.
+   - FormulaRegistry Non-Mutation Firewall: Proves that attempting to overwrite or mutate `PROMOTED_NORMATIVE` tax formula cards (e.g. `FIN-STATUTORY-TCS-TDS-003`) fails closed with `E-ERR-GOV-002: CANNOT_OVERWRITE_NORMATIVE_FORMULA`. Worker can only emit `UNVERIFIED` claims or register sandboxed `CANDIDATE_UI_MODEL` formulas. Unauthorized promotion without human authorization token (`GOVERNED_RATIFICATION_*`) fails closed with `E-ERR-GOV-003`.
+   - Prompt-Injection Canary Quarantine: Quarantines adversarial circular payloads via `InjectionCanaryGuard`, returning `status: 'QUARANTINED_INJECTION'`, `error_code: 'E-GSW-PROMPT-INJECTION-DETECTED'`.
+2. **Acceptance Tests & Evidence Separation (`Suite 27`):**
+   - Implemented `tests/acceptance/suite27_m6_5_govt_statutory_worker.test.ts` (8 passed assertions).
+   - Full test baseline expanded to **233 passed tests across 27 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Dedicated Gate M6.5 evidence files:
+     - `POC-001_Gate_M6_5_Test_Execution_Results.json` (SHA-256: `90FF1A25470BC812590971145C6402A2C5863FDBA69BC4E50D184611D77FBFF0`, 233 tests).
+     - `POC-001_Gate_M6_5_Typecheck_Execution_Results.txt` (SHA-256: `D3799E8B201645F3813E47DE5A9B31946EFC9C4743B2C7760DB96198E24DE251`, 0 errors).
+3. **Milestone Disposition:**
+   - Gate M6.5 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
 ### Safety Invariants
 
