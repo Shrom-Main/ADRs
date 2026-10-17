@@ -383,6 +383,32 @@ Formally authorized by Project Owner on 2026-10-18:
 3. **Milestone Disposition:**
    - Gate M6.5 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
+### Project Owner Decision OD-16 (Gate M6.6 Micro-Agent #5 `RedTeamAndConflictWorker`, 7 Adversarial Rules, Hard Disposition Ceiling & Context-Routing State Machine)
+
+Formally authorized by Project Owner on 2026-10-18:
+1. **Stage 6 Implementation & Contracts:**
+   - Implemented `RedTeamAndConflictWorker` (`worker:red-team:v1`) in `src/agents/workers/redTeamWorker.ts` and contract in `src/mcp/contracts/redTeamContract.ts`.
+   - Read-only MCP tool `mcp://audit-corpus/read_joined_claims` registered on `McpServerAdapter` with policy `RED_TEAM_TOOL_POLICY` (zero network egress `allowed_hosts: []`, GET only, 256 KB cap).
+   - 7 Authoritative Red-Team Adversarial & Conflict Rules:
+     1. `RT-01-BELOW-PHYSICAL-SCRAP-FLOOR`: Blocks candidate quotes priced below LME SS304 raw metal scrap floor or minimum viable EXW manufacturing floor (`HOLD_BLOCKED_BY_RED_TEAM`).
+     2. `RT-02-UNRESOLVED-CROSS-SOURCE-CONFLICT`: Strictly preserves cross-source conflicts without voting, averaging, or guessing (`HOLD_BLOCKED_BY_RED_TEAM`).
+     3. `RT-03-UNVERIFIED-HIGH-RETURN-ILLUSION`: Flags RoWC > 10,000 bps (100.00%) resting solely on unverified `ADVERTISED_LISTING` evidence (`REQUIRES_SUPPLEMENTARY_CORROBORATION`).
+     4. `RT-04-METALLURGY-CHATTER-CONTRADICTION`: Rejects candidate quotes where supplier advertises SS304 but customer reviews identify SS202 adulteration or defect rates > 1,000 bps (`HOLD_BLOCKED_BY_RED_TEAM`).
+     5. `RT-05-ILLEGAL-MSME-CREDIT-TERM-ASSUMPTION`: Enforces statutory MSME Section 43B(h) credit ceilings. Flags assumed supplier DPO payment terms > 45 days (`HOLD_BLOCKED_BY_RED_TEAM`).
+     6. `RT-06-MANDATORY-COST-DATA-REQUIRED`: Enforces zero-cost substitution ban under Frozen Spec §2.3. Flags missing freight, packaging, or tax rates (`HOLD_BLOCKED_BY_RED_TEAM`).
+     7. `RT-07-EXPIRED-OR-CLOCK-SKEWED-EVIDENCE`: Enforces evidence freshness and clock skew firewalls (>60s skew or expired TTL) (`HOLD_BLOCKED_BY_RED_TEAM`).
+   - Hard Disposition Ceiling: Restricts outputs to `HOLD_BLOCKED_BY_RED_TEAM`, `REQUIRES_SUPPLEMENTARY_CORROBORATION`, or `ELIGIBLE_FOR_HUMAN_REVIEW`. Fails closed with `E-RTW-DISPOSITION-CEILING-BREACH` on `APPROVED_FOR_EXECUTION`.
+2. **Deterministic Context-Routing State Machine (`src/agents/scheduler/contextRoutingStateMachine.ts`):**
+   - Coordinates Pass 1 (Horizontal Gap-Filling across Stages 2, 4, 5), Pass 2 (Supplementary Corroboration & Conflict-Preserving Join), and Pass 3 (Red-Team Audit & Deterministic Join) under bit-for-bit RFC 8785 JCS canonical attestation with SHA-256 telemetry digest.
+3. **Acceptance Tests & Evidence Separation (`Suite 28`):**
+   - Implemented `tests/acceptance/suite28_m6_6_red_team_conflict_worker.test.ts` (8 passed assertions).
+   - Full test baseline expanded to **241 passed tests across 28 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Dedicated Gate M6.6 evidence files:
+     - `POC-001_Gate_M6_6_Test_Execution_Results.json` (SHA-256: `81A20C41204E0D776FB7A9FD68317F52DEA712D07A5E02A9FA350E0D3423460B`, 241 tests).
+     - `POC-001_Gate_M6_6_Typecheck_Execution_Results.txt` (SHA-256: `7808FD347CB9B2BAB4A5A91EEF5F976584C3D319641274B1EFAB6572DE48DC6E`, 0 errors).
+4. **Milestone Disposition:**
+   - Gate M6.6 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
 ### Safety Invariants
 
 - **Zero Real Capital / Simulation Isolation:** No live exchange, broker, bank, or payment gateway API connections are permitted. All order routing is confined to `SimulatedExecutionGateway`.
