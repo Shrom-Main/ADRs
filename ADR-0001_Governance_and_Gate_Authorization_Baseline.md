@@ -457,6 +457,27 @@ Formally authorized by Project Owner on 2026-10-18:
 3. **Milestone Disposition:**
    - Gate M6.8 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
+### Project Owner Decision OD-19 (Gate M6.9 Stage 9 Read-Only Operator Terminal, Safety Controls, Egress Telemetry & 12-Point Release Gate Closure)
+
+Formally authorized by Project Owner on 2026-10-18:
+1. **Stage 9 Implementation & Contracts (`src/mcp/contracts/operatorTerminalContract.ts`, `src/terminal/operatorTerminalController.ts`):**
+   - 8-Workspace Read-Only Projection Layer: Implemented strictly read-only terminal projections for all 8 workspaces (`POC.docx` §10): Command Center, Opportunity Radar, Evidence Workbench, Economic & Simulation Sandbox, Capital Allocation & Review Queue, Strategy & Factor Lifecycle, Risk & Exposure Monitor, and Statutory & Audit Ledger.
+   - Anti-Vanity Profit Firewall: Enforces `E-M9-VANITY-PROFIT-FORBIDDEN` whenever an attempt is made to combine forecasts, paper simulation outcomes, and actual production settlements into a single composite profit figure (`POC.docx` §10.1).
+   - 10-Dimension Capital Allocation & Separation: Exposes all 10 required comparison dimensions (`POC.docx` §8) without collapsing into a composite score, strictly enforcing Conviction vs Allocation separation (capping allocation at ₹0.00 for non-live fixtures/unverified listings) and drill-down lineage to source SHA-256 (`POC.docx` §10.2).
+   - 3-Tier Kill Switch Controller: Implemented `KillSwitchController` supporting `HALT_NEW_ALLOCATIONS`, `HALT_ALL_SIMULATION_PROCESSING`, and `ENTER_RECOVERY_ONLY_MODE` while preserving 100% of historical audit records.
+   - Governed Confirmation Gate: Implemented `executeGovernedOperatorAction` requiring confirmation token match and an explicit rationale $\ge 15$ characters (`E-M9-CONFIRMATION-AND-RATIONALE-REQUIRED`).
+   - Two-Level Error Presentation & Secret Scrubbing: Implemented `formatTwoLevelError` redacting secrets with `[E-M9-SECRET-REDACTED]` and distinguishing `DEFINITE_FAILURE` from `OUTCOME_UNKNOWN_RECONCILIATION_REQUIRED` on write timeouts.
+   - Self-Contained HTML5/SVG Workstation Renderer: Implemented `renderOperatorTerminalHtml` producing accessible dark-mode UI with dynamic SVG data visualizations and telemetry tables.
+   - 12-Point Platform Release Gate: Implemented `evaluateTwelvePointPlatformReadiness` evaluating all 12 platform release criteria from `POC.docx` §13, producing an RFC 8785 JCS canonical SHA-256 readiness certificate.
+2. **Acceptance Tests & Evidence Separation (`Suite 31`):**
+   - Implemented `tests/acceptance/suite31_m6_9_operator_terminal_and_release_gate.test.ts` (8 normative acceptance tests).
+   - Full test baseline expanded to **267 passed tests across 31 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Dedicated Gate M6.9 evidence files:
+     - `POC-001_Gate_M6_9_Test_Execution_Results.json` (SHA-256: `270B84DA80CF00B18324E10CD3721ABEE263C690D13783883FF900A4E14B97B6`, 267 tests).
+     - `POC-001_Gate_M6_9_Typecheck_Execution_Results.txt` (SHA-256: `9567B1B8101CBDE9A3E1C97D0B92BD6F0FD2CB579F6E1777A8228B2CC0E748B6`, 0 errors).
+3. **Milestone Disposition:**
+   - Gate M6.9 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
 ### Safety Invariants
 
 - **Zero Real Capital / Simulation Isolation:** No live exchange, broker, bank, or payment gateway API connections are permitted. All order routing is confined to `SimulatedExecutionGateway`.
