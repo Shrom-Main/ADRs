@@ -434,6 +434,27 @@ Formally authorized by Project Owner on 2026-10-18:
 3. **Milestone Disposition:**
    - Gate M6.7 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
+### Project Owner Decision OD-18 (Gate M6.8 Stage 8 Read-Only Operator Terminal Projection, 3-Tier Kill Switch, Two-Level Error Envelope & 12-Point Release Gate Closure)
+
+Formally authorized by Project Owner on 2026-10-18:
+1. **Stage 8 Implementation & Architecture (`src/mcp/contracts/operatorTerminalContract.ts`, `src/terminal/operatorTerminalController.ts`):**
+   - Read-Only 8-Workspace Operator Projection: Implemented `OperatorTerminalController.projectTerminalSnapshot` returning deeply frozen (`deepFreeze`) `OperatorTerminalSnapshot` across all 8 logical workspaces (`command_center`, `opportunity_radar`, `evidence_workbench`, `economics_lab`, `capital_allocator`, `simulation_and_positions`, `reconciliation_and_performance`, `risk_audit_and_system_health`).
+   - Anti-Vanity Profit Firewall: In strict compliance with `POC.docx` §10.1, the platform explicitly refuses to project any combined vanity profit figure mixing forecasts, paper results, and actuals (`E-M8-VANITY-PROFIT-FORBIDDEN`).
+   - 10 Required Comparison Dimensions: In `capital_allocator`, exposes all 10 required capital-allocation comparison dimensions (`POC.docx` §8) without collapsing into a composite score. Enforces strict Conviction vs. Allocation separation (`POC.docx` §10.3), allocating strictly ₹0 to unverified advertised listings regardless of high theoretical RoWC. Distinguishes `MEASURED_DEADLINE` from `MODELLED_ESTIMATE` timers (`POC.docx` §10.4).
+   - 3-Tier Kill-Switch Controller: Implemented `KillSwitchController` (`POC.docx` §8) supporting `HALT_NEW_ALLOCATIONS`, `HALT_ALL_SIMULATION_PROCESSING`, and `ENTER_RECOVERY_ONLY_MODE`, preserving 100% of historical records, open positions, and balances intact.
+   - Governed Confirmation Gate: Implemented `executeGovernedOperatorAction` requiring `OperatorConfirmationEnvelope` with token and $\ge 15$-character explicit rationale (`E-M8-CONFIRMATION-AND-RATIONALE-REQUIRED`), strictly prohibiting optimistic UI mutations (`optimistic_ui_mutation_allowed: false`).
+   - Two-Level Error Presentation: Implemented `formatTwoLevelError` (`POC.docx` §9.5) scrubbing secrets (`gsk_...`, `Groq_Key.env`, DB credentials) with tag `[E-M8-SECRET-REDACTED]`, and distinguishing `DEFINITE_FAILURE` from `OUTCOME_UNKNOWN_RECONCILIATION_REQUIRED` on write timeouts.
+   - Interactive HTML5/SVG Workstation Renderer: Implemented `renderOperatorTerminalHtml` generating a self-contained dark-mode workstation with SVG charts (Spread/Breakeven bands, 35-day Cash-Flow J-Curve, Arbitrage Greeks, Conviction Matrix, MCP Worker DAG), accessible text badges (`[OK]`, `[WARN]`, `[BLOCKED]`, `[HALTED]`), and persistent paper-only safety banner.
+   - 12-Point Platform Release Gate: Implemented `evaluateTwelvePointPlatformReadiness` deterministically verifying all 12 criteria from `POC.docx` §13, producing an RFC 8785 JCS SHA-256 certificate.
+2. **Acceptance Tests & Evidence Separation (`Suite 30`):**
+   - Implemented `tests/acceptance/suite30_m6_8_operator_terminal_and_release_gate.test.ts` (8 normative assertions).
+   - Full test baseline expanded to **257 passed tests across 30 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Dedicated Gate M6.8 evidence files:
+     - POC-001_Gate_M6_8_Test_Execution_Results.json (SHA-256: E553410865DA285A4F6ECE0F24C6B67FA9FBEB8B5CA04C0BB9A064714028848E, 257 tests).
+     - POC-001_Gate_M6_8_Typecheck_Execution_Results.txt (SHA-256: E7E98ADF6A9E862C685EB3BBF53159540AEAD4B7B6991FFD3EBDC14CEB23A42C, 0 errors).
+3. **Milestone Disposition:**
+   - Gate M6.8 status is authoritatively confirmed as **APPROVED / CLOSED / RELEASE-READY**.
+
 ### Safety Invariants
 
 - **Zero Real Capital / Simulation Isolation:** No live exchange, broker, bank, or payment gateway API connections are permitted. All order routing is confined to `SimulatedExecutionGateway`.
