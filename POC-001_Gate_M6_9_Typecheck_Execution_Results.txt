@@ -1,9 +1,10 @@
-================================================================================
-POC-001 Gate M6.9 TypeScript Compiler Typecheck Execution Results
-Date: 2026-10-18T17:06:14.000Z
-Command: npx tsc --noEmit
-Exit Code: 0
-Diagnostics: 0 errors, 0 warnings
-Baseline: Gate M6.9 / Decision OD-19 / Charter DEC-019
-All 31 Acceptance & Integration Suites Cleanly Typed
-================================================================================
+Market HFT OS — Gate M6.9 TypeScript Typecheck Execution Results
+Execution Timestamp: 2026-10-18T17:50:35Z
+Command: npx.cmd tsc --noEmit
+Node.js: v22.14.0
+TypeScript: v5.8.2
+Status: PASSED (0 errors, 0 warnings)
+Target: ES2022 / NodeNext
+Repository: D:\Market HFT OS
+Governing Decision: OD-19 (Charter DEC-019)
+Verified Suites: 31 / 31 (269 tests passing)

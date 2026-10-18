@@ -469,12 +469,13 @@ Formally authorized by Project Owner on 2026-10-18:
    - Two-Level Error Presentation & Secret Scrubbing: Implemented `formatTwoLevelError` redacting secrets with `[E-M9-SECRET-REDACTED]` and distinguishing `DEFINITE_FAILURE` from `OUTCOME_UNKNOWN_RECONCILIATION_REQUIRED` on write timeouts.
    - Self-Contained HTML5/SVG Workstation Renderer: Implemented `renderOperatorTerminalHtml` producing accessible dark-mode UI with dynamic SVG data visualizations and telemetry tables.
    - 12-Point Platform Release Gate: Implemented `evaluateTwelvePointPlatformReadiness` evaluating all 12 platform release criteria from `POC.docx` §13, producing an RFC 8785 JCS canonical SHA-256 readiness certificate.
-2. **Acceptance Tests & Evidence Separation (`Suite 31`):**
-   - Implemented `tests/acceptance/suite31_m6_9_operator_terminal_and_release_gate.test.ts` (8 normative acceptance tests).
-   - Full test baseline expanded to **267 passed tests across 31 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+2. **Acceptance Tests & Evidence Separation (`Suite 30` & `Suite 31`):**
+   - Maintained `tests/acceptance/suite30_m6_8_operator_terminal_and_release_gate.test.ts` (8 normative acceptance tests for Stage 8 Operator Terminal & 12-Point Release Gate).
+   - Implemented `tests/acceptance/suite31_m6_9_mcp_hardening_and_terminal_certification.test.ts` (12 normative acceptance tests covering MCP wire protocol lifecycle, positive manifests, HMAC capability grants, constrained HTTPS egress, DNS pre-resolution, streaming byte cutoff, honest evidence origin firewall, look-ahead bias checks, brokered Groq LLM egress, Adala-style GoldenExtractionBench certification at 10000n bps, plan-driven topological wave DAG dispatcher, durable ledger/checkpoint persistence, operator terminal origin/HMAC/bench telemetry badges, dynamic 7-bucket check OTC-01, and HTML sanitization OTC-02).
+   - Full test baseline expanded to **269 passed tests across 31 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
    - Dedicated Gate M6.9 evidence files:
-     - `POC-001_Gate_M6_9_Test_Execution_Results.json` (SHA-256: `270B84DA80CF00B18324E10CD3721ABEE263C690D13783883FF900A4E14B97B6`, 267 tests).
-     - `POC-001_Gate_M6_9_Typecheck_Execution_Results.txt` (SHA-256: `9567B1B8101CBDE9A3E1C97D0B92BD6F0FD2CB579F6E1777A8228B2CC0E748B6`, 0 errors).
+     - `POC-001_Gate_M6_9_Test_Execution_Results.json` (SHA-256: `FA0699204A5A2A66822ED2032B3EF78F95AFD0CB5F3589C880FD08CFC2C95B72`, 269 tests).
+     - `POC-001_Gate_M6_9_Typecheck_Execution_Results.txt` (SHA-256: `A5A992297C6739D45A6C4B9347C5F84DB162FC660C39605928F7EEBEE660C9F7`, 0 errors).
 3. **Milestone Disposition:**
    - Gate M6.9 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
