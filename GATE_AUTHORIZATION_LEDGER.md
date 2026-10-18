@@ -472,3 +472,31 @@
         - `POC-001_Gate_M6_9_Test_Execution_Results.json` (SHA-256: `FA0699204A5A2A66822ED2032B3EF78F95AFD0CB5F3589C880FD08CFC2C95B72`, 269 tests).
         - `POC-001_Gate_M6_9_Typecheck_Execution_Results.txt` (SHA-256: `A5A992297C6739D45A6C4B9347C5F84DB162FC660C39605928F7EEBEE660C9F7`, 0 errors).
     - Gate M6.9 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
+22. **Project Owner Decision OD-20 (Gate M7.0 Runnable Local Loopback Workstation Server, Authoritative State Manager, Interactive 8-Workspace Client & Zero-Trust Security Acceptance Gate Closure)**:
+    - **Gate M7.0 Implementation & Architecture (`src/server/workstationServer.ts`, `src/server/workstationStateManager.ts`, `src/cli/workstationCli.ts`, `src/terminal/operatorTerminalController.ts`)**:
+      - *Runnable Local Loopback Workstation Server (`WorkstationServer`)*: Implemented HTTP/WebSocket server strictly confined to loopback interface (`127.0.0.1` / `localhost`) per `POC.docx` §10.5, throwing `E-SRV-NON-LOOPBACK-BIND-FORBIDDEN` if any external or wildcard interface is requested. Default port `4310`, with support for ephemeral OS port assignment (`port: 0`) for collision-free test runs (`SRV-04`).
+      - *Browser DNS-Rebinding & CSWSH Firewall (`SRV-01`)*: Inspects `Host` header on every request, rejecting non-loopback hosts with HTTP 403 Forbidden and `E-SRV-INVALID-HOST-HEADER`. Validates `Origin` header on all `POST` requests and WebSocket `/ws` upgrades, rejecting cross-origin attackers with HTTP 403 Forbidden and `E-SRV-CROSS-ORIGIN-BLOCKED`. Enforces hard 64 KB (65,536 bytes) request body cap, rejecting oversized payloads with HTTP 413 and `E-SRV-REQUEST-BODY-TOO-LARGE`.
+      - *Strict Security Headers (`SRV-01`)*: Enforces `Content-Security-Policy: default-src 'self' 'unsafe-inline'; frame-ancestors 'none'`, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Cache-Control: no-store` on all responses.
+      - *Zero Client-Side Float Math / Zero Optimistic UI (`SRV-02`)*: UI is strictly a read-only projection (`POC.docx` §10.5). What-If evaluations execute purely on the backend via `stateManager.evaluateWhatIfFormula` evaluating symbolic expressions in pure `BigInt` rational AST arithmetic (`CANDIDATE_UI_MODEL` tier), completely eliminating JavaScript IEEE 754 floating-point drift and client-side optimistic state mutations.
+      - *Live Kill-Switch Fail-Closed Enforcement (`SRV-03`)*: When kill switch is `HALT_ALL_SIMULATION_PROCESSING` or `ENTER_RECOVERY_ONLY_MODE`, `POST /api/actions/run-dag` fails closed with HTTP 409 Conflict and `TwoLevelErrorEnvelope` (`E-M8-KILLSWITCH-ALL-SIMULATION-HALTED` / `E-M8-KILLSWITCH-RECOVERY-ONLY`), while read-only inspection endpoints (`GET /`, `GET /api/snapshot`, `GET /api/health`, `GET /api/certificate`) remain 100% available and responsive.
+      - *Live WebSocket Snapshot Broadcast*: WebSocket clients connecting to `ws://127.0.0.1:<port>/ws` receive initial snapshot immediately (`SNAPSHOT_INITIAL`), followed by live real-time broadcast of all authoritative state transitions (`TERMINAL_SNAPSHOT_BROADCAST`).
+      - *CLI Workstation Runner (`src/cli/workstationCli.ts`)*: Added `"workstation": "tsx src/cli/workstationCli.ts"` script to `package.json`, printing structured terminal banner with loopback URLs and security status on startup.
+    - **Acceptance Tests & Evidence Separation (`Suite 32`)**:
+      - Implemented `tests/acceptance/suite32_m7_0_workstation_server.test.ts` (10 normative acceptance tests):
+        1. `MCP-WRK-NON-LOOPBACK-BIND-REJECT-001`: Strict loopback confinement (127.0.0.1 / localhost only).
+        2. `MCP-WRK-DNS-REBINDING-HOST-FIREWALL-002`: Host header DNS-rebinding rejection (HTTP 403 / `E-SRV-INVALID-HOST-HEADER`).
+        3. `MCP-WRK-CSWSH-ORIGIN-FIREWALL-003`: Cross-site POST & WebSocket upgrade rejection (HTTP 403 / `E-SRV-CROSS-ORIGIN-BLOCKED`).
+        4. `MCP-WRK-REQUEST-BODY-CAP-004`: 64 KB request envelope cap rejection (HTTP 413 / `E-SRV-REQUEST-BODY-TOO-LARGE`).
+        5. `MCP-WRK-SECURITY-HEADERS-ENFORCED-005`: Strict security headers on all HTTP responses (CSP, XFO, nosniff, no-store).
+        6. `MCP-WRK-READ-ONLY-PROJECTION-ROOT-006`: Self-contained HTML5/SVG terminal rendering with all 8 workspaces.
+        7. `MCP-WRK-READ-ONLY-API-ENDPOINTS-007`: Frozen snapshot, health, and 12-point platform readiness certificate APIs.
+        8. `MCP-WRK-KILL-SWITCH-GOVERNED-ACTION-008`: 3-tier kill-switch transition requiring $\ge 15$-character rationale.
+        9. `MCP-WRK-KILL-SWITCH-DAG-HALT-ENFORCEMENT-009`: DAG execution fail-closed (HTTP 409) under halt scopes (`SRV-03`).
+        10. `MCP-WRK-WEBSOCKET-LIVE-BROADCAST-010`: Live WebSocket broadcast of snapshot transitions (`TERMINAL_SNAPSHOT_BROADCAST`).
+    - **Full Baseline Conformance**:
+      - Full test baseline expanded to **279 passed tests across 32 contiguous suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`) and 0 TypeScript compilation errors.
+      - Dedicated Gate M7.0 evidence files generated:
+        - `POC-001_Gate_M7_0_Test_Execution_Results.json` (SHA-256: `8A4E3D35960B94E545352E1231FF55D3C6A2A237461FF6E83211B57FC913BEE1`, 279 tests).
+        - `POC-001_Gate_M7_0_Typecheck_Execution_Results.txt` (SHA-256: `7C70531016D2170F58C0AA0159CBA4B6B90949D6E57707CB71232ECA3011B323`, 0 errors).
+    - Gate M7.0 status is authoritatively confirmed as **APPROVED / CLOSED**.

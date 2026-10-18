@@ -479,6 +479,26 @@ Formally authorized by Project Owner on 2026-10-18:
 3. **Milestone Disposition:**
    - Gate M6.9 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
+### Project Owner Decision OD-20 (Gate M7.0 Runnable Local Loopback Workstation Server, Authoritative State Manager, Interactive 8-Workspace Client & Zero-Trust Security Acceptance Gate Closure)
+
+Formally authorized by Project Owner on 2026-10-18:
+1. **Gate M7.0 Implementation & Architecture (`src/server/workstationServer.ts`, `src/server/workstationStateManager.ts`, `src/cli/workstationCli.ts`, `src/terminal/operatorTerminalController.ts`):**
+   - Runnable Local Loopback Workstation Server (`WorkstationServer`): Deterministic loopback HTTP and WebSocket server strictly confined to `127.0.0.1` and `localhost` (`E-SRV-NON-LOOPBACK-BIND-FORBIDDEN`), supporting default port `4310` and ephemeral `port: 0` for isolated test runs (`SRV-04`).
+   - Browser DNS-Rebinding & CSWSH Firewall (`SRV-01`): Inspects `Host` header on every request (HTTP 403 / `E-SRV-INVALID-HOST-HEADER`), validates `Origin` header on state-mutating POST requests and `/ws` upgrades (HTTP 403 / `E-SRV-CROSS-ORIGIN-BLOCKED`), and enforces 64 KB request envelope cap (HTTP 413 / `E-SRV-REQUEST-BODY-TOO-LARGE`).
+   - Strict Security Headers (`SRV-01`): Attaches `Content-Security-Policy: default-src 'self' 'unsafe-inline'; frame-ancestors 'none'`, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Cache-Control: no-store` to all responses.
+   - Zero Client-Side Float Math / Zero Optimistic UI (`SRV-02`): UI is strictly read-only (`POC.docx` §10.5). What-If evaluations execute purely on the backend in pure `BigInt` rational AST arithmetic within the sandboxed `CANDIDATE_UI_MODEL` tier.
+   - Live Kill-Switch Fail-Closed Enforcement (`SRV-03`): Under `HALT_ALL_SIMULATION_PROCESSING` and `ENTER_RECOVERY_ONLY_MODE`, `POST /api/actions/run-dag` fails closed with HTTP 409 Conflict, while read-only GET endpoints remain 100% available.
+   - Live WebSocket Snapshot Broadcast: Pushes real-time snapshot events (`TERMINAL_SNAPSHOT_BROADCAST`) over `/ws` to all connected clients upon state transition.
+   - CLI Workstation Runner (`src/cli/workstationCli.ts`): Added `"workstation": "tsx src/cli/workstationCli.ts"` script to `package.json`.
+2. **Acceptance Tests & Evidence Separation (`Suite 32`):**
+   - Implemented `tests/acceptance/suite32_m7_0_workstation_server.test.ts` (10 normative acceptance tests).
+   - Full test baseline expanded to **279 passed tests across 32 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Dedicated Gate M7.0 evidence files:
+     - `POC-001_Gate_M7_0_Test_Execution_Results.json` (SHA-256: `8A4E3D35960B94E545352E1231FF55D3C6A2A237461FF6E83211B57FC913BEE1`, 279 tests).
+     - `POC-001_Gate_M7_0_Typecheck_Execution_Results.txt` (SHA-256: `7C70531016D2170F58C0AA0159CBA4B6B90949D6E57707CB71232ECA3011B323`, 0 errors).
+3. **Milestone Disposition:**
+   - Gate M7.0 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
 ### Safety Invariants
 
 - **Zero Real Capital / Simulation Isolation:** No live exchange, broker, bank, or payment gateway API connections are permitted. All order routing is confined to `SimulatedExecutionGateway`.

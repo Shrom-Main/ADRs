@@ -17,12 +17,14 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 2. Governance & Gate Authorization
 
-* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md) — Authoritative sign-off record for Gates M0, M1, M2, M3, M4, M4.1, M4.2, M4.3, M5, M6, M6.1, M6.2, M6.3, M6.4, M6.5, M6.6, M6.7, M6.8, and M6.9.
+* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md) — Authoritative sign-off record for Gates M0, M1, M2, M3, M4, M4.1, M4.2, M4.3, M5, M6, M6.1, M6.2, M6.3, M6.4, M6.5, M6.6, M6.7, M6.8, M6.9, and M7.0.
 
 ---
 
 ## 3. Gate Conformance Reports & Audit Evidence
 
+* **Gate M7.0 Test Execution Results (JSON):** [`POC-001_Gate_M7_0_Test_Execution_Results.json`](./POC-001_Gate_M7_0_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (279 passed tests across 32 suites).
+* **Gate M7.0 Typecheck Results (UTF-8):** [`POC-001_Gate_M7_0_Typecheck_Execution_Results.txt`](./POC-001_Gate_M7_0_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output (0 errors).
 * **Gate M6.9 Test Execution Results (JSON):** [`POC-001_Gate_M6_9_Test_Execution_Results.json`](./POC-001_Gate_M6_9_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (269 passed tests across 31 suites).
 * **Gate M6.9 Typecheck Results (UTF-8):** [`POC-001_Gate_M6_9_Typecheck_Execution_Results.txt`](./POC-001_Gate_M6_9_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output (0 errors).
 * **Gate M6.8 Test Execution Results (JSON):** [`POC-001_Gate_M6_8_Test_Execution_Results.json`](./POC-001_Gate_M6_8_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (259 passed tests across 30 suites).
