@@ -434,26 +434,28 @@ Formally authorized by Project Owner on 2026-10-18:
 3. **Milestone Disposition:**
    - Gate M6.7 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
-### Project Owner Decision OD-18 (Gate M6.8 Stage 8 Read-Only Operator Terminal Projection, 3-Tier Kill Switch, Two-Level Error Envelope & 12-Point Release Gate Closure)
+### Project Owner Decision OD-18 (Gate M6.8 Comprehensive MCP Protocol Hardening, Constrained Egress Connector, First-Class Evidence Origin Firewall, Provider Certification & Plan-Driven DAG Execution Closure)
 
 Formally authorized by Project Owner on 2026-10-18:
-1. **Stage 8 Implementation & Architecture (`src/mcp/contracts/operatorTerminalContract.ts`, `src/terminal/operatorTerminalController.ts`):**
-   - Read-Only 8-Workspace Operator Projection: Implemented `OperatorTerminalController.projectTerminalSnapshot` returning deeply frozen (`deepFreeze`) `OperatorTerminalSnapshot` across all 8 logical workspaces (`command_center`, `opportunity_radar`, `evidence_workbench`, `economics_lab`, `capital_allocator`, `simulation_and_positions`, `reconciliation_and_performance`, `risk_audit_and_system_health`).
-   - Anti-Vanity Profit Firewall: In strict compliance with `POC.docx` §10.1, the platform explicitly refuses to project any combined vanity profit figure mixing forecasts, paper results, and actuals (`E-M8-VANITY-PROFIT-FORBIDDEN`).
-   - 10 Required Comparison Dimensions: In `capital_allocator`, exposes all 10 required capital-allocation comparison dimensions (`POC.docx` §8) without collapsing into a composite score. Enforces strict Conviction vs. Allocation separation (`POC.docx` §10.3), allocating strictly ₹0 to unverified advertised listings regardless of high theoretical RoWC. Distinguishes `MEASURED_DEADLINE` from `MODELLED_ESTIMATE` timers (`POC.docx` §10.4).
-   - 3-Tier Kill-Switch Controller: Implemented `KillSwitchController` (`POC.docx` §8) supporting `HALT_NEW_ALLOCATIONS`, `HALT_ALL_SIMULATION_PROCESSING`, and `ENTER_RECOVERY_ONLY_MODE`, preserving 100% of historical records, open positions, and balances intact.
-   - Governed Confirmation Gate: Implemented `executeGovernedOperatorAction` requiring `OperatorConfirmationEnvelope` with token and $\ge 15$-character explicit rationale (`E-M8-CONFIRMATION-AND-RATIONALE-REQUIRED`), strictly prohibiting optimistic UI mutations (`optimistic_ui_mutation_allowed: false`).
-   - Two-Level Error Presentation: Implemented `formatTwoLevelError` (`POC.docx` §9.5) scrubbing secrets (`gsk_...`, `Groq_Key.env`, DB credentials) with tag `[E-M8-SECRET-REDACTED]`, and distinguishing `DEFINITE_FAILURE` from `OUTCOME_UNKNOWN_RECONCILIATION_REQUIRED` on write timeouts.
-   - Interactive HTML5/SVG Workstation Renderer: Implemented `renderOperatorTerminalHtml` generating a self-contained dark-mode workstation with SVG charts (Spread/Breakeven bands, 35-day Cash-Flow J-Curve, Arbitrage Greeks, Conviction Matrix, MCP Worker DAG), accessible text badges (`[OK]`, `[WARN]`, `[BLOCKED]`, `[HALTED]`), and persistent paper-only safety banner.
-   - 12-Point Platform Release Gate: Implemented `evaluateTwelvePointPlatformReadiness` deterministically verifying all 12 criteria from `POC.docx` §13, producing an RFC 8785 JCS SHA-256 certificate.
+1. **Stage 8 Implementation & Architecture (`src/mcp/mcpSubstrate.ts`, `src/agents/evaluation/goldenExtractionBench.ts`, `src/research/llmFormulaAdvisor.ts`, `src/agents/scheduler/contextRoutingStateMachine.ts`, `src/research/m5SignalAndEvidenceEngine.ts`, `src/mcp/contracts/redTeamContract.ts`, `src/agents/workers/redTeamWorker.ts`):**
+   - MCP Wire Lifecycle & Transport Protocol: Implemented `handleRpcMessage` supporting full JSON-RPC 2.0 / MCP 2025-11-25 wire lifecycle: `initialize` (negotiating server protocol version `2025-11-25`, server capabilities, and server info), `notifications/initialized`, `ping`, `tools/list`, `resources/list`, `resources/read`, `notifications/cancelled`, and `tools/call`.
+   - Positive Tool Manifest Registry & Code Attestation: Replaced ad-hoc regex blacklists with strict positive JSON schemas enforcing `additionalProperties: false` (throwing `E-MCP-UNKNOWN-ARGUMENT-REJECTED`) and cryptographic handler attestation (verifying handler SHA-256 against registered manifest hash, throwing `E-MCP-HANDLER-TAMPERED`).
+   - HMAC-SHA256 Signed Capability Grants & Wall-Clock Budget: Added cryptographic HMAC-SHA256 signatures (`grant_signature_hmac`) to `CapabilityGrant` generated via `signCapabilityGrant` and validated fail-closed via `verifyCapabilityGrantSignature`. Enforced calling worker and task identity validation (`E-MCP-WORKER-IDENTITY-MISMATCH`) and cumulative task wall-clock budget (`E-MCP-TASK-WALL-CLOCK-EXCEEDED`).
+   - Constrained HTTPS Egress Connector: Hardened network egress to port 443 only (`E-MCP-PORT-DENIED`), DNS pre-resolution checking private/loopback/metadata IPs (`E-MCP-DNS-REBINDING-OR-PRIVATE-IP-DENIED`), streaming byte cutoff via `ReadableStream` reader immediately aborting the underlying socket (`E-MCP-STREAM-PAYLOAD-TOO-LARGE`), and abort signal timeout.
+   - Append-Only McpRunLedger File Persistence: Implemented durable disk persistence via `saveLedgerToFile` and `loadLedgerFromFile`, validating RFC 8785 JCS monotonic hash chains and throwing `E-MCP-LEDGER-TAMPERED` upon post-hoc mutation.
+   - First-Class Evidence Origin Firewall: Formally introduced `EvidenceOriginClass = 'LIVE_VERIFIED_CAPTURE' | 'RECORDED_GOLDEN_FIXTURE' | 'CALLER_SUPPLIED_PAYLOAD' | 'SYNTHETIC_SIMULATION' | 'LLM_MODEL_PROPOSAL'`. Preserved distinct `requested_url` (canonical supplier catalog URI) and `resolved_source_identity` (e.g. `caller://raw_html_payload` or `fixture://...`). Enforced origin promotion firewall in `EvidencePromotionEngine` and red-team rule `RT-08-NON-LIVE-EVIDENCE-ORIGIN`, strictly prohibiting non-live origins from promoting to `VERIFIED_EXECUTABLE_OFFER` (`E-EV-NON-LIVE-ORIGIN-PROMOTION-FORBIDDEN`).
+   - Look-Ahead Bias Elimination: Macro and statutory workers enforce that observation timestamps and circular effective dates do not exceed task `reference_time_utc`, failing closed with `E-MLW-LOOKAHEAD-BIAS-REJECTED`.
+   - Groq LLM Egress Boundary & Secret Redaction: In `src/research/llmFormulaAdvisor.ts`, network egress is locked strictly to `APPROVED_GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions'` (`E-GROQ-UNAPPROVED-ENDPOINT`), input secrets are scrubbed via `redactPromptSecrets`, and generated formula proposals are tagged with origin `LLM_MODEL_PROPOSAL`.
+   - Adala-Inspired Golden Extraction Bench: Implemented `GoldenExtractionBench` evaluating precision, recall, and exact match rates in pure BigInt basis points (`10000n` bps required for `certified_pass = true`).
+   - Plan-Driven Topological Wave Dispatcher: Implemented `executeCompiledDagPlan` in `ContextRoutingStateMachine` evaluating node `activation_predicate`, bounded parallel wave batches, cumulative wall-clock budget checking (`E-DAG-BUDGET-OVERFLOW`), and durable JCS checkpointing (`DagCheckpointStore.saveCheckpointToFile` / `resumeFromCheckpoint`).
 2. **Acceptance Tests & Evidence Separation (`Suite 30`):**
-   - Implemented `tests/acceptance/suite30_m6_8_operator_terminal_and_release_gate.test.ts` (8 normative assertions).
-   - Full test baseline expanded to **257 passed tests across 30 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Implemented `tests/acceptance/suite30_m6_8_mcp_hardening_and_worker_certification.test.ts` (10 normative acceptance tests).
+   - Full test baseline expanded to **259 passed tests across 30 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
    - Dedicated Gate M6.8 evidence files:
-     - POC-001_Gate_M6_8_Test_Execution_Results.json (SHA-256: E553410865DA285A4F6ECE0F24C6B67FA9FBEB8B5CA04C0BB9A064714028848E, 257 tests).
-     - POC-001_Gate_M6_8_Typecheck_Execution_Results.txt (SHA-256: E7E98ADF6A9E862C685EB3BBF53159540AEAD4B7B6991FFD3EBDC14CEB23A42C, 0 errors).
+     - `POC-001_Gate_M6_8_Test_Execution_Results.json` (SHA-256: `D51FB20D6570B7B8B0260C6560D655B0639CCF4DFBE7F4107D04D38DB3A42A78`, 259 tests).
+     - `POC-001_Gate_M6_8_Typecheck_Execution_Results.txt` (SHA-256: `957B9839BF6E3D6165A6B902132DAAAB9CE8E65C5ACF3AC7867D6406123ADE57`, 0 errors).
 3. **Milestone Disposition:**
-   - Gate M6.8 status is authoritatively confirmed as **APPROVED / CLOSED / RELEASE-READY**.
+   - Gate M6.8 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
 ### Safety Invariants
 
