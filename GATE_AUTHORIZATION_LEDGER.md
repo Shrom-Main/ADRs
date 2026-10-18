@@ -391,3 +391,37 @@
         - `POC-001_Gate_M6_6_Typecheck_Execution_Results.txt` (SHA-256: `7808FD347CB9B2BAB4A5A91EEF5F976584C3D319641274B1EFAB6572DE48DC6E`, 0 errors).
     - Gate M6.6 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
+19. **Project Owner Decision OD-17 (Gate M6.7 Stage 7 Typed DAG Scheduler, Bounded Concurrency, Deduplication, Degraded Hold & End-to-End Capital Gate)**:
+    - **Stage 7 Architectural Upgrades (`src/agents/scheduler/contextRoutingStateMachine.ts`, `src/mcp/mcpSubstrate.ts`, `src/agents/workers/macroLateralWorker.ts`)**:
+      - *Typed DAG Nodes & Execution Plan*: Implemented `DagTaskNode`, `DagExecutionPlan`, `DagTaskNodeStatus`, and `DagRunStatus`. Supported nodes across Pass 1 (Horizontal Gap-Filling), Pass 2 (Vertical Corroboration), Pass 3 (Red Team Audit), and Pass 4 (Deterministic Core Gate).
+      - *Cycle Detection & Topological Validation*: Implemented `validateDagAcyclicity(nodes)` detecting cycles via Kahn's algorithm / DFS recursion, throwing `E-DAG-CYCLE-DETECTED` fail-closed upon circular task dependencies.
+      - *Bounded Parallel Worker Concurrency*: Implemented `runBoundedParallel(tasks, max_parallel_workers)` (default 3 concurrent workers) with deterministic barrier sorting `(pass_number, node_id)` ensuring bit-for-bit identical execution plans and RFC 8785 JCS digests regardless of asynchronous event loop timing or jitter.
+      - *Idempotent Task Deduplication*: Implemented canonical task node idempotency keys (`computeTaskNodeIdempotencyKey(run_id, worker_id, request_digest)`). Cache hits return `status: 'DEDUPLICATED_REPLAY'` reusing historical results without consuming additional MCP broker request quotas or invoking sub-agents.
+      - *Pass 4 Deterministic Capital Gate*:
+        - Connected all 5 micro-agents, Regime Classifier (`SUSTAINED_STRUCTURAL_SIGNAL` vs `FAST_TACTICAL_OPPORTUNITY`), `FactorEfficacyLedger`, and `evaluateOptimalBatchSize` (Pareto bracket selection & concentration constraints).
+        - Enforces dry-run simulation mode (`execution_mode: 'PAPER_SIMULATION'`, decision `ALLOCATE_PAPER_SIMULATION`) with bitemporal restatement recording ($t_d$ and $t_k$) in `BitemporalRestatementEngine`. Real capital execution is structurally impossible without human operator ratification.
+        - Fail-Closed Degraded Hold: When any provider fails or returns `DATA_REQUIRED` (e.g. macro feed down), marks the node `FAILED_DEGRADED`, assigns run status `PARTIAL_DEGRADED_HOLD`, and emits `DO_NOT_ALLOCATE_CAPITAL` with blocking reason `E-DAG-DEGRADED-PROVIDER-HOLD`.
+        - Red-Team Blocking Defense: When Pass 3 Red Team disposition is not `ELIGIBLE_FOR_HUMAN_REVIEW`, capital gate emits `DO_NOT_ALLOCATE_CAPITAL` with blocking reason `E-DAG-RED-TEAM-BLOCKED`.
+        - Factor Refutation Defense: When dynamic factor driver is classified `DISCREDITED_REFUTED` or historical win-rate < 50%, capital gate emits `DO_NOT_ALLOCATE_CAPITAL` with blocking reason `E-DAG-REFUTED-GROWTH-DRIVER`.
+        - Edge Decay Defense: When tactical opportunity has CCC exceeding half-life ($CCC > \text{half\_life}$), capital gate fails closed with `E-MLW-EDGE-DECAYS-BEFORE-CASH-RECOVERY`.
+      - *Surgical Fixes & Broker Hardening*:
+        - MLW-01: Pure BigInt half-life math in `calculateHalflifeDecayBps` (`half_life_days * 86400n`).
+        - MLW-02: Async LLM integration via `evaluateDynamicGrowthDriverWithAdvisor`.
+        - Broker `getUsage(grantId)`: Added method to `McpCapabilityBroker` exposing real-time usage metrics.
+    - **Acceptance Tests & Evidence Separation (`Suite 29`)**:
+      - Implemented `tests/acceptance/suite29_m6_7_context_dag_and_cooperation.test.ts` (8 normative assertions):
+        1. `MCP-DAG-ASYNC-BARRIER-JCS-DETERMINISM-001`: Proves bounded parallel execution with random jitter yields bit-for-bit identical RFC 8785 JCS digests under canonical barrier sorting.
+        2. `MCP-DAG-COMPLEMENTARY-AND-SUPPLEMENTARY-COOPERATION-002`: Executes 4-pass DAG coordinating all 5 micro-agents and proves optimal batch sizing.
+        3. `MCP-DAG-IDEMPOTENT-DEDUPLICATION-NO-QUOTA-003`: Proves duplicate node execution returns `DEDUPLICATED_REPLAY` without consuming MCP broker quotas.
+        4. `MCP-DAG-DEGRADED-PROVIDER-HOLD-004`: Simulates provider timeout/failure, asserting `PARTIAL_DEGRADED_HOLD` and `DO_NOT_ALLOCATE_CAPITAL`.
+        5. `MCP-DAG-ACYCLICITY-CYCLE-REJECTION-005`: Proves cyclic dependency graph fails closed with `E-DAG-CYCLE-DETECTED`.
+        6. `MCP-DAG-BITEMPORAL-REPLAY-EQUIVALENCE-006`: Validates bitemporal restatement $t_0 \to t_1$ and historical replay invariance.
+        7. `MCP-DAG-REFUTED-DRIVER-BLOCKS-CAPITAL-007`: Validates discredited factor driver blocks capital gate with `E-DAG-REFUTED-GROWTH-DRIVER`.
+        8. `MCP-DAG-TACTICAL-EDGE-DECAY-REJECTION-008`: Validates $CCC > \text{half\_life}$ triggers `E-MLW-EDGE-DECAYS-BEFORE-CASH-RECOVERY`.
+    - **Full Baseline Conformance**:
+      - Full test baseline expanded to **249 passed tests across 29 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+      - Dedicated Gate M6.7 evidence files generated:
+        - `POC-001_Gate_M6_7_Test_Execution_Results.json` (SHA-256: `3002FE6935AA3ECD8A0B110FD540B2647951A534F754AF813ED38341A0FDFDC7`, 249 tests).
+        - `POC-001_Gate_M6_7_Typecheck_Execution_Results.txt` (SHA-256: `34EB2E7BF4A843CF8B8757466FAF65929EFA90339B18470CB3284D23F76A19A7`, 0 errors).
+    - Gate M6.7 status is authoritatively confirmed as **APPROVED / CLOSED**.
+

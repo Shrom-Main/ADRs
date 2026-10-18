@@ -409,6 +409,31 @@ Formally authorized by Project Owner on 2026-10-18:
 4. **Milestone Disposition:**
    - Gate M6.6 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
+### Project Owner Decision OD-17 (Gate M6.7 Stage 7 Typed DAG Scheduler, Bounded Concurrency, Deduplication, Degraded Hold & End-to-End Capital Gate)
+
+Formally authorized by Project Owner on 2026-10-18:
+1. **Stage 7 Implementation & Architecture (`src/agents/scheduler/contextRoutingStateMachine.ts`, `src/mcp/mcpSubstrate.ts`, `src/agents/workers/macroLateralWorker.ts`):**
+   - Implemented `DagTaskNode`, `DagExecutionPlan`, `DagTaskNodeStatus`, and `DagRunStatus`. Supported nodes across 4 distinct passes.
+   - Cycle Detection: Implemented `validateDagAcyclicity(nodes)` detecting circular graph dependencies and throwing `E-DAG-CYCLE-DETECTED`.
+   - Bounded Parallel Worker Concurrency: Implemented `runBoundedParallel(tasks, max_parallel_workers)` (default 3 concurrent workers) with deterministic barrier sorting `(pass_number, node_id)` ensuring bit-for-bit identical RFC 8785 JCS digests under asynchronous event loop jitter.
+   - Idempotent Task Deduplication: Canonical task node idempotency keys (`computeTaskNodeIdempotencyKey(run_id, worker_id, request_digest)`). Cache hits return `status: 'DEDUPLICATED_REPLAY'` without consuming additional MCP broker request quotas or invoking sub-agents.
+   - Pass 4 Deterministic Capital Gate:
+     - Connected 5 micro-agents, Regime Classifier (`SUSTAINED_STRUCTURAL_SIGNAL` vs `FAST_TACTICAL_OPPORTUNITY`), `FactorEfficacyLedger`, and `evaluateOptimalBatchSize` (Pareto bracket selection & concentration constraints).
+     - Confined to dry-run simulation mode (`execution_mode: 'PAPER_SIMULATION'`, decision `ALLOCATE_PAPER_SIMULATION`) with bitemporal restatement recording ($t_d$ and $t_k$) in `BitemporalRestatementEngine`.
+     - Degraded-Mode Hold: Provider timeouts or `DATA_REQUIRED` fail closed to `PARTIAL_DEGRADED_HOLD` / `DO_NOT_ALLOCATE_CAPITAL` (`E-DAG-DEGRADED-PROVIDER-HOLD`).
+     - Red-Team Blocking Defense: Non-clean Pass 3 audit triggers `DO_NOT_ALLOCATE_CAPITAL` (`E-DAG-RED-TEAM-BLOCKED`).
+     - Factor Refutation Defense: Discredited factor driver triggers `DO_NOT_ALLOCATE_CAPITAL` (`E-DAG-REFUTED-GROWTH-DRIVER`).
+     - Tactical Edge Decay Defense: When $CCC > \text{half\_life}$, fails closed with `E-MLW-EDGE-DECAYS-BEFORE-CASH-RECOVERY`.
+   - Surgical Fixes & Hardening: MLW-01 (pure BigInt half-life math), MLW-02 (`evaluateDynamicGrowthDriverWithAdvisor`), and broker `getUsage(grantId)`.
+2. **Acceptance Tests & Evidence Separation (`Suite 29`):**
+   - Implemented `tests/acceptance/suite29_m6_7_context_dag_and_cooperation.test.ts` (8 normative assertions).
+   - Full test baseline expanded to **249 passed tests across 29 suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`).
+   - Dedicated Gate M6.7 evidence files:
+     - `POC-001_Gate_M6_7_Test_Execution_Results.json` (SHA-256: `3002FE6935AA3ECD8A0B110FD540B2647951A534F754AF813ED38341A0FDFDC7`, 249 tests).
+     - `POC-001_Gate_M6_7_Typecheck_Execution_Results.txt` (SHA-256: `34EB2E7BF4A843CF8B8757466FAF65929EFA90339B18470CB3284D23F76A19A7`, 0 errors).
+3. **Milestone Disposition:**
+   - Gate M6.7 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
 ### Safety Invariants
 
 - **Zero Real Capital / Simulation Isolation:** No live exchange, broker, bank, or payment gateway API connections are permitted. All order routing is confined to `SimulatedExecutionGateway`.
