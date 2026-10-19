@@ -500,3 +500,35 @@
         - `POC-001_Gate_M7_0_Test_Execution_Results.json` (SHA-256: `8A4E3D35960B94E545352E1231FF55D3C6A2A237461FF6E83211B57FC913BEE1`, 279 tests).
         - `POC-001_Gate_M7_0_Typecheck_Execution_Results.txt` (SHA-256: `7C70531016D2170F58C0AA0159CBA4B6B90949D6E57707CB71232ECA3011B323`, 0 errors).
     - Gate M7.0 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
+23. **Project Owner Decision OD-21 (Gate M7.1 Multi-Channel Signal Ingestion Pipeline, Provenance Hardening, 8-Variant SS304 Matrix & 3-Pane Research Cockpit UI Closure)**:
+    - **Gate M7.1 Implementation & Architecture (`src/research/m5SignalAndEvidenceEngine.ts`, `src/mcp/contracts/signalIngestionContract.ts`, `src/server/workstationStateManager.ts`, `src/server/workstationServer.ts`, `src/terminal/operatorTerminalController.ts`, `src/cli/exportStandaloneHtml.ts`)**:
+      - *Provenance Hardening & Fallback Elimination*: Completely eliminated hardcoded fallback signal magnitudes and simulated assumptions from `src/research/m5SignalAndEvidenceEngine.ts`. Mandatory supplier quote components (`unit_price_subunits`, `inbound_freight_subunits`, `packaging_kitting_subunits`) must be present or extraction fails closed with `DATA_REQUIRED` (`E-SIG-MANDATORY-FIELD-MISSING`). Seed state boots badged `RECORDED_GOLDEN_FIXTURE` (`[FIXTURE]`); promotion to `LIVE_VERIFIED_CAPTURE` (`[LIVE]`) requires genuine live capture tool calls recorded in `McpRunLedger`.
+      - *Genuine 5-Worker DAG Execution*: Replaced stubbed DAG closure in `WorkstationStateManager.triggerGovernedDagRun` with genuine execution of all 5 certified MCP specialist workers (`SourceCaptureWorker`, `MacroAndLateralMarketWorker`, `GovtAndStatutoryWorker`, `MediaAndChatterWorker`, `RedTeamAndConflictWorker`) via `ContextRoutingStateMachine`, logging verifiable `TOOL_CALL_INVOKED` events to the append-only `mcpRunLedger`.
+      - *Multi-Channel Signal Ingestion Pipeline*: Implemented `ingestSignalEnvelope` across 6 distinct signal channels (`RAW_MATERIAL_BENCHMARK_FEED`, `TRADE_POLICY_STATUTORY_RECORD`, `FREIGHT_RATE_SURCHARGE_INDEX`, `MARKETPLACE_OR_SUPPLIER_HTML`, `COMMUNITY_SOCIAL_MEDIA_STREAM`, `SYNTHETIC_SIMULATION_SCENARIO`). Enforces 3-tier kill switch state, payload size limit, look-ahead bias validation (`timestamp_utc <= as_of_utc`), 90-day stale TTL rejection (`E-SIG-EVENT-EXPIRED`), idempotency deduplication (`E-SIG-DUPLICATE-ENVELOPE`), canary scanning (`InjectionCanaryGuard` / `E-SIG-INJECTION-ATTEMPT-QUARANTINED`), connector routing, and 6-stage lineage tracing (`SignalProcessingTraceRecord`).
+      - *REST API Endpoints*: Exposed `POST /api/signals/ingest`, `GET /api/signals/inbox`, `GET /api/signals/trace`, and `GET /api/variants/ss304` on `WorkstationServer`, protected by the loopback interface, Host header firewall, and CSWSH origin verification.
+      - *8-Variant SS304 DIN 3017 Matrix*: Integrated the complete 8-variant SS304 commodity hose clamp catalog (W1 through W5 material specs, 8-12mm to 50-70mm diameter ranges, pack sizes 10 to 100) with deterministic bitemporal 36-point J-curves, landed cost breakdowns, and capital allocation recommendations.
+      - *3-Pane Institutional Research Cockpit UI & Data-Driven SVGs*:
+        - Designed institutional 3-pane layout: Top Telemetry Header (Kill Switch, Live/Fixture Origin Breakdown, Conserved Capital, Memory/Host Telemetry), Left Navigation Tabs (Workspaces 0–8), Center Cockpit Workspace, and Right Slide-Over Lineage Drawer (`#lineage-drawer`).
+        - Integrated Workspace 0: 5 Source Connectors status table, Signal Intake form with 7 preset buttons, real-time Signal Surveillance inbox table, and the 8-Variant SS304 DIN 3017 matrix table.
+        - Replaced mock SVG charts with 100% data-driven SVG generators (`renderDataDrivenJCurveSvg`, `renderDataDrivenSpreadBandsSvg`, `renderDataDrivenGreeksSvg`, `renderDataDrivenConvictionMatrixSvg`) based on authoritative BigInt backend state.
+        - Standalone HTML export updated in `src/cli/exportStandaloneHtml.ts` generating self-contained file `dist/POC-001_Standalone_Workstation.html`.
+    - **Acceptance Tests & Evidence Separation (`Suite 33`)**:
+      - Implemented `tests/acceptance/suite33_m7_1_signal_ingestion_and_cockpit_ui.test.ts` (10 normative acceptance tests):
+        1. `M71-SIG-CHANNEL-INGESTION-001`: Multi-channel ingestion across 6 channels.
+        2. `M71-SIG-QUARANTINE-INJECTION-002`: Prompt injection detection and quarantine (`E-SIG-INJECTION-ATTEMPT-QUARANTINED`).
+        3. `M71-SIG-DEDUPLICATION-003`: Duplicate envelope rejection (`E-SIG-DUPLICATE-ENVELOPE`).
+        4. `M71-SIG-LOOKAHEAD-BIAS-004`: Future timestamp rejection (`E-SIG-LOOKAHEAD-BIAS-DETECTED`).
+        5. `M71-SIG-STALE-TTL-005`: Stale event rejection (>90 days, `E-SIG-EVENT-EXPIRED`).
+        6. `M71-SIG-MANDATORY-COSTS-006`: Missing mandatory supplier quote rejection (`E-SIG-MANDATORY-FIELD-MISSING`).
+        7. `M71-SIG-PROVENANCE-HONESTY-007`: Initial fixture badging (`[FIXTURE]`) and live promotion (`[LIVE]`) after DAG tool invocation.
+        8. `M71-SIG-SS304-CATALOG-008`: 8-variant SS304 DIN 3017 matrix completeness and 36-point J-curves.
+        9. `M71-SIG-UI-COCKPIT-PANE-009`: Workspace 0 cockpit, connectors table, preset buttons, and lineage drawer in HTML projection.
+        10. `M71-SIG-DATA-DRIVEN-SVG-010`: Real data-driven SVG rendering in Economics and Capital Allocator workspaces.
+    - **Full Baseline Conformance**:
+      - Full test baseline expanded to **289 passed tests across 33 contiguous suites (0 skipped, 0 failed)** with live PostgreSQL 16.8 (`localhost:5432`) and 0 TypeScript compilation errors.
+      - Dedicated Gate M7.1 evidence files generated:
+        - `POC-001_Gate_M7_1_Test_Execution_Results.json` (SHA-256: `21623F9A6F1A23C99A0A15C00D647B395CF14AC437DDC3A991141DC0AE1BCC52`, 289 tests).
+        - `POC-001_Gate_M7_1_Typecheck_Execution_Results.txt` (SHA-256: `174101613E05AFFB47F166F4C0E244508D25007496395CECA4123C36425003F7`, 0 errors).
+    - Gate M7.1 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
