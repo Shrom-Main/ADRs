@@ -532,3 +532,32 @@
         - `POC-001_Gate_M7_1_Typecheck_Execution_Results.txt` (SHA-256: `174101613E05AFFB47F166F4C0E244508D25007496395CECA4123C36425003F7`, 0 errors).
     - Gate M7.1 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
+24. **Project Owner Decision OD-22 (Gate M7.2 Multi-Product Universe Observation Deck, Sell-Side Analytics, Buyer Grievance Mining, Engineered Operational Edge & Governed Research Dispatch Closure)**:
+    - **Gate M7.2 Implementation & Architecture (`src/mcp/contracts/productObservationContract.ts`, `src/research/productObservationDeckRegistry.ts`, `src/server/workstationStateManager.ts`, `src/server/workstationServer.ts`, `src/terminal/operatorTerminalController.ts`, `src/cli/exportStandaloneHtml.ts`)**:
+      - *Multi-Product Universe Expansion*: Expanded catalog from single-product SS304 vertical slice to an extensible, category-agnostic multi-product observation deck across 6 commercial archetypes (`CLUSTER_MRO_STANDARDIZED`, `TECHNICAL_COMPLIANCE`, `SEASONAL_D2C_VISUAL`, `D2C_CONSUMABLE`, `MRO_INDUSTRIAL`, `REPLACEMENT_PARTS`) and 7 industrial/consumer categories. Preserves SS304 DIN 3017 (`prod:din3017:ss304:16-25mm:pack-10`) as the immutable `is_guiding_reference: true` anchor.
+      - *Sell-Side Marketplace Dynamics ("What Others Are Selling")*: Captures primary marketplace, product listing URLs, BSR (Best Seller Rank), monthly sales volume estimates, monthly gross revenue in INR, prevailing retail ASP, active competitor count, top competitor brand names, and dominant pack formats for each product.
+      - *Buyer Review Grievance Mining ("What Buyers Are Noting as Feedback")*: Analyzes negative review frequency and categorizes structured customer grievances (`QUALITY_DEFECT`, `DURABILITY_FAILURE`, `SAFETY_HAZARD`, `PACKAGING_DAMAGE`, `REGULATORY_NON_COMPLIANCE`, `SPEC_MISMATCH`), capturing failure modes and verbatim representative buyer feedback quotes.
+      - *Engineered Operational Edge (Quality Fix Formulation)*: Directly formulates exact physical, metallurgical, chemical, and operational remediations (e.g. Geomet 500 coating, optical thread sorting, platinum-cured VMQ silicone, BIS certification) to systematically eliminate negative reviews and capture the marketplace Buy Box.
+      - *Upstream Sourcing Hub Cluster & Financial Spread Analysis*: Models geographic manufacturing hubs (Jamnagar, Ludhiana, Jalandhar, Khurja, Vasai/Pune, Moradabad), factory-gate unit quotes, MOQs, lead times, raw material bases, landed costs, gross spreads, contribution margin bps, and annualized RoWC bps with conservative working capital and CCC calculations.
+      - *Governed Strategic Arbitrage & Research Dispatch*: Defines explicit strategic decisions (`PURSUE`, `INVESTIGATING`, `MONITOR_ONLY`, `REJECT`), bull-case rationale, and bear-case downside risk. Dispatches research tasks to specialist workers via `ContextRoutingStateMachine` with full `McpRunLedger` audit logging.
+      - *Interactive Observation Deck Table & Slide-Over Teardown Drawer*: Integrated into Workspace 0 with category/archetype filter pills, expandable "+ Push Product to Deck" operator form, dual-mode slide-over drawer (`#lineage-drawer`) presenting comprehensive product teardowns, and full cross-workspace reflection into Opportunity Radar (Workspace 2) and Evidence Workbench (Workspace 3).
+      - *Offline Standalone HTML Bundle*: Exported self-contained bundle `dist/POC-001_Standalone_Workstation.html` with all 8 products and offline drawer interactivity.
+    - **Acceptance Tests & Evidence Separation (`Suite 34`)**:
+      - Implemented `tests/acceptance/suite34_m7_2_multi_product_observation_deck.test.ts` (10 normative acceptance tests):
+        1. `M72-PROD-CATALOG-ARCHETYPES-001`: Multi-product catalog completeness across 6 archetypes.
+        2. `M72-PROD-SELLSIDE-DYNAMICS-002`: Marketplace sell-side dynamics and revenue estimates.
+        3. `M72-PROD-GRIEVANCE-MINING-003`: Buyer review grievance clustering and verbatim quotes.
+        4. `M72-PROD-OPERATIONAL-EDGE-004`: Engineered quality remediation formulations.
+        5. `M72-PROD-UPSTREAM-SPREADS-005`: Upstream hub sourcing, landed costs, and financial spreads.
+        6. `M72-PROD-PUSH-OBSERVATION-006`: Fail-closed ingestion of new product observations.
+        7. `M72-PROD-RESEARCH-DISPATCH-007`: Governed research dispatch and ledger recording.
+        8. `M72-PROD-REST-ENDPOINTS-008`: Workstation server REST API verification (`/api/products/*`).
+        9. `M72-PROD-UI-DRAWER-INTERACTION-009`: HTML markup, drawer interactivity, and archetype filters.
+        10. `M72-PROD-CROSS-WORKSPACE-010`: Cross-workspace projection into Opportunity Radar and Evidence Workbench.
+    - **Full Baseline Conformance**:
+      - Full test baseline expanded to **294 passed tests across 34 contiguous suites (0 failed, 6 skipped conditional postgres)** with 0 TypeScript compilation errors.
+      - Dedicated Gate M7.2 evidence files generated:
+        - `POC-001_Gate_M7_2_Test_Execution_Results.json` (SHA-256: `E74CAFD0509178F5A3F11C55F0079FC212D3DCC8866006B14D209AEFF7B7CD37`, 294 tests).
+        - `POC-001_Gate_M7_2_Typecheck_Execution_Results.txt` (SHA-256: `E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855`, 0 errors).
+    - Gate M7.2 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
