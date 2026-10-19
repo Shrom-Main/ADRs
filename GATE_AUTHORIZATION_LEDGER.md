@@ -561,3 +561,33 @@
         - `POC-001_Gate_M7_2_Typecheck_Execution_Results.txt` (SHA-256: `E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855`, 0 errors).
     - Gate M7.2 status is authoritatively confirmed as **APPROVED / CLOSED**.
 
+25. **Project Owner Decision OD-23 (Gate M7.3 Modern React Workstation UI, Bloomberg Split-Terminal Temporal Dynamics, Multi-Product Grievance Mining Cockpit & Groq AI Strategic Advisor Certification Closure)**:
+    - **Gate M7.3 Implementation & Architecture (`client/`, `src/server/workstationServer.ts`, `src/terminal/operatorTerminalController.ts`, `src/cli/exportStandaloneHtml.ts`)**:
+      - *Modern React 19 + Tailwind CSS + Lucide Workstation UI (`client/`)*: Completely redesigned the user interface into a modern, responsive single-page application built on React 19, Tailwind CSS v4, Lucide icons, and Vite. Decoupled from backend dependencies to maintain strict zero-runtime-npm compliance in `Market HFT OS` core (`ADR-0004`).
+      - *Primary Product Opportunity & Grievance Mining Cockpit (`CockpitHome.tsx`)*: Elevated as the primary home view, showcasing all 8 products across 6 commercial archetypes, with top KPI ribbons (aggregate volume, gross capture revenue, active investigations), archetype filter pills, live search, and collapsible "+ Push Product to Deck" observation form.
+      - *Rich Grievance Teardowns & Operational Edge Formulations*: Highlights verbatim customer feedback quotes, failure severity badges (`CRITICAL`, `HIGH`), and exact physical/operational fixes directly on product cards and in the comprehensive 4-tab slide-over inspection drawer (`ProductTeardownDrawer.tsx`).
+      - *Bloomberg-Style Split-Screen Temporal & Market Dynamics Terminal (`BloombergSplitTerminal.tsx`)*:
+        - *Left Screen (Fundamentals)*: Interactive Landed Cost Waterfall SVG chart (Factory Gate $\to$ Inbound Freight $\to$ Packaging/Kitting $\to$ Buffer $\to$ Net Landed $\to$ Target ASP), volume margin sensitivity ladder, Cash Conversion Cycle (CCC) metrics, and live What-If sandbox evaluating symbolic expressions via pure BigInt rational AST on the backend (`POST /api/actions/what-if-formula`).
+        - *Right Screen (Market Forces)*: 36-point bitemporal raw material benchmark wave vs capture spread, competitor seller concentration, return rate reduction metrics, and Buy Box capture probability surface.
+        - *Split-Screen Controls*: Dynamic timeframe selection (`1D`, `7D`, `30D`, `90D`, `1Y`), macro regime toggle (`BASE`, `SHOCK`, `OPTIMISTIC`), and split layout toggles (50/50, left-heavy, right-heavy, maximized).
+      - *Autonomous Micro-Agent Research Desk (`AgentResearchDesk.tsx`)*: Visualizes the 5 certified specialist workers (`SourceCapture`, `MacroMarket`, `GovtStatutory`, `MediaChatter`, `RedTeamConflict`), 7-stage governed topological wave execution, live append-only execution log stream, and governed DAG action dispatch with rationale validation.
+      - *Groq AI Strategic Advisor (`GroqAiIntelligenceModal.tsx` & `/api/ai/analyze`)*: Integrated LLM opportunity synthesizer powered by Groq (`llama-3.3-70b-versatile`), extracting unserved customer pain points, suggesting engineered operational edges, and commenting on commodity price sensitivities.
+      - *WorkstationServer Static Asset Delivery & Root Injection*: `WorkstationServer` delivers compiled Vite client bundles (`/assets/*`) with strict security headers (CSP, nosniff, cache control). `renderOperatorTerminalHtml` automatically discovers client bundles, mounting `<div id="root"></div>` in the browser while preserving all semantic DOM hooks and test assertions for headless runners.
+      - *100% Inlined Offline Standalone HTML*: `src/cli/exportStandaloneHtml.ts` generates `dist/POC-001_Standalone_Workstation.html` (583,782 bytes) with the entire compiled React bundle and styles inlined for completely offline inspection.
+    - **Acceptance Tests & Evidence Separation (`Suite 35`)**:
+      - Implemented `tests/acceptance/suite35_m7_3_modern_react_workstation_ui.test.ts` (8 normative acceptance tests):
+        1. `M73-UI-CLIENT-BUNDLE-INTEGRITY-001`: Vite production build bundle integrity in `dist/client/assets`.
+        2. `M73-UI-SERVER-STATIC-ASSETS-002`: WorkstationServer delivery of static JS/CSS bundles with security headers.
+        3. `M73-UI-HTML-MOUNT-INJECTION-003`: Root HTML mount injection and backward-compatible test hooks.
+        4. `M73-UI-BLOOMBERG-SPLIT-TERMINAL-004`: Bloomberg split-terminal What-If formula simulation integration.
+        5. `M73-UI-GROQ-AI-ANALYZE-API-005`: `/api/ai/analyze` endpoint validation and structured AI recommendations.
+        6. `M73-UI-STANDALONE-INLINED-HTML-006`: Standalone HTML snapshot inlined self-contained bundling (>500 KB).
+        7. `M73-UI-AGENT-RESEARCH-DESK-007`: 5-Worker DAG dispatcher contract and ledger telemetry verification.
+        8. `M73-UI-GRIEVANCE-MINING-COCKPIT-008`: Multi-product grievance clustering and operational edge formulation.
+    - **Full Baseline Conformance**:
+      - Full test baseline expanded to **302 passed tests across 35 contiguous suites (0 failed, 6 skipped conditional postgres)** with 0 TypeScript compilation errors.
+      - Dedicated Gate M7.3 evidence files generated:
+        - `POC-001_Gate_M7_3_Test_Execution_Results.json` (SHA-256: `391A7BF111D8C98EF6DF19101BD6B2D43965F102895539DE27E92ADC84B8187A`, 302 tests).
+        - `POC-001_Gate_M7_3_Typecheck_Execution_Results.txt` (SHA-256: `E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855`, 0 errors).
+    - Gate M7.3 status is authoritatively confirmed as **APPROVED / CLOSED**.
+
