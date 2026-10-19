@@ -17,7 +17,7 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 2. Governance & Gate Authorization
 
-* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md) — Authoritative sign-off record for Gates M0, M1, M2, M3, M4, M4.1, M4.2, M4.3, M5, M6, M6.1, M6.2, M6.3, M6.4, M6.5, M6.6, M6.7, M6.8, M6.9, M7.0, M7.1, M7.2, and M7.3.
+* **Gate Authorization Ledger:** [`GATE_AUTHORIZATION_LEDGER.md`](./GATE_AUTHORIZATION_LEDGER.md) — Authoritative sign-off record for Gates M0, M1, M2, M3, M4, M4.1, M4.2, M4.3, M5, M6, M6.1, M6.2, M6.3, M6.4, M6.5, M6.6, M6.7, M6.8, M6.9, M7.0, M7.1, M7.2, M7.3, and M8.0.
 
 ---
 
