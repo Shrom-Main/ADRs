@@ -23,6 +23,9 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 3. Gate Conformance Reports & Audit Evidence
 
+* **Pre-Slice-2C Safety Remediation Verification Report:** [`POC-001_Pre_Slice_2C_Safety_Remediation_Verification_Report.md`](./POC-001_Pre_Slice_2C_Safety_Remediation_Verification_Report.md) — Remediation verification of Suite 48 across economic underwriting firewalls and source-scoped SKU isolation.
+* **Pre-Slice-2C Independent Post-Commit Audit Report:** [`POC-001_Pre_Slice_2C_Independent_Post_Commit_Audit_Report.md`](./POC-001_Pre_Slice_2C_Independent_Post_Commit_Audit_Report.md) — Post-commit verification of commit 4ba8191 and 427-test baseline.
+
 * **Gate M7.3 Test Execution Results (JSON):** [`POC-001_Gate_M7_3_Test_Execution_Results.json`](./POC-001_Gate_M7_3_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (302 passed tests across 35 suites).
 * **Gate M7.3 Typecheck Results (UTF-8):** [`POC-001_Gate_M7_3_Typecheck_Execution_Results.txt`](./POC-001_Gate_M7_3_Typecheck_Execution_Results.txt) — TypeScript 5.4.5 typecheck output (0 errors).
 * **Gate M7.2 Test Execution Results (JSON):** [`POC-001_Gate_M7_2_Test_Execution_Results.json`](./POC-001_Gate_M7_2_Test_Execution_Results.json) — Vitest v4.1.12 machine-readable output (294 passed tests across 34 suites).
@@ -78,6 +81,7 @@ Repository index for architecture decision records (ADRs), frozen specifications
 
 ## 4. Frozen Normative Specifications
 
+* **Slice 2C Controlled Investigation Orchestration Architecture Specification (Revision 010):** [`POC-001_Slice2C_Investigation_Orchestration_Architecture_Specification.md`](./POC-001_Slice2C_Investigation_Orchestration_Architecture_Specification.md) (`PROPOSED — OWNER APPROVAL PENDING / DEC-030`).
 * **Gate M6 Multi-Agent and Bitemporal Replay Specification:** [`POC-001_Gate_M6_Multi_Agent_and_Bitemporal_Replay_Specification.md`](./POC-001_Gate_M6_Multi_Agent_and_Bitemporal_Replay_Specification.md) (`FROZEN / AUTHORIZED (OD-10)`).
 * **Gate M5 Signal Bus & Group Simulation Specification:** [`POC-001_Gate_M5_Signal_Bus_and_Group_Simulation_Specification.md`](./POC-001_Gate_M5_Signal_Bus_and_Group_Simulation_Specification.md) (`FROZEN / AUTHORIZED (OD-09)`).
 * **Gate M5 Portfolio Capital Rationing Specification:** [`POC-001_Gate_M5_Portfolio_Capital_Rationing_Specification.md`](./POC-001_Gate_M5_Portfolio_Capital_Rationing_Specification.md) (`FROZEN / AUTHORIZED (OD-09)`).
